@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+sudo apt-get purge -y xserver-xorg-video-intel
+sudo apt-get purge -y ~nnvidia
+sudo prime-select on-demand
+sudo systemctl disable gpu-manager.service
+
+mkdir -pv /etc/modprobe.d
+cat << EOF | sudo tee /etc/modprobe.d/novideo.conf
+alias nouveau off
+alias nvidia off
+alias nvidia_drm off
+alias nvidia_modeset off
+alias nvidia_uvm off
+blacklist nouveau
+blacklist nvidia
+blacklist nvidia_drm
+blacklist nvidia_modeset
+blacklist nvidia_uvm
+EOF
+
+mkdir -pv /etc/udev/rules.d
+cat << EOF | sudo tee /etc/udev/rules.d/novideo.rules
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", ATTR{power/control}="auto", ATTR{remove}="1"
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{power/control}="auto", ATTR{remove}="1"
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
+ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
+EOF
+
+sudo update-initramfs -u -k all -v
