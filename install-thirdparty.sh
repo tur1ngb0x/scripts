@@ -49,7 +49,7 @@ sudo bash -c 'wget -O- https://github.com/jesseduffield/lazygit/releases/downloa
 sudo bash -c 'pushd /usr/local/bin && curl https://getmic.ro | sh && popd'
 
 # ncdu
-sudo bash -c 'wget -O- https://dev.yorhel.nl/download/ncdu-2.1.2-linux-x86_64.tar.gz | tar xvz -C /usr/local/bin'
+sudo bash -c 'wget -O- https://dev.yorhel.nl/download/ncdu-2.2.1-linux-x86_64.tar.gz | tar xvz -C /usr/local/bin'
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf 'https://sh.rustup.rs' | sh -s -- -y --no-modify-path
