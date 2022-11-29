@@ -24,10 +24,12 @@ EOF
 
 cat << EOF
 # Remove intel driver
-$ sudo apt-get purge -y xserver-xorg-video-intel
+$ sudo apt-get purge xserver-xorg-video-intel
+$ sudo pacman -Rns xf86-video-intel
+$ sudo rm -fv /etc/X11/xorg.conf.d/20-intel.conf
 
 # Remove nvidia driver
-$ sudo apt-get purge -y ~nnvidia
+$ sudo apt-get purge ~nnvidia
 
 # Set nvidia prime
 $ sudo prime-select on-demand
@@ -37,4 +39,6 @@ $ systemctl disable gpu-manager.service
 
 # Update initramfs
 $ sudo update-initramfs -u -k all -v
+$ sudo dracut --force --regenerate-all
+$ sudo mkinitcpio -Pv
 EOF
