@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # reset
-dconf reset -f /
+#dconf reset -f /
 
 # vanilla gnome
 #sudo apt-get install --install-recommends -y gnome-session adwaita-icon-theme-full fonts-cantarell
@@ -66,12 +66,6 @@ gsettings set org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.desktop.notifications show-in-lock-screen false
 
-# popos
-gsettings set com.system76.hidpi enable false
-gsettings set com.system76.hidpi mode lodpi
-gsettings set com.github.donadigo.eddy always-on-top true
-gsettings set io.elementary.appcenter.settings automatic-updates false
-
 # power
 gsettings set org.gnome.desktop.session idle-delay 0
 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type nothing
@@ -90,9 +84,9 @@ gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true
 gsettings set org.gnome.desktop.sound theme-name freedesktop
 
 # theme
-gsettings set org.gnome.desktop.interface gtk-theme Adwaita
-gsettings set org.gnome.desktop.interface icon-theme Adwaita
-gsettings set org.gnome.desktop.interface cursor-theme Adwaita
+#gsettings set org.gnome.desktop.interface gtk-theme Adwaita
+#gsettings set org.gnome.desktop.interface icon-theme Adwaita
+#gsettings set org.gnome.desktop.interface cursor-theme Adwaita
 
 # windows
 gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'

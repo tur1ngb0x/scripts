@@ -35,6 +35,19 @@ EOF
 sudo apt-get update && sudo apt-get install --install-recommends -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo groupadd -f docker && sudo usermod -aG docker "${USER}"
 
+# virtmanager
+sudo apt-get install --install-recommends -y virt-manager
+sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
+sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
+cat << EOF | sudo tee -a /etc/libvirt/libvirtd.conf
+unix_sock_group = libvirt
+unix_sock_rw_perms = 0770
+EOF
+cat << EOF | sudo tee -a /etc/libvirt/libvirtd.conf
+user = ${USER}
+group = ${USER}
+EOF
+
 # virtualbox
 curl -fsSL 'https://virtualbox.org/download/oracle_vbox_2016.asc' | sudo gpg --dearmor -o /usr/share/keyrings/oracle-virtualbox-2016.gpg
 cat << EOF | sudo tee /etc/apt/sources.list.d/virtualbox.list
@@ -55,6 +68,4 @@ sudo groupadd -f vboxsf && sudo usermod -aG vboxsf "${USER}"
 sudo add-apt-repository -yn ppa:git-core/ppa
 sudo apt-get update && sudo apt-get install --install-recommends -y git
 sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libsecret-1-dev
-pushd /usr/share/doc/git/contrib/credential/libsecret
-sudo make
-popd
+sudo make -C /usr/share/doc/git/contrib/credential/libsecret

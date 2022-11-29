@@ -66,6 +66,7 @@ printf '[connection]\nwifi.powersave = 2\n' | sudo tee /etc/NetworkManager/conf.
 ```
 
 # PopOS
+APT
 ```
 sudo cp -fv /etc/apt/sources.list.d/pop-os-apps.sources{,.bak}
 ```
@@ -74,14 +75,17 @@ sudo cp -fv /etc/apt/sources.list.d/pop-os-apps.sources{,.bak}
 sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
 ```
 
+Kernel
 ```
 sudo kernelstub -vv -o 'ipv6.disable=1 net.ifnames=0 nosgx nowatchdog pci=noaer'
 ```
 
+Flatpak
 ```
 flatpak install org.gtk.Gtk3theme.Pop{,-light,-dark}
 ```
 
+GNOME Settings
 ```
 gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
 ```
@@ -112,6 +116,22 @@ gsettings set org.gnome.shell.extensions.dash-to-dock background-color '#211F1F'
 
 ```
 gsettings set org.gnome.shell favorite-apps '["org.gnome.Nautilus.desktop", "org.gnome.Terminal.desktop", "google-chrome.desktop"]'
+```
+
+```
+gsettings set com.system76.hidpi enable false
+```
+
+```
+gsettings set com.system76.hidpi mode lodpi
+```
+
+```
+gsettings set com.github.donadigo.eddy always-on-top true
+```
+
+```
+gsettings set io.elementary.appcenter.settings automatic-updates false
 ```
 
 # Startup
