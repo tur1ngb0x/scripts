@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-sudo apt-get purge -y xserver-xorg-video-intel
-sudo apt-get purge -y ~nnvidia
-sudo prime-select on-demand
-sudo systemctl disable gpu-manager.service
-
 mkdir -pv /etc/modprobe.d
 cat << EOF | sudo tee /etc/modprobe.d/novideo.conf
 alias nouveau off
@@ -27,4 +22,19 @@ ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330"
 ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{power/control}="auto", ATTR{remove}="1"
 EOF
 
-sudo update-initramfs -u -k all -v
+cat << EOF
+# Remove intel driver
+$ sudo apt-get purge -y xserver-xorg-video-intel
+
+# Remove nvidia driver
+$ sudo apt-get purge -y ~nnvidia
+
+# Set nvidia prime
+$ sudo prime-select on-demand
+
+# Disable gpu service
+$ systemctl disable gpu-manager.service
+
+# Update initramfs
+$ sudo update-initramfs -u -k all -v
+EOF
