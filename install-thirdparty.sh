@@ -55,7 +55,7 @@ sudo bash -c 'wget -O- https://dev.yorhel.nl/download/ncdu-2.2.1-linux-x86_64.ta
 curl --proto '=https' --tlsv1.2 -sSf 'https://sh.rustup.rs' | sh -s -- -y --no-modify-path
 
 # starship
-sudo sh -c 'wget -O /tmp/starship.sh https://raw.githubusercontent.com/starship/starship/master/install/install.sh && sh /tmp/starship.sh -y' && starship preset plain-text-symbols > ~/.config/starship.toml
+sudo sh -c 'wget -O /tmp/starship.sh https://raw.githubusercontent.com/starship/starship/master/install/install.sh && sh /tmp/starship.sh -y' && starship preset nerd-font-symbols > ~/.config/starship.toml
 
 # telegram
 sudo bash -c 'wget -O- https://telegram.org/dl/desktop/linux | tar xvJ -C /opt'

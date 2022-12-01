@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 clear
 
@@ -34,4 +34,3 @@ EOF
 [[ -f /usr/bin/dpkg ]] && pkgs_apt="$(dpkg --get-selections | wc -l)" && printf "apt\t${pkgs_apt}\n"
 [[ -f /usr/bin/snap ]] && pkgs_snap="$(snap list | wc -l)" && printf "snap\t${pkgs_snap}\n"
 [[ -f /usr/bin/flatpak ]] && pkgs_flatpak="$(flatpak list | wc -l)" && printf "flatpak\t${pkgs_flatpak}\n"
-

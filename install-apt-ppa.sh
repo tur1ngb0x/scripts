@@ -1,5 +1,5 @@
 # git
-sudo add-apt-repository -yn ppa:git-core/ppa
+sudo apt-add-repository -yn ppa:git-core/ppa
 sudo apt-get update && sudo apt-get install --install-recommends -y git
 
 # system76-power
@@ -21,3 +21,10 @@ sudo system76-power graphics integrated
 # sudo system76-power graphics power off
 # sudo system76-power profile performance
 # sudo system76-power profile performance
+
+# razer
+sudo apt-add-repository -yn ppa:openrazer/stable
+sudo apt-apt-repository -yn ppa:polychromatic/stable
+sudo apt-get update
+sudo apt-get install openrazer-meta polychromatic
+sudo groupadd -f plugdev && sudo usermod -aG plugdev "${USER}"

@@ -28,7 +28,7 @@ sudo apt-get install --install-recommends -y /tmp/chrome.deb
 wget -O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
 sudo apt-get install --install-recommends -y /tmp/code.deb
 code --install-extension formulahendry.code-runner
-code --install-extension piousdeer.adwaita-theme
+code --install-extension mathcale.theme-dracula-refined
 code --install-extension yzane.markdown-pdf
 
 # virtualbox
@@ -46,3 +46,10 @@ cat << EOF | sudo tee /etc/apt/sources.list.d/baltocdn-i3.list
 deb [arch=amd64 signed-by=/usr/share/keyrings/baltocdn-i3.gpg] https://baltocdn.com/i3-window-manager/i3/i3-autobuild-ubuntu all main
 EOF
 sudo apt-get update && sudo apt-get install --install-recommends -y i3
+
+# sublime
+curl -fsSL 'https://download.sublimetext.com/sublimehq-pub.gpg' | sudo gpg --dearmor -o /usr/share/keyrings/sublime.gpg
+cat << EOF | sudo tee /etc/apt/sources.list.d/sublime.list
+deb [arch=amd64 signed-by=/usr/share/keyrings/sublime.gpg] https://download.sublimetext.com/ apt/stable/
+EOF
+sudo apt-get update && sudo apt-get install --install-recommends -y sublime-text

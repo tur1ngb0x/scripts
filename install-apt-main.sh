@@ -5,6 +5,9 @@ sudo apt-get install --install-recommends -y apt-transport-https ca-certificates
 
 # drivers
 sudo apt-get install --install-recommends -y android-sdk-platform-tools ddcutil libfuse2
+sudo mkdir -pv /etc/modules-load.d
+printf 'i2c-dev\n' | sudo tee /etc/modules-load.d/i2c-dev.conf
+sudo groupadd -f i2c && sudo usermod -aG i2c "${USER}"
 
 # apps stores
 sudo apt-get install --install-recommends -y flatpak snapd synaptic
@@ -22,5 +25,7 @@ sudo apt-get install --install-recommends -y gparted
 # virtualization
 sudo apt-get install --install-recommends -y virt-manager
 sudo usermod -aG kvm,libvirt "${USER}"
+sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
+sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
 printf "\nunix_sock_group = libvirt\nunix_sock_rw_perms = 0770\n" | sudo tee -a /etc/libvirt/libvirtd.conf
 printf "\nuser = ${USER}\ngroup = ${USER}\n" | sudo tee -a /etc/libvirt/qemu.conf
