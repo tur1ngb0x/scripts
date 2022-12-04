@@ -2,11 +2,15 @@
 Minimal APT
 ```
 cat << EOF | sudo tee /etc/apt/apt.conf.d/99-betterapt
+// Disable translations
 Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;
-Acquire::Languages "none";
-APT::Get::Never-Include-Phased-Updates "true";
-APT::Install-Recommends "false";
-APT::Install-Suggests "false";
+Acquire::Languages none;
+// Disable phased updates
+APT::Get::Never-Include-Phased-Updates true;
+// Disable recommended packages
+APT::Install-Recommends false;
+// Disable sugggested packages
+APT::Install-Suggests false;
 EOF
 ```
 

@@ -9,7 +9,7 @@ sudo mkdir -pv /etc/modules-load.d
 printf 'i2c-dev\n' | sudo tee /etc/modules-load.d/i2c-dev.conf
 sudo groupadd -f i2c && sudo usermod -aG i2c "${USER}"
 
-# apps stores
+# appstores
 sudo apt-get install --install-recommends -y flatpak snapd synaptic
 
 # programming
@@ -17,7 +17,7 @@ sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libse
 sudo make -C /usr/share/doc/git/contrib/credential/libsecret
 
 # apps cli
-sudo apt-get install --install-recommends -y atool dos2unix p7zip-full p7zip-rar tree xclip
+sudo apt-get install --install-recommends -y atool dos2unix ffmpeg p7zip-full p7zip-rar tree xclip
 
 # apps gui
 sudo apt-get install --install-recommends -y gparted
@@ -27,5 +27,5 @@ sudo apt-get install --install-recommends -y virt-manager
 sudo usermod -aG kvm,libvirt "${USER}"
 sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
 sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
-printf "\nunix_sock_group = libvirt\nunix_sock_rw_perms = 0770\n" | sudo tee -a /etc/libvirt/libvirtd.conf
+printf '\nunix_sock_group = libvirt\nunix_sock_rw_perms = 0770\n' | sudo tee -a /etc/libvirt/libvirtd.conf
 printf "\nuser = ${USER}\ngroup = ${USER}\n" | sudo tee -a /etc/libvirt/qemu.conf
