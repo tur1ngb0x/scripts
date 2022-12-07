@@ -22,14 +22,14 @@ flatpak update --appstream
 
 # gnome
 if [[ $(pgrep -f gnome-shell) ]]; then
-	flatpak --user install flathub com.github.tchx84.Flatseal
-	flatpak --user install flathub com.mattjakeman.ExtensionManager
-	flatpak --user install flathub io.github.realmazharhussain.GdmSettings
+	flatpak --user install flathub --assumeyes com.github.tchx84.Flatseal					# flatseal
+	flatpak --user install flathub --assumeyes com.mattjakeman.ExtensionManager				# extension manager
+	flatpak --user install flathub --assumeyes io.github.realmazharhussain.GdmSettings		# gdm editor
 fi
 
 # gaming
-flatpak --user install flathub com.valvesoftware.Steam				# steam
-flatpak --user install flathub net.davidotek.pupgui2				# proton-up
-flatpak --user install flathub com.usebottles.bottles				# bottles
-flatpak --user install flathub io.mgba.mGBA							# mgba
-flatpak --user install flathub com.dosbox_x.DOSBox-X				# dosbox-x
+flatpak --user install flathub --assumeyes com.valvesoftware.Steam							# steam
+flatpak --user install flathub --assumeyes net.davidotek.pupgui2							# proton-up
+flatpak --user install flathub --assumeyes com.usebottles.bottles							# bottles
+flatpak --user install flathub --assumeyes io.mgba.mGBA										# mgba
+flatpak --user install flathub --assumeyes com.dosbox_x.DOSBox-X							# dosbox-x

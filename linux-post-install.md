@@ -61,7 +61,7 @@ sudo locale-gen en_IN.UTF-8
 ```
 
 ```
-$ sudo update-locale en_IN.UTF-8
+sudo update-locale en_IN.UTF-8
 ```
 
 # Network
@@ -95,7 +95,7 @@ gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,m
 ```
 
 ```
-gsettings set org.gnome.shell favourite-apps '['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop']'
+gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop']"
 ```
 
 ```
