@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # load zram module at startup
 sudo mkdir -pv /etc/modules-load.d

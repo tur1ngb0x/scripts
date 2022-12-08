@@ -119,7 +119,7 @@ gsettings set org.gnome.shell.extensions.dash-to-dock background-color '#211F1F'
 ```
 
 ```
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Nautilus.desktop", "org.gnome.Terminal.desktop", "google-chrome.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["pop-cosmic-applications.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "com.alacritty.Alacritty.desktop"]'
 ```
 
 ```
