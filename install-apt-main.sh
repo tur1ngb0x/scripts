@@ -28,6 +28,7 @@ sudo usermod -aG kvm,libvirt "${USER}"
 sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
 sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
 
+# libvirtd
 cat << EOF | sudo tee /etc/libvirt/libvirtd.conf
 auth_unix_ro = "none"
 auth_unix_rw = "none"
@@ -36,6 +37,7 @@ unix_sock_ro_perms = "0777"
 unix_sock_rw_perms = "0770"
 EOF
 
+# qemu
 cat << EOF | sudo tee /etc/libvirt/qemu.conf
 swtpm_user = "swtpm"
 swtpm_group = "swtpm"
