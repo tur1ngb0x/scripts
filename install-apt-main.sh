@@ -27,5 +27,18 @@ sudo apt-get install --install-recommends -y virt-manager
 sudo usermod -aG kvm,libvirt "${USER}"
 sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
 sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
-printf '\nunix_sock_group = libvirt\nunix_sock_rw_perms = 0770\n' | sudo tee -a /etc/libvirt/libvirtd.conf
-printf "\nuser = ${USER}\ngroup = ${USER}\n" | sudo tee -a /etc/libvirt/qemu.conf
+
+cat << EOF | sudo tee -a /etc/libvirt/libvirtd.conf
+auth_unix_ro = "none"
+auth_unix_rw = "none"
+unix_sock_group = "libvirt"
+unix_sock_ro_perms = "0777"
+unix_sock_rw_perms = "0770"
+EOF
+
+cat << EOF | sudo tee -a /etc/libvirt/qemu.conf
+swtpm_user = "swtpm"
+swtpm_group = "swtpm"
+user = "${USER}"
+group = "${USER}"
+EOF
