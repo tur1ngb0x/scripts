@@ -17,7 +17,7 @@ sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libse
 sudo make -C /usr/share/doc/git/contrib/credential/libsecret
 
 # apps cli
-sudo apt-get install --install-recommends -y atool dos2unix ffmpeg p7zip-full p7zip-rar tree xclip
+sudo apt-get install --install-recommends -y atool dos2unix ffmpeg mediainfo p7zip-full p7zip-rar tree xclip
 
 # apps gui
 sudo apt-get install --install-recommends -y gparted
