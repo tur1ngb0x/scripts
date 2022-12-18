@@ -1,0 +1,2 @@
+mousewheel.acceleration.factor 1
+mousewheel.min_line_scroll_amount 30
