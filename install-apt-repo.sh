@@ -30,6 +30,7 @@ repo_chrome() {
 repo_code() {
 	wget -O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
 	sudo apt-get install --install-recommends -y /tmp/code.deb
+	code --install-extension DavidAnson.vscode-markdownlint
 	code --install-extension formulahendry.code-runner
 	code --install-extension mathcale.theme-dracula-refined
 	code --install-extension yzane.markdown-pdf
