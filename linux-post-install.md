@@ -147,13 +147,11 @@ $ printf 'options zram num_devices=1\n' | sudo tee /etc/modprobe.d/zram.conf
 
 $ sudo mkdir -pv /etc/udev/rules.d
 
-$ printf 'KERNEL=="zram0", ATTR{disksize}="4096M", ATTR{comp_algorithm}="zstd", RUN="/usr/sbin/mkswap /dev/zram0", TAG+="systemd"\n' | sudo tee /etc/udev/rules.d/99-zram.rules
+$ printf 'KERNEL=="zram0", ATTR{disksize}="4096M", RUN="/usr/sbin/mkswap /dev/zram0", TAG+="systemd"\n' | sudo tee /etc/udev/rules.d/99-zram.rules
 
-$ printf '\n\n/dev/zram0 none swap defaults,pri=100 0 0\n\n' | sudo tee -a /etc/fstab
+$ printf '\n\n/dev/zram0 none swap defaults 0 0\n\n' | sudo tee -a /etc/fstab
 
-$ cat << EOF | sudo tee /etc/sysctl.d/99-zram.conf
-vm.swappiness = 180
-vm.page-cluster = 0
-max_pool_percent = 40
+$ printf 'vm.swappiness = 10\n' | sudo tee /etc/sysctl.d/99-zram.conf
+
 EOF
 ```
