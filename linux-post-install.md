@@ -1,9 +1,11 @@
+<!-- markdownlint-disable MD001 MD005 -->
+<!-- markdownlint-disable MD001 MD014 -->
+<!-- markdownlint-disable MD001 MD040 -->
+
 # APT
 
-Minimal APT
-
-```bash
-cat << EOF | sudo tee /etc/apt/apt.conf.d/99-betterapt
+```
+$ cat << EOF | sudo tee /etc/apt/apt.conf.d/99-betterapt
 // Disable translations
 Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;
 Acquire::Languages none;
@@ -14,12 +16,8 @@ APT::Install-Recommends false;
 // Disable sugggested packages
 APT::Install-Suggests false;
 EOF
-```
 
-Ubuntu Sources
-
-```bash
-cat << EOF
+$ cat << EOF
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse
@@ -30,22 +28,26 @@ EOF
 
 # Filesystem
 
-```bash
-sed '/^$/d;/^#/d' /etc/fstab | column -t
+```
+$ mount | sed 's/ on / /' | sed 's/ type / /'| column -t
+
+$ sed '/^$/d;/^#/d' /etc/fstab | column -t
+
+$ sudo mount -o remount,uid=1000,gid=1000,rw /mnt/linuxdata
 ```
 
 # GRUB2
 
-```bash
-sed '/^$/d;/^#/d' /etc/default/grub | sort
 ```
+$ sed '/^$/d;/^#/d' /etc/default/grub | sort
 
-```bash
-cat << EOF
+$ cat << EOF
 GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1 net.ifnames=0 nosgx nowatchdog pci=noaer"
 GRUB_DISABLE_OS_PROBER="true"
+GRUB_DISABLE_RECOVERY="true"
 GRUB_DISABLE_SUBMENU="true"
 GRUB_DISTRIBUTOR="Ubuntu"
+GRUB_TERMINAL_OUTPUT="console"
 GRUB_TIMEOUT_STYLE="menu"
 GRUB_TIMEOUT="5"
 EOF
@@ -53,138 +55,105 @@ EOF
 
 # Hostname
 
-```bash
-hostnamectl set-hostname starlabs
+```
+$ hostnamectl set-hostname starlabs
+
+$ sudoedit /etc/hosts
 ```
 
 # Locale
 
-```bash
-localectl set-locale en_IN.UTF-8
 ```
+$ localectl set-locale en_IN.UTF-8
 
-```bash
-sudo locale-gen en_IN.UTF-8
-```
+$ sudo locale-gen en_IN.UTF-8
 
-```bash
-sudo update-locale en_IN.UTF-8
+$ sudo update-locale en_IN.UTF-8
 ```
 
 # Network
 
-```bash
-printf '[connection]\nwifi.powersave = 2\n' | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave-off.conf
+```
+$ sudo rm /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+
+$ printf '[connection]\nwifi.powersave = 2\n' | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave-off.conf
+
+$ sudo systemctl restart NetworkManager.service
 ```
 
 # PopOS
 
-APT
+```
+$ sudo cp -fv /etc/apt/sources.list.d/pop-os-apps.sources{,.bak}
 
-```bash
-sudo cp -fv /etc/apt/sources.list.d/pop-os-apps.sources{,.bak}
+$ sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
+
+$ sudo kernelstub -vv -o 'ipv6.disable=1 net.ifnames=0 nosgx nowatchdog pci=noaer'
+
+$ flatpak install org.gtk.Gtk3theme.Pop{,-light,-dark}
+
+$ gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+
+$ gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
+
+$ gsettings set org.gnome.shell.extensions.dash-to-dock dock-alignment 'START'
+
+$ gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size '32'
+
+$ gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-previews'
+
+$ gsettings set org.gnome.shell.extensions.dash-to-dock background-color '#211F1F'
+
+$ gsettings set org.gnome.shell favorite-apps '["pop-cosmic-applications.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "com.alacritty.Alacritty.desktop"]'
 ```
 
-```bash
-sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
+# Startup Apps
+
 ```
-
-Kernel
-
-```bash
-sudo kernelstub -vv -o 'ipv6.disable=1 net.ifnames=0 nosgx nowatchdog pci=noaer'
-```
-
-Flatpak
-
-```bash
-flatpak install org.gtk.Gtk3theme.Pop{,-light,-dark}
-```
-
-GNOME Settings
-
-```bash
-gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
-```
-
-```bash
-gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop']"
-```
-
-```bash
-gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
-```
-
-```bash
-gsettings set org.gnome.shell.extensions.dash-to-dock dock-alignment 'START'
-```
-
-```bash
-gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size '32'
-```
-
-```bash
-gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-previews'
-```
-
-```bash
-gsettings set org.gnome.shell.extensions.dash-to-dock background-color '#211F1F'
-```
-
-```bash
-gsettings set org.gnome.shell favorite-apps '["pop-cosmic-applications.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "com.alacritty.Alacritty.desktop"]'
-```
-
-```bash
-gsettings set com.system76.hidpi enable false
-```
-
-```bash
-gsettings set com.system76.hidpi mode lodpi
-```
-
-```bash
-gsettings set com.github.donadigo.eddy always-on-top true
-```
-
-```bash
-gsettings set io.elementary.appcenter.settings automatic-updates false
-```
-
-# Startup
-
-```bash
-sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
+$ sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
 ```
 
 # Swappiness
 
-```bash
-printf '\nvm.swappiness = 10\n' | sudo tee /etc/sysctl.d/99-swappiness.conf
+```
+$ printf 'vm.swappiness = 10\n' | sudo tee /etc/sysctl.d/99-swappiness.conf
 ```
 
 # Time
 
-```bash
-sudo apt-get install systemd-timesyncd
+```
+$ timedatectl set-timezone Asia/Kolkata
+
+$ timedatectl set-ntp true
+
+$ timedatectl set-local-rtc true
+
+$ timedatectl --adjust-system-clock
+
+$ timedatectl show
 ```
 
-```bash
-timedatectl set-timezone Asia/Kolkata
-```
+# ZRAM
+<!-- https://www.reddit.com/r/Fedora/comments/mzun99/new_zram_tuning_benchmarks/ -->
 
-```bash
-timedatectl set-ntp true
 ```
+$ sudo mkdir -pv /etc/modules-load.d
 
-```bash
-timedatectl set-local-rtc true
-```
+$ printf 'zram\n' | sudo tee /etc/modules-load.d/zram.conf
 
-```bash
-timedatectl --adjust-system-clock
-```
+$ sudo mkdir -pv /etc/modprobe.d
 
-```bash
-timedatectl show
+$ printf 'options zram num_devices=1\n' | sudo tee /etc/modprobe.d/zram.conf
+
+$ sudo mkdir -pv /etc/udev/rules.d
+
+$ printf 'KERNEL=="zram0", ATTR{disksize}="4096M", ATTR{comp_algorithm}="zstd", RUN="/usr/sbin/mkswap /dev/zram0", TAG+="systemd"\n' | sudo tee /etc/udev/rules.d/99-zram.rules
+
+$ printf '\n\n/dev/zram0 none swap defaults,pri=100 0 0\n\n' | sudo tee -a /etc/fstab
+
+$ cat << EOF | sudo tee /etc/sysctl.d/99-zram.conf
+vm.swappiness = 180
+vm.page-cluster = 0
+max_pool_percent = 40
+EOF
 ```

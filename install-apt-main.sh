@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # essentials
-sudo apt-get install --install-recommends -y apt-transport-https ca-certificates curl git gnupg lsb-release wget
+sudo apt-get install --install-recommends -y apt-transport-https ca-certificates curl git gnome-keyring gnupg lsb-release wget
 
 # drivers
 sudo apt-get install --install-recommends -y android-sdk-platform-tools ddcutil libfuse2
@@ -17,10 +17,10 @@ sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libse
 sudo make -C /usr/share/doc/git/contrib/credential/libsecret
 
 # apps cli
-sudo apt-get install --install-recommends -y atool dos2unix ffmpeg mediainfo p7zip-full p7zip-rar tree xclip
+sudo apt-get install --install-recommends -y atool dos2unix ffmpeg lm-sensors mediainfo net-tools p7zip-full p7zip-rar tree xclip
 
 # apps gui
-sudo apt-get install --install-recommends -y gparted
+sudo apt-get install --install-recommends -y gparted gwenview kolourpaint okular okular-extra-backends
 
 # virtualization
 sudo apt-get install --install-recommends -y virt-manager

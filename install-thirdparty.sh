@@ -9,10 +9,6 @@ sudo bash -c 'wget -O- https://dev.yorhel.nl/download/ncdu-2.2.1-linux-x86_64.ta
 # starship
 sudo sh -c 'wget -O /tmp/starship.sh https://raw.githubusercontent.com/starship/starship/master/install/install.sh && sh /tmp/starship.sh -y'
 
-# telegram
-sudo bash -c 'wget -O- https://telegram.org/dl/desktop/linux | tar xvJ -C /opt'
-sudo chown -R root:root /opt/Telegram
-
 # yt-dlp
 sudo bash -c 'wget -O /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp && chmod +x /usr/local/bin/yt-dlp'
 

@@ -1,0 +1,13 @@
+<os>
+	<type arch="x86_64" machine="q35">hvm</type>
+	<loader readonly="yes" type="pflash">/usr/share/OVMF/OVMF_CODE_4M.fd</loader>
+	<boot dev="hd"/>
+</os>
+
+<video>
+	<model type="virtio" heads="1" primary="yes">
+	<resolution x="1920" y="1080"/>
+	</model>
+	<alias name="video0"/>
+	<address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
+</video>

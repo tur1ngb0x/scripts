@@ -47,3 +47,7 @@ sudo bash -c 'wget -O- https://github.com/jesseduffield/lazygit/releases/downloa
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf 'https://sh.rustup.rs' | sh -s -- -y --no-modify-path
+
+# telegram
+sudo bash -c 'wget -O- https://telegram.org/dl/desktop/linux | tar xvJ -C /opt'
+sudo chown -R root:root /opt/Telegram
