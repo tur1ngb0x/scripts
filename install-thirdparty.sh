@@ -13,4 +13,4 @@ sudo sh -c 'wget -O /tmp/starship.sh https://raw.githubusercontent.com/starship/
 sudo bash -c 'wget -O /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp && chmod +x /usr/local/bin/yt-dlp'
 
 # fix permissions
-sudo chown -R root:root /usr/local/bin
+sudo chown -Rv root:root /usr/local/bin

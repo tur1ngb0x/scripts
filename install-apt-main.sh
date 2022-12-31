@@ -10,11 +10,13 @@ printf 'i2c-dev\n' | sudo tee /etc/modules-load.d/i2c-dev.conf
 sudo groupadd -f i2c && sudo usermod -aG i2c "${USER}"
 
 # appstores
+sudo rm -fv /etc/apt/preferences.d/nosnap.pref
 sudo apt-get install --install-recommends -y flatpak snapd synaptic
 
 # programming
 sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libsecret-1-dev python3-dev python3-pip python3-venv python-is-python3
 sudo make -C /usr/share/doc/git/contrib/credential/libsecret
+sudo mv -fv /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret /usr/local/bin/git-credential-libsecret
 
 # apps cli
 sudo apt-get install --install-recommends -y atool dos2unix ffmpeg lm-sensors mediainfo net-tools p7zip-full p7zip-rar tree xclip
@@ -24,7 +26,6 @@ sudo apt-get install --install-recommends -y gparted gwenview kolourpaint okular
 
 # virtualization
 sudo apt-get install --install-recommends -y virt-manager
-sudo usermod -aG kvm,libvirt "${USER}"
 sudo groupadd -f kvm && sudo usermod -aG kvm "${USER}"
 sudo groupadd -f libvirt && sudo usermod -aG libvirt "${USER}"
 

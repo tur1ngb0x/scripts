@@ -4,7 +4,6 @@ flatpak --user remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
 
 flatpak --user install flathub --assumeyes io.mgba.mGBA
 flatpak --user install flathub --assumeyes xyz.z3ntu.razergenie
-flatpak --user install flathub --assumeyes com.dosbox_x.DOSBox-X
 flatpak --user install flathub --assumeyes com.valvesoftware.Steam
 flatpak --user install flathub --assumeyes com.heroicgameslauncher.hgl
 

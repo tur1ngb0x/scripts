@@ -47,9 +47,10 @@ GRUB_DISABLE_OS_PROBER="true"
 GRUB_DISABLE_RECOVERY="true"
 GRUB_DISABLE_SUBMENU="true"
 GRUB_DISTRIBUTOR="Ubuntu"
+GRUB_GFXPAYLOAD_LINUX="keep"
 GRUB_TERMINAL_OUTPUT="console"
 GRUB_TIMEOUT_STYLE="menu"
-GRUB_TIMEOUT="5"
+GRUB_TIMEOUT="10"
 EOF
 ```
 
@@ -74,7 +75,7 @@ $ sudo update-locale en_IN.UTF-8
 # Network
 
 ```
-$ sudo rm /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+$ sudo rm -fv /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
 
 $ printf '[connection]\nwifi.powersave = 2\n' | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave-off.conf
 
@@ -151,7 +152,7 @@ $ printf 'KERNEL=="zram0", ATTR{disksize}="4096M", RUN="/usr/sbin/mkswap /dev/zr
 
 $ printf '\n\n/dev/zram0 none swap defaults 0 0\n\n' | sudo tee -a /etc/fstab
 
-$ printf 'vm.swappiness = 10\n' | sudo tee /etc/sysctl.d/99-zram.conf
+$ printf 'vm.swappiness = 200\n' | sudo tee /etc/sysctl.d/99-zram.conf
 
 EOF
 ```
