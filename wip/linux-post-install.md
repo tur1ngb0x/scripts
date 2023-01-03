@@ -1,7 +1,3 @@
-<!-- markdownlint-disable MD001 MD005 -->
-<!-- markdownlint-disable MD001 MD014 -->
-<!-- markdownlint-disable MD001 MD040 -->
-
 # APT
 
 ```
@@ -34,6 +30,20 @@ $ mount | sed 's/ on / /' | sed 's/ type / /'| column -t
 $ sed '/^$/d;/^#/d' /etc/fstab | column -t
 
 $ sudo mount -o remount,uid=1000,gid=1000,rw /mnt/linuxdata
+```
+
+# GNOME
+
+```
+$ gsettings set org.gnome.shell.extensions.screenshot clipboard-action 'set-image-data'
+
+$ gsettings set org.gnome.shell.extensions.screenshot save-screenshot true
+
+$ gsettings set org.gnome.shell.extensions.screenshot save-location '/home/tur1ngb0x/Pictures/Screenshots'
+
+$ gsettings set org.gnome.shell.extensions.screenshot filename-template '{Y}{m}{d}_{H}{M}{S}_{w}x{h}'
+
+$ gsettings set org.gnome.shell.extensions.screenshot shortcut-select-area ['<Shift><Super>s']
 ```
 
 # GRUB2

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # essentials
-sudo apt-get install --install-recommends -y apt-transport-https ca-certificates curl git gnome-keyring gnupg lsb-release wget
+sudo apt-get install --install-recommends -y curl git wget
 
 # drivers
 sudo apt-get install --install-recommends -y android-sdk-platform-tools ddcutil libfuse2
@@ -14,15 +14,15 @@ sudo rm -fv /etc/apt/preferences.d/nosnap.pref
 sudo apt-get install --install-recommends -y flatpak snapd synaptic
 
 # programming
-sudo apt-get install --install-recommends -y build-essential libsecret-1-0 libsecret-1-dev python3-dev python3-pip python3-venv python-is-python3
+sudo apt-get install --install-recommends -y bash-completion build-essential libsecret-1-0 libsecret-1-dev python3-dev python3-pip python3-venv python-is-python3
 sudo make -C /usr/share/doc/git/contrib/credential/libsecret
 sudo mv -fv /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret /usr/local/bin/git-credential-libsecret
 
-# apps cli
-sudo apt-get install --install-recommends -y atool dos2unix ffmpeg lm-sensors mediainfo net-tools p7zip-full p7zip-rar tree xclip
+# apps
+sudo apt-get install --install-recommends -y ffmpeg gparted lm-sensors mediainfo net-tools
 
-# apps gui
-sudo apt-get install --install-recommends -y gparted gwenview kolourpaint okular okular-extra-backends
+# tools
+sudo apt-get install --install-recommends -y atool dos2unix p7zip-full p7zip-rar tree vim xclip
 
 # virtualization
 sudo apt-get install --install-recommends -y virt-manager

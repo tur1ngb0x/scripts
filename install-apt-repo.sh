@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 repo_mysql() {
-	wget -O /tmp/mysql.deb 'https://repo.mysql.com/mysql-apt-config_0.8.24-1_all.deb'
+	wget -4O /tmp/mysql.deb 'https://repo.mysql.com/mysql-apt-config_0.8.24-1_all.deb'
 	sudo apt-get update && sudo apt-get install --install-recommends -y /tmp/mysql.deb
 	sudo apt-key export 3A79BD29 | sudo gpg --dearmour -o /usr/share/keyrings/mysql.gpg && sudo apt-key del 3A79BD29
 	cat <<-'EOF' | sudo tee /etc/apt/sources.list.d/mysql.list
@@ -23,17 +23,13 @@ repo_docker() {
 }
 
 repo_chrome() {
-	wget -O /tmp/chrome.deb 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
+	wget -4O /tmp/chrome.deb 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
 	sudo apt-get install --install-recommends -y /tmp/chrome.deb
 }
 
 repo_code() {
-	wget -O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
+	wget -4O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
 	sudo apt-get install --install-recommends -y /tmp/code.deb
-	code --install-extension DavidAnson.vscode-markdownlint
-	code --install-extension formulahendry.code-runner
-	code --install-extension mathcale.theme-dracula-refined
-	code --install-extension yzane.markdown-pdf
 }
 
 repo_i3() {
@@ -63,12 +59,12 @@ repo_virtualbox() {
 }
 
 # begin script from here
-repo_mysql
 repo_chrome
 repo_code
-repo_docker
 
 # rarely used
+# repo_mysql
+# repo_docker
 # repo_i3
 # repo_sublime
 # repo_virtualbox
