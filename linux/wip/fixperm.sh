@@ -16,8 +16,8 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-tput rev; tput blink; tput bold; echo ' fixing file permissions '; tput sgr0
+tput rev; tput bold; echo ' fixing file permissions '; tput sgr0
 find -L "${1}" -type d -exec chmod --verbose --changes "${2}" {} \;
 
-tput rev; tput blink; tput bold; echo ' fixing file permissions '; tput sgr0
+tput rev; tput bold; echo ' fixing file permissions '; tput sgr0
 find -L "${1}" -type f -exec chmod --verbose --changes "${3}" {} \;

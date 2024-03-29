@@ -20,5 +20,5 @@ elif [[ $(command -pv scrot) ]]; then
 elif [[ $(command -pv notify-send) ]]; then
 	notify-send 'screenshot tool not found'
 else
-	tput rev; tput blink; tput bold; echo ' screenshot tool not found ' ; tput sgr0 && exit
+	tput rev; tput bold; echo ' screenshot tool not found ' ; tput sgr0 && exit
 fi

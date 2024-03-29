@@ -48,7 +48,7 @@ mkdir -pv "${videos}"
 mkdir -pv "${zmisc}"
 
 # template
-#tput rev; tput blink; tput bold; printf "%s\n" "template"; tput sgr0;
+#tput rev; tput bold; printf "%s\n" "template"; tput sgr0;
 # find "${target}" -maxdepth 1 -type f \(\
 # 	-iname "*.ext1" -o \
 # 	-iname "*.ext2" -o \
@@ -57,7 +57,7 @@ mkdir -pv "${zmisc}"
 # \) -exec mv -v {} "${template}" \;
 
 # apps
-tput rev; tput blink; tput bold; printf "%s\n" "applications"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "applications"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '\*.appimage' -o \
 	-iname '\*.deb' -o \
@@ -67,7 +67,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${applications}" \;
 
 # archives
-tput rev; tput blink; tput bold; printf "%s\n" "archives"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "archives"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.7z' -o \
 	-iname '*.rar' -o \
@@ -77,7 +77,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${archives}" \;
 
 # audios
-tput rev; tput blink; tput bold; printf "%s\n" "audios"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "audios"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.m4a' -o \
 	-iname '*.mp3' -o \
@@ -85,7 +85,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${audios}" \;
 
 # disks
-tput rev; tput blink; tput bold; printf "%s\n" "diskimages"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "diskimages"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.img' -o \
 	-iname '*.iso' -o \
@@ -93,7 +93,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${diskimages}" \;
 
 # documents
-tput rev; tput blink; tput bold; printf "%s\n" "documents"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "documents"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.doc' -o \
 	-iname '*.docx' -o \
@@ -110,7 +110,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${documents}" \;
 
 # pictures
-tput rev; tput blink; tput bold; printf "%s\n" "pictures"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "pictures"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.gif' -o \
 	-iname '*.jpeg' -o \
@@ -119,7 +119,7 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${pictures}" \;
 
 # source
-tput rev; tput blink; tput bold; printf "%s\n" "sourcecode"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "sourcecode"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.json' -o \
 	-iname '*.py' -o \
@@ -128,20 +128,20 @@ find -L "${target}" -maxdepth 1 -type f \(\
 \) -exec mv -v {} "${sourcecode}" \;
 
 # torrents
-tput rev; tput blink; tput bold; printf "%s\n" "torrents"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "torrents"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.torrent'  \
 \) -exec mv -v {} "${torrents}" \;
 
 # videos
-tput rev; tput blink; tput bold; printf "%s\n" "videos"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "videos"; tput sgr0;
 find -L "${target}" -maxdepth 1 -type f \(\
 	-iname '*.mkv' -o \
 	-iname '*.mp4' \
 \) -exec mv -v {} "${videos}" \;
 
 # cleanup other folders
-tput rev; tput blink; tput bold; printf "%s\n" "zmisc"; tput sgr0;
+tput rev; tput bold; printf "%s\n" "zmisc"; tput sgr0;
 find -L "${target}" -mindepth 1 -maxdepth 1 -type d -not \(\
 	-path "${applications}" -o \
 	-path "${archives}" -o \
