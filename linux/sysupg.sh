@@ -72,10 +72,11 @@ upg_code(){
 upg_docker(){
 	header 'docker'
 	{ set -x ; } &> /dev/null
+	export DOCKER_CLI_HINTS="false"
 	for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
-		DOCKER_CLI_HINTS="false" docker pull "${img}"
-	done
+			docker pull "${img}"
 	{ set +x ; } &> /dev/null
+	done
 }
 
 upg_pipx(){

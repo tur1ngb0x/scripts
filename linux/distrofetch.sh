@@ -77,7 +77,7 @@ get_ram_used(){
 }
 
 get_uptime(){
-	uptime | awk -F'( |,|:)+' '{d=h=m=0; if ($7=="min") m=$6; else {if ($7~/^day/){d=$6;h=$8;m=$9} else {h=$6;m=$7}}} {printf "%dd %dh %dm\n", d, h, m}'
+	uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g'
 }
 
 get_packages(){
