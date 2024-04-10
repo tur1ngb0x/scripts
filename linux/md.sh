@@ -8,22 +8,28 @@ Syntax:
 	${0##*/} <media_type> <media_mode> <media_url>
 Options:
 	media_type:
-		video (v), audio (a)
+		video, audio
 	media_mode:
-		single (s), playlist (p)
+		single, playlist
 	media_url:
-		remote url (youtube, soundcloud)
+		remote url (youtube, soundcloud, etc.)
 Usage:
 	audio single:
-		${0##*/} v s 'https://youtube.com/watch?v=dQw4w9WgXcQ'
+		${0##*/} video single 'https://youtube.com/watch?v=dQw4w9WgXcQ'
 	video playlist:
-		${0##*/} a p 'https://youtube.com/playlist?list=PLr5RRQC6c-2gwyPr8JaBnEiK_xARWTflv'
+		${0##*/} audio playlist 'https://youtube.com/playlist?list=PLr5RRQC6c-2gwyPr8JaBnEiK_xARWTflv'
 EOF
 }
 
 # exit if less than 3 arguments
 if [[ "${#}" -le 3 ]]; then
 	usage
+	exit
+fi
+
+# exit if ffmpeg is not found
+if [[ ! $(command -v ffmpeg) ]]; then
+	echo 'ffmpeg not found in PATH, exiting...'
 	exit
 fi
 
@@ -48,16 +54,16 @@ pushd "${media_dir}" || exit
 
 # switch case
 case "${media_type}" in
-	v)	case "${media_mode}" in
-			s) md '--output' '%(title)s.%(ext)s' "${media_url}" ;;
-			p) md '--output' '%(playlist)s/%(playlist_index)03d_%(title)s.%(ext)s' "${media_url}" ;;
-			*) usage ;;
-		esac ;;
-	a)	case "${media_mode}" in
-			s) md '--extract-audio' '--audio-format' 'mp3' '--audio-quality' '0' '--output' '%(title)s.%(ext)s' "${media_url}" ;;
-			p) md '--extract-audio' '--audio-format' 'mp3' '--audio-quality' '0' '--output'  '%(playlist)s/%(playlist_index)03d_%(title)s.%(ext)s' "${media_url}" ;;
-			*) usage ;;
-		esac ;;
+	video)	case "${media_mode}" in
+				single) md '--output' '%(title)s.%(ext)s' "${media_url}" ;;
+				playlist) md '--output' '%(playlist)s/%(playlist_index)03d_%(title)s.%(ext)s' "${media_url}" ;;
+				*) usage ;;
+			esac ;;
+	audio)	case "${media_mode}" in
+				single) md '--extract-audio' '--audio-format' 'mp3' '--audio-quality' '0' '--output' '%(title)s.%(ext)s' "${media_url}" ;;
+				playlist) md '--extract-audio' '--audio-format' 'mp3' '--audio-quality' '0' '--output'  '%(playlist)s/%(playlist_index)03d_%(title)s.%(ext)s' "${media_url}" ;;
+				*) usage ;;
+			esac ;;
 	*)	usage ;;
 esac
 

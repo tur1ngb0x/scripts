@@ -17,13 +17,11 @@ row(){
 }
 
 separator(){
-	printf -- '-%.0s' {1..72}; printf '\n'
+	printf -- '—%.0s' {1..72}; printf '\n'
 }
 
 # data
-#get_display(){ [[ -f /usr/bin/xrandr ]] && xrandr | grep '\*' | awk '{print $1"@"$2}' | sed "s/\..*//" || echo 'N/A'; }
-#get_swap_total() { printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MB"; }
-#get_swap_used() { printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MB"; }
+#get_display(){ [[ -f /usr/bin/xrandr ]] && xrandr | grep '\*' | awk '{print $1"@"$2}' | sed "s/\..*//" || echo '-'; }
 #get_colorbar(){ for ((n=0;n<16;n++)) do printf "$(tput setaf ${n})%s$(tput sgr0)" '#'; done; printf '\n'; }
 #get_colorbar(){ for i in {0..15}; do tput setaf "${i}"; printf "%s" "#"; done; }
 
@@ -39,7 +37,7 @@ get_machine(){
 	if [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
 		cat /sys/devices/virtual/dmi/id/product_name 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -48,7 +46,7 @@ get_distro(){
 		source /etc/os-release 2> /dev/null
 		echo "${PRETTY_NAME}" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -56,7 +54,15 @@ get_kernel(){
 	if [[ -f /usr/bin/uname ]]; then
 		uname --kernel-release 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
+	fi
+}
+
+get_display(){
+	if [[ -f /usr/bin/xrandr ]]; then
+		xrandr | grep '\*' | awk '{print $1"@"$2}' | sed "s/\..*//"
+	else
+		echo '-'
 	fi
 }
 
@@ -64,7 +70,7 @@ get_desktop(){
 	if [[ -n "${XDG_CURRENT_DESKTOP}" ]] && [[ -n "${XDG_SESSION_TYPE}" ]]; then
 		echo "${XDG_CURRENT_DESKTOP}" "${XDG_SESSION_TYPE}" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -72,7 +78,7 @@ get_ram_total(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MB" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -80,7 +86,7 @@ get_ram_used(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MB" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -88,7 +94,7 @@ get_swap_total(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MB" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -96,7 +102,7 @@ get_swap_used(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MB" 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -104,7 +110,7 @@ get_uptime(){
 	if [[ -f /usr/bin/uptime ]]; then
 		uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g' 2> /dev/null
 	else
-		echo 'NA'
+		echo '-'
 	fi
 }
 
@@ -125,6 +131,7 @@ separator
 row 'MACHINE'	"$(get_machine)"
 row 'DISTRO'	"$(get_distro)"
 row 'KERNEL'	"$(get_kernel)"
+row 'DISPLAY'	"$(get_display)"
 row 'DESKTOP'	"$(get_desktop)"
 row 'RAM'		"$(get_ram_used)/$(get_ram_total)"
 row 'SWAP'		"$(get_swap_used)/$(get_swap_total)"
