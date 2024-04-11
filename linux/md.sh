@@ -22,7 +22,7 @@ EOF
 }
 
 # exit if less than 3 arguments
-if [[ "${#}" -le 3 ]]; then
+if [[ "${#}" -le 2 ]]; then
 	usage
 	exit
 fi
