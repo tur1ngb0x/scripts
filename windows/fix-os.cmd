@@ -1,47 +1,50 @@
-:: disable echo
 @echo off
 
-:: warning
-echo.
-echo.
-echo Save your work. Close all windows.
-echo.
-echo.
+echo ------------------------------------------------------------------------
+echo  SAVE YOUR WORK. CLOSE ALL WINDOWS.
+echo ------------------------------------------------------------------------
 
-:: pause before starting
 pause
 
-:: enable echo
-@echo on
-
-:: repair windows image
+echo ------------------------------------------------------------------------
+echo  dism /online /cleanup-image /restorehealth /norestart
+echo ------------------------------------------------------------------------
 dism /online /cleanup-image /restorehealth /norestart
 
-:: repair windows files
+echo ------------------------------------------------------------------------
+echo  sfc /scannow
+echo ------------------------------------------------------------------------
 sfc /scannow
 
-:: remove old windows updates
+echo ------------------------------------------------------------------------
+echo  dism /online /cleanup-image /startcomponentcleanup /resetbase /norestart
+echo ------------------------------------------------------------------------
 dism /online /cleanup-image /startcomponentcleanup /resetbase /norestart
 
-:: perform disk cleanup
+
+echo ------------------------------------------------------------------------
+echo  cleanmgr /verylowdisk /sageset:420
+echo ------------------------------------------------------------------------
 cleanmgr /verylowdisk /sageset:420
+
+echo ------------------------------------------------------------------------
+echo  cleanmgr /verylowdisk /sagerun:420
+echo ------------------------------------------------------------------------
 cleanmgr /verylowdisk /sagerun:420
 
-:: trim c drive
+
+echo ------------------------------------------------------------------------
+echo  defrag c: /optimize /printprogress /verbose
+echo ------------------------------------------------------------------------
 defrag c: /optimize /printprogress /verbose
 
-:: disable echo
-@echo off
+echo ------------------------------------------------------------------------
+echo  SAVE YOUR WORK. CLOSE ALL WINDOWS.
+echo  REBOOT IMMEDIATELY
+echo ------------------------------------------------------------------------
 
-:: warning
-echo.
-echo.
-echo Reboot immediately for changes to take effect.
-echo.
-echo.
-
-:: pause before closing
 pause
+
 exit
 
 :: :: unused commands
