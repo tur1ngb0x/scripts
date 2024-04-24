@@ -1,10 +1,8 @@
 @echo off
 
-title ENABLE VIRTUALBOX, DISABLE WSL2
-
 echo ------------------------------------------------------------------------
-echo VIRTUALBOX WILL BE ENABLED.
-echo WSL2 WILL BE DISABLED.
+echo  VIRTUALBOX WILL BE ENABLED.
+echo  WSL2 WILL BE DISABLED.
 echo ------------------------------------------------------------------------
 
 pause
@@ -13,8 +11,8 @@ dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux
 dism.exe /online /disable-feature /featurename:VirtualMachinePlatform /all /norestart
 
 echo ------------------------------------------------------------------------
-echo RESTARTING MACHINE
-echo CLOSE WINDOW TO SKIP RESTART
+echo  RESTARTING MACHINE
+echo  CLOSE WINDOW TO SKIP RESTART
 echo ------------------------------------------------------------------------
 
 pause
