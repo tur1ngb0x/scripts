@@ -1,4 +1,6 @@
-@echo on
+@echo off
+
+title ENABLE WSL
 
 echo ------------------------------------------------------------------------
 echo Microsoft-Windows-Subsystem-Linux will be ENABLED.
@@ -12,8 +14,9 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
 echo ------------------------------------------------------------------------
-echo Machine will be restarted now, close window to skip restart
+echo Machine will be RESTARTED now, close window to SKIP restart.
 echo ------------------------------------------------------------------------
 
 pause
+
 shutdown.exe /f /t 0 /r
