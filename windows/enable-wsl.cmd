@@ -4,7 +4,7 @@ title ENABLE WSL2, DISABLE VIRTUALBOX
 
 echo ------------------------------------------------------------------------
 echo WSL2 WILL BE ENABLED.
-echo VIRTUALBOX WILL BE DISABLEDD.
+echo VIRTUALBOX WILL BE DISABLED.
 echo ------------------------------------------------------------------------
 
 pause
