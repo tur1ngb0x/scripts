@@ -19,7 +19,7 @@ separator(){
 
 get_user(){
 	if [[ -f /usr/bin/id ]]; then
-		printf '%s' "$(id --user --name)" 2> /dev/null
+		printf '%s' "$(id --user --name)"
 	else
 		printf '%s' '-'
 	fi
@@ -27,7 +27,7 @@ get_user(){
 
 get_host(){
 	if [[ -f /usr/bin/hostname ]]; then
-		printf '%s' "$(hostname --long)" 2> /dev/null
+		printf '%s' "$(hostname --long)"
 	else
 		printf '%s' '-'
 	fi
@@ -35,7 +35,7 @@ get_host(){
 
 get_now(){
 	if [[ -f /usr/bin/date ]]; then
-		printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')" 2> /dev/null
+		printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')"
 	else
 		printf '%s' '-'
 	fi
@@ -43,7 +43,7 @@ get_now(){
 
 get_machine(){
 	if [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
-		printf '%s' "$(cat /sys/devices/virtual/dmi/id/product_name)" 2> /dev/null
+		printf '%s' "$(cat /sys/devices/virtual/dmi/id/product_name)"
 	else
 		printf '%s' '-'
 	fi
@@ -51,7 +51,7 @@ get_machine(){
 
 get_distro(){
 	if [[ -f /etc/os-release ]]; then
-		printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")" 2> /dev/null
+		printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
 	else
 		printf '%s' '-'
 	fi
@@ -59,15 +59,17 @@ get_distro(){
 
 get_kernel(){
 	if [[ -f /usr/bin/uname ]]; then
-		printf '%s' "$(uname --kernel-release)" 2> /dev/null
+		printf '%s' "$(uname --kernel-release)"
 	else
 		printf '%s' '-'
 	fi
 }
 
 get_display(){
-	if [[ -f /usr/bin/xrandr ]]; then
-		printf '%s' "$(xrandr | awk '/connected primary/{ getline; {print $1"@"$2} } ' | sed "s/\..*//")Hz" 2> /dev/null
+	if [[ -f /usr/bin/tty ]] && [[ $(tty) == *tty* ]]; then
+		printf '%s' '-'
+	elif [[ -f /usr/bin/xrandr ]]; then
+		printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
 	else
 		printf '%s' '-'
 	fi
@@ -83,7 +85,7 @@ get_desktop(){
 
 get_ram_total(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
 	else
 		printf '%s' '-'
 	fi
@@ -91,7 +93,7 @@ get_ram_total(){
 
 get_ram_used(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
 	else
 		printf '%s' '-'
 	fi
@@ -99,7 +101,7 @@ get_ram_used(){
 
 get_swap_total(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MiB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MiB"
 	else
 		printf '%s' '-'
 	fi
@@ -107,7 +109,7 @@ get_swap_total(){
 
 get_swap_used(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB"
 	else
 		printf '%s' '-'
 	fi
@@ -115,20 +117,20 @@ get_swap_used(){
 
 get_uptime(){
 	if [[ -f /usr/bin/uptime ]]; then
-		uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g' 2> /dev/null
+		uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g'
 	else
 		printf '%s' '-'
 	fi
 }
 
 get_packages(){
-	get_dnf(){		(dnf list --installed | grep -c '')						2> /dev/null; }
-	get_docker(){	(docker images --format "{{.Repository}}" | grep -c '')	2> /dev/null; }
-	get_dpkg(){		(dpkg --list | grep -c '^ii')							2> /dev/null; }
-	get_flatpak(){	(flatpak list --all | grep -c '')						2> /dev/null; }
-	get_pacman(){	(pacman -Qq | grep -c '')								2> /dev/null; }
-	get_pipx(){		(pipx list --short | grep -c '')						2> /dev/null; }
-	get_snap(){		(snap list --all | grep -c '')							2> /dev/null; }
+	get_dpkg(){		(dpkg --list | grep -c '^ii'); }
+	get_dnf(){		(dnf list --installed | grep -c ''); }
+	get_pacman(){	(pacman -Qq | grep -c ''); }
+	# get_docker(){	(docker images --format "{{.Repository}}" | grep -c ''); }
+	# get_flatpak(){	(flatpak list --all | grep -c ''); }
+	# get_pipx(){		(pipx list --short | grep -c ''); }
+	# get_snap(){		(snap list --all | grep -c ''); }
 	if [[ -f /usr/bin/dpkg ]];		then printf '%s' "$(get_dpkg)"; fi
 	if [[ -f /usr/bin/dnf ]];		then printf '%s' "$(get_dnf)"; fi
 	if [[ -f /usr/bin/pacman ]];	then printf '%s' "$(get_pacman)"; fi
