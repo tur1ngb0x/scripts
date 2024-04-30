@@ -6,11 +6,11 @@
 # helpers
 #######################################################################
 row(){
-	printf -- '%10s : %s\n' "${1}" "${2}"
+	printf -- '%9s : %s\n' "${1}" "${2}"
 }
 
 separator(){
-	printf -- '—%.0s' {1..72}; printf '\n'
+	printf -- '—%.0s' {1..48}; printf '\n'
 }
 
 #######################################################################
@@ -83,7 +83,7 @@ get_desktop(){
 
 get_ram_total(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB" 2> /dev/null
 	else
 		printf '%s' '-'
 	fi
@@ -91,7 +91,7 @@ get_ram_total(){
 
 get_ram_used(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB" 2> /dev/null
 	else
 		printf '%s' '-'
 	fi
@@ -99,7 +99,7 @@ get_ram_used(){
 
 get_swap_total(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MiB" 2> /dev/null
 	else
 		printf '%s' '-'
 	fi
@@ -107,7 +107,7 @@ get_swap_total(){
 
 get_swap_used(){
 	if [[ -f /usr/bin/free ]]; then
-		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MB" 2> /dev/null
+		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB" 2> /dev/null
 	else
 		printf '%s' '-'
 	fi
@@ -129,13 +129,13 @@ get_packages(){
 	get_pacman(){	(pacman -Qq | grep -c '')								2> /dev/null; }
 	get_pipx(){		(pipx list --short | grep -c '')						2> /dev/null; }
 	get_snap(){		(snap list --all | grep -c '')							2> /dev/null; }
-	if [[ -f /usr/bin/dpkg ]];		then printf '%s' "$(get_dpkg)(dpkg) "; fi
-	if [[ -f /usr/bin/dnf ]];		then printf '%s' "$(get_dnf)(dnf) "; fi
-	if [[ -f /usr/bin/pacman ]];	then printf '%s' "$(get_pacman)(pacman) "; fi
-	if [[ -f /usr/bin/flatpak ]];	then printf '%s' "$(get_flatpak)(flatpak) "; fi
-	if [[ -f /usr/bin/snap ]];		then printf '%s' "$(get_snap)(snap) "; fi
-	if [[ -f /usr/bin/docker ]];	then printf '%s' "$(get_docker)(docker) "; fi
-	if [[ -f /usr/bin/pipx ]];		then printf '%s' "$(get_pipx)(pipx) "; fi
+	if [[ -f /usr/bin/dpkg ]];		then printf '%s' "$(get_dpkg)"; fi
+	if [[ -f /usr/bin/dnf ]];		then printf '%s' "$(get_dnf)"; fi
+	if [[ -f /usr/bin/pacman ]];	then printf '%s' "$(get_pacman)"; fi
+	# if [[ -f /usr/bin/flatpak ]];	then printf '%s' "$(get_flatpak)(flatpak) "; fi
+	# if [[ -f /usr/bin/snap ]];		then printf '%s' "$(get_snap)(snap) "; fi
+	# if [[ -f /usr/bin/docker ]];	then printf '%s' "$(get_docker)(docker) "; fi
+	# if [[ -f /usr/bin/pipx ]];		then printf '%s' "$(get_pipx)(pipx) "; fi
 }
 
 get_colors(){
@@ -148,19 +148,19 @@ get_colors(){
 #######################################################################
 # begin script from here
 #######################################################################
+# separator
+# row 'LOGIN'		"$(get_user)@$(get_host)"
+# row 'NOW'		"$(get_now)"
 separator
-row 'LOGIN'		"$(get_user)@$(get_host)"
-row 'NOW'		"$(get_now)"
+row 'Machine'	"$(get_machine)"
+row 'Distro'	"$(get_distro)"
+row 'Kernel'	"$(get_kernel)"
+row 'Display'	"$(get_display)"
+row 'Desktop'	"$(get_desktop)"
+row 'Memory'	"$(get_ram_used)/$(get_ram_total)"
+row 'Swap'		"$(get_swap_used)/$(get_swap_total)"
+row 'Uptime'	"$(get_uptime)"
+row 'Packages'	"$(get_packages)"
 separator
-row 'MACHINE'	"$(get_machine)"
-row 'DISTRO'	"$(get_distro)"
-row 'KERNEL'	"$(get_kernel)"
-row 'DISPLAY'	"$(get_display)"
-row 'DESKTOP'	"$(get_desktop)"
-row 'RAM'		"$(get_ram_used)/$(get_ram_total)"
-row 'SWAP'		"$(get_swap_used)/$(get_swap_total)"
-row 'UPTIME'	"$(get_uptime)"
-row 'PACKAGES'	"$(get_packages)"
-separator
-row 'COLORS'	"$(get_colors)"
-separator
+# row 'COLORS'	"$(get_colors)"
+# separator
