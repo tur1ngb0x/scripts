@@ -21,7 +21,7 @@ get_user(){
 	if [[ -f /usr/bin/id ]]; then
 		printf '%s' "$(id --user --name)"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -29,7 +29,7 @@ get_host(){
 	if [[ -f /usr/bin/hostname ]]; then
 		printf '%s' "$(hostname --long)"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -37,7 +37,7 @@ get_now(){
 	if [[ -f /usr/bin/date ]]; then
 		printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -45,7 +45,7 @@ get_machine(){
 	if [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
 		printf '%s' "$(cat /sys/devices/virtual/dmi/id/product_name)"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -53,7 +53,7 @@ get_distro(){
 	if [[ -f /etc/os-release ]]; then
 		printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -61,17 +61,17 @@ get_kernel(){
 	if [[ -f /usr/bin/uname ]]; then
 		printf '%s' "$(uname --kernel-release)"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
 get_display(){
 	if [[ -f /usr/bin/tty ]] && [[ $(tty) == *tty* ]]; then
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	elif [[ -f /usr/bin/xrandr ]]; then
 		printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -79,7 +79,7 @@ get_desktop(){
 	if [[ -n "${XDG_CURRENT_DESKTOP}" ]] && [[ -n "${XDG_SESSION_TYPE}" ]]; then
 		printf '%s@%s' "${XDG_CURRENT_DESKTOP}" "${XDG_SESSION_TYPE}"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -87,7 +87,7 @@ get_ram_total(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -95,7 +95,7 @@ get_ram_used(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -103,7 +103,7 @@ get_swap_total(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MiB"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -111,7 +111,7 @@ get_swap_used(){
 	if [[ -f /usr/bin/free ]]; then
 		printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB"
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
@@ -119,7 +119,7 @@ get_uptime(){
 	if [[ -f /usr/bin/uptime ]]; then
 		uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g'
 	else
-		printf '%s' '-'
+		printf '%s' 'N/A'
 	fi
 }
 
