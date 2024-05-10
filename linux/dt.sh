@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 dt-distro(){
-	source /etc/os-release; echo "${PRETTY_NAME}")
+	source /etc/os-release; echo "${PRETTY_NAME}"
 }
 
 dt-kernel(){
