@@ -117,7 +117,7 @@ get_swap_used(){
 
 get_uptime(){
 	if [[ -f /usr/bin/uptime ]]; then
-		uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g'
+		printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"
 	else
 		printf '%s' 'N/A'
 	fi
