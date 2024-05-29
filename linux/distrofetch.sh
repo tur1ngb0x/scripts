@@ -2,6 +2,8 @@
 
 # shellcheck source=/dev/null
 
+LC_ALL=C; export LC_ALL
+
 #######################################################################
 # helpers
 #######################################################################
@@ -150,19 +152,51 @@ get_colors(){
 #######################################################################
 # begin script from here
 #######################################################################
-# separator
-# row 'LOGIN'		"$(get_user)@$(get_host)"
-# row 'NOW'		"$(get_now)"
-separator
-row 'Machine'	"$(get_machine)"
-row 'Distro'	"$(get_distro)"
-row 'Kernel'	"$(get_kernel)"
-row 'Display'	"$(get_display)"
-row 'Desktop'	"$(get_desktop)"
-row 'Memory'	"$(get_ram_used)/$(get_ram_total)"
-row 'Swap'		"$(get_swap_used)/$(get_swap_total)"
-row 'Uptime'	"$(get_uptime)"
-row 'Packages'	"$(get_packages)"
-separator
-# row 'COLORS'	"$(get_colors)"
-# separator
+
+if [[ ${1} == '--short' ]] || [[ ${1} == '-short' ]] || [[ ${1} == '--s' ]] || [[ ${1} == '-s' ]]; then
+	dt-line(){
+		printf -- '-%.0s' {1..48}; printf '\n'
+	}
+
+	dt-distro(){
+		printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")"
+	}
+
+	dt-kernel(){
+		printf '%s' "$(uname --kernel-release)"
+	}
+
+	dt-ram(){
+		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
+		#printf ' %s ' '/'
+		#printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
+	}
+
+	dt-uptime(){
+		printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"
+	}
+
+	# begin script from here
+	cat <<-EOF | tr '[:upper:]' '[:lower:]'
+	$(dt-line)
+	distro : $(dt-distro)
+	kernel : $(dt-kernel)
+	memory : $(dt-ram)
+	uptime : $(dt-uptime)
+	$(dt-line)
+	EOF
+
+	exit
+else
+	separator
+	row 'Machine'	"$(get_machine)"
+	row 'Distro'	"$(get_distro)"
+	row 'Kernel'	"$(get_kernel)"
+	row 'Display'	"$(get_display)"
+	row 'Desktop'	"$(get_desktop)"
+	row 'Memory'	"$(get_ram_used)/$(get_ram_total)"
+	row 'Swap'		"$(get_swap_used)/$(get_swap_total)"
+	row 'Uptime'	"$(get_uptime)"
+	row 'Packages'	"$(get_packages)"
+	separator
+fi

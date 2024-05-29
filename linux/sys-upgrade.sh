@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+LC_ALL=C; export LC_ALL
+
 header(){
 	tput rev
 	printf ' %s \n' "${1}";
@@ -41,7 +43,7 @@ upg_snap(){
 	sudo snap refresh
 	sudo snap refresh --hold
 	sudo snap set system snapshots.automatic.retention=no
-	LANG=C sudo snap list --all | while read -r name version revision tracking publisher notes
+	sudo snap list --all | while read -r name version revision tracking publisher notes
 		do if [[ "${notes}" = *disabled* ]]; then
 			echo "${name}" "${version}" "${tracking}" "${publisher}" "${notes}"
 			sudo snap remove --purge "${name}" --revision="${revision}"
@@ -82,7 +84,8 @@ upg_docker(){
 upg_pipx(){
 	header 'pipx'
 	{ set -x ; } &> /dev/null
-	USE_EMOJI="0" pipx upgrade-all
+	export USE_EMOJI="0"
+	pipx upgrade-all
 	{ set +x ; } &> /dev/null
 }
 
