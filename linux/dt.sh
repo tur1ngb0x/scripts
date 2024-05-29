@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 dt-line(){
-	printf -- '*%.0s' {1..72}; printf '\n'
+	printf -- '-%.0s' {1..48}; printf '\n'
 }
 
 dt-distro(){
-	printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
+	printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")"
 }
 
 dt-kernel(){
@@ -14,8 +14,8 @@ dt-kernel(){
 
 dt-ram(){
 	printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
-	printf '%s' '/'
-	printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
+	#printf ' %s ' '/'
+	#printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
 }
 
 dt-uptime(){

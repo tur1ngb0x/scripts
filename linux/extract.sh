@@ -5,7 +5,7 @@ usage()
 {
 	cat << EOF
 Syntax:
-	${0##*/} <name.extension>
+	${0##*/} <filename.extension>
 Usage:
 	${0##*/} linux-kernel.tar.gz
 	${0##*/} images.zip
