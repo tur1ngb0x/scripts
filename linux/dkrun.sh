@@ -16,11 +16,9 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-if [[ -z "${1}" ]] || [[ -z "${2}" ]]; then
-	usage
-	exit
-fi
 
-docker container run --interactive --tty --hostname "docker-${1}-$(uuidgen | awk -F- '{print $1}')" --workdir '/' "${1}" "${2}"
+docker container run --interactive --tty --hostname "docker-${1}-$(uuidgen | awk -F- '{print $1}')" --workdir "/" "${1}" "${@:2}"
 
 # uuidgen | awk -F- '{print $1}'
+
+# -e "PS1=$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w\n\$ "
