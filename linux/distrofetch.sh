@@ -68,10 +68,15 @@ get_kernel(){
 }
 
 get_display(){
-	if [[ $(tty) == *tty* ]] || [[ $(tty) == *pts* ]]; then
+	if [[ $(tty) == *tty* ]]; then
 		printf '%s' '-'
 	elif [[ -f /usr/bin/xrandr ]]; then
-		printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
+		xrandr &> /dev/null
+		if [[ ${?} == '1' ]]; then
+			printf '%s' '-'
+		else
+			printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
+		fi
 	else
 		printf '%s' '-'
 	fi
@@ -126,20 +131,20 @@ get_uptime(){
 }
 
 get_packages(){
-	get_dpkg(){		(dpkg --list | grep -c '^ii'); }
-	get_dnf(){		(dnf list --installed | grep -c ''); }
-	get_pacman(){	(pacman -Qq | grep -c ''); }
+	get_dpkg(){	(dpkg --list | grep -c '^ii'); }
+	get_dnf(){ (dnf list --installed | grep -c ''); }
+	get_pacman(){ (pacman -Qq | grep -c ''); }
 	# get_docker(){	(docker images --format "{{.Repository}}" | grep -c ''); }
-	# get_flatpak(){	(flatpak list --all | grep -c ''); }
-	# get_pipx(){		(pipx list --short | grep -c ''); }
-	# get_snap(){		(snap list --all | grep -c ''); }
-	if [[ -f /usr/bin/dpkg ]];		then printf '%s' "$(get_dpkg)"; fi
-	if [[ -f /usr/bin/dnf ]];		then printf '%s' "$(get_dnf)"; fi
-	if [[ -f /usr/bin/pacman ]];	then printf '%s' "$(get_pacman)"; fi
-	# if [[ -f /usr/bin/flatpak ]];	then printf '%s' "$(get_flatpak)(flatpak) "; fi
-	# if [[ -f /usr/bin/snap ]];		then printf '%s' "$(get_snap)(snap) "; fi
-	# if [[ -f /usr/bin/docker ]];	then printf '%s' "$(get_docker)(docker) "; fi
-	# if [[ -f /usr/bin/pipx ]];		then printf '%s' "$(get_pipx)(pipx) "; fi
+	# get_flatpak(){ (flatpak list --all | grep -c ''); }
+	# get_pipx(){ (pipx list --short | grep -c ''); }
+	# get_snap(){ (snap list --all | grep -c ''); }
+	if [[ -f /usr/bin/dpkg ]]; then printf '%s' "$(get_dpkg)"; fi
+	if [[ -f /usr/bin/dnf ]]; then printf '%s' "$(get_dnf)"; fi
+	if [[ -f /usr/bin/pacman ]]; then printf '%s' "$(get_pacman)"; fi
+	# if [[ -f /usr/bin/flatpak ]]; then printf '%s' "$(get_flatpak)(flatpak) "; fi
+	# if [[ -f /usr/bin/snap ]]; then printf '%s' "$(get_snap)(snap) "; fi
+	# if [[ -f /usr/bin/docker ]]; then printf '%s' "$(get_docker)(docker) "; fi
+	# if [[ -f /usr/bin/pipx ]]; then printf '%s' "$(get_pipx)(pipx) "; fi
 }
 
 get_colors(){
@@ -194,8 +199,8 @@ else
 	row 'Kernel'	"$(get_kernel)"
 	row 'Display'	"$(get_display)"
 	row 'Desktop'	"$(get_desktop)"
-	row 'Memory'	"$(get_ram_used)/$(get_ram_total)"
-	row 'Swap'		"$(get_swap_used)/$(get_swap_total)"
+	row 'Memory'	"$(get_ram_used) / $(get_ram_total)"
+	row 'Swap'		"$(get_swap_used) / $(get_swap_total)"
 	row 'Uptime'	"$(get_uptime)"
 	row 'Packages'	"$(get_packages)"
 	separator
