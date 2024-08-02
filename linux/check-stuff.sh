@@ -29,7 +29,7 @@ shift
 case "${option}" in
 	ip)		curl ifconfig.me/all ;;
 	mem)	watch --interval 1 'free --mebi --lohi --total --wide' ;;
-	path)	tr ":" "\n" <<< "${PATH}" '';;
+	path)	echo "${PATH}" | tr ":" "\n" ;;
 	ping)	ping -4 "${@}" ;;
 	route)	traceroute -4 "${@}" ;;
 	*)		usage ;;
