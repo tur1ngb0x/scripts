@@ -24,13 +24,13 @@ rm -fr /tmp/nerd-fonts
 
 rm -fv "${HOME}"/.local/share/fonts/"${1}"
 
-mkdir -p /tmp/
+mkdir -p "${HOME}"/src/tmp/
 
 mkdir -p "${HOME}"/.local/share/fonts/"${1}"
 
-git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts /tmp/nerd-fonts
+git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts "${HOME}"/src/tmp/nerd-fonts
 
-pushd /tmp/nerd-fonts || exit
+pushd "${HOME}"/src/tmp/nerd-fonts || exit
 
 git sparse-checkout add patched-fonts/"${1}"
 
