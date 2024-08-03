@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 # directories
-mkdir -pv "${HOME}"/Applications
 mkdir -pv "${HOME}"/.local/bin
-mkdir -pv "${HOME}"/.local/share/applications
 
 cli_golang()
 {
@@ -31,14 +29,13 @@ cli_ncdu()
 	tar --file /tmp/ncdu.tar.gz -vvv --extract --gzip --directory "${HOME}"/.local/bin
 }
 
-
 cli_ytdlp()
 {
 	wget -4O "${HOME}"/.local/bin/yt-dlp 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp'
 }
 
 # begin script from here
-cli_golang
+#cli_golang
 cli_micro
 cli_ncdu
 cli_ytdlp

@@ -44,13 +44,10 @@ cleandir "${HOME}/.cache/fontconfig"
 cleandir "${HOME}/.cache/mesa_shader_cache"
 
 showheader 'cache flatpak'
-cleandir "${HOME}/.var/app/com.google.Chrome/config/google-chrome/Default/Service Worker"
-cleandir "${HOME}/.var/app/com.microsoft.Edge/config/microsoft-edge/Default/Service Worker"
 cleandir "${HOME}/.var/app/com.brave.Browser/cache/BraveSoftware"
 cleandir "${HOME}/.var/app/com.google.Chrome/cache/google-chrome"
 cleandir "${HOME}/.var/app/com.microsoft.Edge/cache/microsoft-edge"
 cleandir "${HOME}/.var/app/org.mozilla.firefox/cache/mozilla"
-cleandir "${HOME}/.var/app/org.telegram.desktop/data/TelegramDesktop/tdata/user_data"
 
 showheader 'trim'
 [[ $(command -pv fstrim) ]] && sudo fstrim --all --verbose

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # install flatpak
 sudo add-apt-repository -y ppa:flatpak/stable; sudo apt-get update; sudo apt-get install -y flatpak
 sudo dnf install -y flatpak
