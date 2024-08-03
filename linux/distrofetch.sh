@@ -15,20 +15,17 @@ separator(){
 	printf -- '*%.0s' {1..48}; printf '\n'
 }
 
-usage(){
-	cat <<-'EOF'
-
-Information:
+usage()
+{
+	cat << EOF
+Description
     Show distribution information using bash.
-
-Usage:
-    $ distrofetch <option>
-
-Options:
-    blank                                use long format (default)
+Syntax
+    $ ${0##*/} <option>
+Options
+                                         use long format (default)
     --short, -short, short --s, -s, s    use short format
     --help, -help, help, --h, -h, h      show help
-
 EOF
 }
 

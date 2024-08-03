@@ -16,5 +16,10 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-tput rev; echo " setting brightness to ${1} "; tput sgr0
-sudo bash -c "modprobe i2c-dev; ddcutil setvcp 10 ${1}"
+if [[ $(command -v ddcutil) ]]; then
+	printf "setting brightness to %s \n" "${1}"
+	sudo bash -c "modprobe i2c-dev; ddcutil setvcp 10 ${1}"
+else
+	echo 'ddcutil is not installed'
+	exit
+fi
