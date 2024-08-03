@@ -17,11 +17,17 @@ separator(){
 
 usage(){
 	cat <<-'EOF'
-	Usage:
-	    $ distrofetch <option>
-	Options:
-	    --long, -long, --l, -l          show data in long format (default)
-	    --short, -short, --s, -s        show data in short format
+
+Information:
+    Show distribution information using bash.
+
+Usage:
+    $ distrofetch <option>
+
+Options:
+    blank                                use long format (default)
+    --short, -short, short --s, -s, s    use short format
+    --help, -help, help, --h, -h, h      show help
 
 EOF
 }
@@ -49,6 +55,14 @@ get_host(){
 get_now(){
 	if [[ -f /usr/bin/date ]]; then
 		printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')"
+	else
+		printf '%s' '-'
+	fi
+}
+
+get_vendor(){
+	if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]]; then
+		printf '%s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)"
 	else
 		printf '%s' '-'
 	fi
@@ -178,7 +192,7 @@ dt-short(){
 
 dt-long(){
 	separator
-	row 'Machine'	"$(get_machine)"
+	row 'Hardware'	"$(get_vendor) $(get_machine)"
 	row 'Distro'	"$(get_distro)"
 	row 'Kernel'	"$(get_kernel)"
 	row 'Display'	"$(get_display)"
@@ -197,7 +211,7 @@ option="${1}"
 shift
 
 case "${option}" in
-	--short | -short | --s | -s)    dt-short ;;
-	--long | -long | --l | -l)      dt-long ;;
-	*)                              dt-long ;;
+	--help | -help | help | --h | -h | h)    usage ;;
+	--short | -short | --s | -s)             dt-short ;;
+	*)                                       dt-long ;;
 esac
