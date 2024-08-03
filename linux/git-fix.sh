@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 
-# $HOME/src/dotfiles
-find "${HOME}"/src/dotfiles/ -mindepth 1 -type f -not -path "${HOME}/src/dotfiles/windows/*" -exec dos2unix --follow-symlink --verbose {} \;
-find "${HOME}"/src/dotfiles/windows/ -mindepth 1 -type f -exec unix2dos --follow-symlink --verbose {} \;
+#######################################################################
+# file endings
+#######################################################################
+# dotfiles
+find "${HOME}"/src/dotfiles/          -mindepth 1 -type f -exec dos2unix --follow-symlink --allow-chown --verbose {} \;
+find "${HOME}"/src/dotfiles/windows/  -mindepth 1 -type f -exec unix2dos --follow-symlink --allow-chown --verbose {} \;
+# scripts
+find "${HOME}"/src/scripts/           -mindepth 1 -type f -exec dos2unix --follow-symlink --allow-chown --verbose {} \;
+find "${HOME}"/src/scripts/windows/   -mindepth 1 -type f -exec unix2dos --follow-symlink --allow-chown --verbose {} \;
+# notes
+find "${HOME}"/src/notes/             -mindepth 1 -type f -exec dos2unix --follow-symlink --allow-chown --verbose {} \;
 
-# $HOME/src/scripts
-find "${HOME}"/src/scripts/ -mindepth 1 -type f -not -path "${HOME}/src/scripts/windows/*" -exec dos2unix --follow-symlink --verbose {} \;
-find "${HOME}"/src/scripts/windows/ -mindepth 1 -type f -exec unix2dos --follow-symlink --verbose {} \;
+########################################################################
+# permissions
+#######################################################################
+# dotfiles
+find -L "${HOME}"/src/dotfiles/       -type d -exec chmod --verbose --changes 0755 {} \;
+find -L "${HOME}"/src/dotfiles/       -type f -exec chmod --verbose --changes 0644 {} \;
+# scripts
+find -L "${HOME}"/src/scripts/        -type d -exec chmod --verbose --changes 0755 {} \;
+find -L "${HOME}"/src/scripts/        -type f -exec chmod --verbose --changes 0644 {} \;
 
-# $HOME/src/notes
-find "${HOME}"/src/notes/ -mindepth 1 -type f -exec dos2unix --follow-symlink --verbose {} \;
+#######################################################################
+# executable permissions
+#######################################################################
+# scripts
+find "${HOME}"/src/scripts/linux/     -mindepth 1 -type f -exec chmod --recursive --changes a+x {} \;
+find "${HOME}"/src/scripts/windows/   -mindepth 1 -type f -exec chmod --recursive --changes a+x {} \;
