@@ -18,14 +18,14 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-# tput rev; echo " opening ${*} with $(which code) as superuser "; tput sgr0
-printf "\n opening "; tput rev; printf ' %s ' "${*}"; tput sgr0; printf " with "; tput rev; printf ' %s ' "$(which code)"; tput sgr0; printf " as superuser\n\n"
+tput rev; echo -e "\n opening ${*} with $(which code) as superuser \n"; tput sgr0
+
 sudo code \
 	--disable-chromium-sandbox \
 	--disable-extensions \
 	--disable-gpu \
 	--disable-lcd-text \
-	--locale en-US \
+	--locale en \
 	--no-sandbox \
 	--reuse-window \
 	--sync off \
