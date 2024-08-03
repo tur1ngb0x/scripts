@@ -15,6 +15,17 @@ separator(){
 	printf -- '*%.0s' {1..48}; printf '\n'
 }
 
+usage(){
+	cat <<-'EOF'
+	Usage:
+	    $ distrofetch <option>
+	Options:
+	    --long, -long, --l, -l          show data in long format (default)
+	    --short, -short, --s, -s        show data in short format
+
+EOF
+}
+
 #######################################################################
 # data
 #######################################################################
@@ -154,45 +165,18 @@ get_colors(){
 	printf "\e[0m\n"
 }
 
-#######################################################################
-# begin script from here
-#######################################################################
-
-if [[ ${1} == '--short' ]] || [[ ${1} == '-short' ]] || [[ ${1} == '--s' ]] || [[ ${1} == '-s' ]]; then
-	dt-line(){
-		printf -- '-%.0s' {1..48}; printf '\n'
-	}
-
-	dt-distro(){
-		printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")"
-	}
-
-	dt-kernel(){
-		printf '%s' "$(uname --kernel-release)"
-	}
-
-	dt-ram(){
-		printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
-		#printf ' %s ' '/'
-		#printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
-	}
-
-	dt-uptime(){
-		printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"
-	}
-
-	# begin script from here
+dt-short(){
 	cat <<-EOF | tr '[:upper:]' '[:lower:]'
-	$(dt-line)
-	distro : $(dt-distro)
-	kernel : $(dt-kernel)
-	memory : $(dt-ram)
-	uptime : $(dt-uptime)
-	$(dt-line)
+	$(printf -- '-%.0s' {1..48}; printf '\n')
+	distro : $(printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")")
+	kernel : $(printf '%s' "$(uname --kernel-release)")
+	memory : $(printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB")
+	uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
+	$(printf -- '-%.0s' {1..48}; printf '\n')
 	EOF
+}
 
-	exit
-else
+dt-long(){
 	separator
 	row 'Machine'	"$(get_machine)"
 	row 'Distro'	"$(get_distro)"
@@ -204,4 +188,16 @@ else
 	row 'Uptime'	"$(get_uptime)"
 	row 'Packages'	"$(get_packages)"
 	separator
-fi
+}
+
+#######################################################################
+# begin script from here
+#######################################################################
+option="${1}"
+shift
+
+case "${option}" in
+	--short | -short | --s | -s)    dt-short ;;
+	--long | -long | --l | -l)      dt-long ;;
+	*)                              dt-long ;;
+esac
