@@ -37,9 +37,14 @@ docker \
 	"${@:2}"
 
 # PS1
-# PS1='$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n\$ '
+# PS1='\n$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n\$ '
+
+# APT
+# apt-get clean; apt-get update; apt-get dist-upgrade; apt-get install micro xclip git bash-completion -y; source /usr/share/bash-completion/bash_completion
+
 # DNF
-# dnf clean all; dnf upgrade --refresh --assumeyes; dnf install --setopt=install_weak_deps=False --assumeyes ncurses micro xclip git bash-completion
+# dnf clean all; dnf upgrade --refresh -y; dnf install --setopt=install_weak_deps=False ncurses micro xclip git bash-completion -y; source /usr/share/bash-completion/bash_completion
+
 # PACMAN
 # pacman -Scc --noconfirm; pacman -Syyu --noconfirm; pacman -S --noconfirm reflector micro xclip git bash-completion; source /usr/share/bash-completion/bash_completion
 # reflector --verbose --ipv4 --protocol http --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist; pacman -Scc --noconfirm; pacman -Syyu --noconfirm
