@@ -3,11 +3,18 @@
 usage()
 {
 	cat << EOF
+
+Description:
+    Run docker containers quickly.
+
 Syntax:
-	${0##*/} <image:tag> <command>
+    $ ${0##*/} <image>     <command>
+    $ ${0##*/} <image:tag> <command>
+
 Usage:
-	${0##*/} 'debian' sh
-	${0##*/} 'ubuntu' bash
+    $ ${0##*/} 'archlinux' sh
+    $ ${0##*/} 'ubuntu:noble' bash
+
 EOF
 }
 
@@ -16,7 +23,18 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-docker --debug --log-level 'debug' container run --interactive --tty --cpus '2' --memory '4096m' --hostname 'docker' --workdir '/root' "${1}" "${@:2}"
+docker \
+	--debug \
+	--log-level 'debug' \
+	container run \
+	--interactive \
+	--tty \
+	--cpus '2' \
+	--memory '4096m' \
+	--hostname 'docker' \
+	--workdir '/root' \
+	"${1}" \
+	"${@:2}"
 
 # PS1
 # PS1='$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n\$ '

@@ -3,11 +3,18 @@
 usage()
 {
 	cat << EOF
+
+Description:
+    Change the brightness level of the monitor using ddcutil.
+
 Syntax:
-	${0##*/} <brightness_value>
+    $ ${0##*/} <value>
+
 Usage:
-	${0##*/} 0
-	${0##*/} 100
+    $ ${0##*/} 0
+    $ ${0##*/} 50
+    $ ${0##*/} 100
+
 EOF
 }
 
@@ -16,10 +23,5 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-if [[ $(command -v ddcutil) ]]; then
-	printf "setting brightness to %s \n" "${1}"
-	sudo bash -c "modprobe i2c-dev; ddcutil setvcp 10 ${1}"
-else
-	echo 'ddcutil is not installed'
-	exit
-fi
+printf "setting brightness to %s \n" "${1}"
+sudo bash -c "modprobe i2c-dev; ddcutil setvcp 10 ${1}"
