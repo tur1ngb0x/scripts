@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+# set screenshot directory and file
 SCREENCLIP_DIR="${HOME}/Pictures/Screenshots"
-SCREENCLIP_FILE="${SCREENCLIP_DIR}/screenclip-$(date +'%Y%m%d-%H%M%S').png"
+SCREENCLIP_FILE="${SCREENCLIP_DIR}/clip-$(date +'%Y%m%d-%H%M%S').png"
 
 # create screenshot directory
 if [[ ! -d "${SCREENCLIP_DIR}" ]]; then
@@ -20,5 +21,5 @@ elif [[ $(command -pv scrot) ]]; then
 elif [[ $(command -pv notify-send) ]]; then
 	notify-send 'screenshot tool not found'
 else
-	tput rev; tput bold; echo ' screenshot tool not found ' ; tput sgr0 && exit
+	tput rev; echo ' screenshot tool not found '; tput sgr0 && exit
 fi

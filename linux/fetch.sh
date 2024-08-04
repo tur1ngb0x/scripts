@@ -176,18 +176,27 @@ get_colors(){
 	printf "\e[0m\n"
 }
 
-dt-short(){
-	cat <<-EOF | tr '[:upper:]' '[:lower:]'
-	$(printf -- '-%.0s' {1..48}; printf '\n')
-	distro : $(printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")")
-	kernel : $(printf '%s' "$(uname --kernel-release)")
-	memory : $(printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB")
-	uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
-	$(printf -- '-%.0s' {1..48}; printf '\n')
-	EOF
+fetch-short(){
+	cat << EOF | tr '[:upper:]' '[:lower:]'
+
+  distro : $(printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")")
+  kernel : $(printf '%s' "$(uname --kernel-release)")
+  memory : $(printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB")
+  uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
+
+EOF
 }
 
-dt-long(){
+# function fetch-short {
+# 	separator
+# 	row 'Distro'	"$(get_distro)"
+# 	row 'Kernel'	"$(get_kernel)"
+# 	row 'Memory'	"$(get_ram_used)"
+# 	row 'Uptime'	"$(get_uptime)"
+# 	separator
+# }
+
+fetch-long(){
 	separator
 	row 'Hardware'	"$(get_vendor) $(get_machine)"
 	row 'Distro'	"$(get_distro)"
@@ -209,6 +218,6 @@ shift
 
 case "${option}" in
 	--help | -help | help | --h | -h | h)    usage ;;
-	--short | -short | --s | -s)             dt-short ;;
-	*)                                       dt-long ;;
+	--short | -short | --s | -s)             fetch-short ;;
+	*)                                       fetch-long ;;
 esac
