@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 # directories
-mkdir -pv "${HOME}"/Applications
+mkdir -pv "${HOME}"/Apps
 mkdir -pv "${HOME}"/.local/bin
 mkdir -pv "${HOME}"/.local/share/applications
 
 gui_code() {
-	[[ -f "${HOME}"/Applications/VSCode-linux-x64/bin/code ]] && echo "already installed ${HOME}/Applications/VSCode-linux-x64/bin/code" && return
-	mkdir -pv "${HOME}"/Applications
-	wget -4O- 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64' | tar -vxz -C "${HOME}"/Applications
+	[[ -f "${HOME}"/Apps/VSCode-linux-x64/bin/code ]] && echo "already installed ${HOME}/Applications/VSCode-linux-x64/bin/code" && return
+	mkdir -pv "${HOME}"/Apps
+	wget -4O- 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64' | tar -vxz -C "${HOME}"/Apps
 	mkdir -pv "${HOME}"/.local/share/applications
 	cat <<-EOF | tee "${HOME}"/.local/share/applications/code.desktop
 	[Desktop Entry]
@@ -38,16 +38,16 @@ gui_code() {
 	Keywords=vscode;
 	EOF
 	mkdir -pv "${HOME}"/.local/bin
-	ln -fsv "${HOME}"/Applications/VSCode-linux-x64/bin/code "${HOME}"/.local/bin/code
-	#mkdir -pv "${HOME}"/Applications/VSCode-linux-x64/data/tmp
+	ln -fsv "${HOME}"/Apps/VSCode-linux-x64/bin/code "${HOME}"/.local/bin/code
+	#mkdir -pv "${HOME}"/Apps/VSCode-linux-x64/data/tmp
 }
 
 gui_firefox() {
-	[[ -f "${HOME}"/Applications/firefox/firefox ]] && echo "already installed: ${HOME}/Applications/firefox/firefox" && return
-	mkdir -pv "${HOME}"/Applications
-	wget -4O- 'https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Applications
+	[[ -f "${HOME}"/Apps/firefox/firefox ]] && echo "already installed: ${HOME}/Applications/firefox/firefox" && return
+	mkdir -pv "${HOME}"/Apps
+	wget -4O- 'https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Apps
 	mkdir -pv "${HOME}"/.local/bin
-	ln -fsv "${HOME}"/Applications/firefox/firefox "${HOME}"/.local/bin/firefox
+	ln -fsv "${HOME}"/Apps/firefox/firefox "${HOME}"/.local/bin/firefox
 	mkdir -pv "${HOME}"/.local/share/applications
 	wget -4O "${HOME}"/.local/share/applications/firefox.desktop 'https://raw.githubusercontent.com/mozilla/sumo-kb/main/install-firefox-linux/firefox.desktop'
 	sed -i "s|Name=Firefox Web Browser|Name=Firefox (User)|g" "${HOME}"/.local/share/applications/firefox.desktop
@@ -64,11 +64,11 @@ EOF
 }
 
 gui_thunderbird() {
-	[[ -f "${HOME}"/Applications/thunderbird/thunderbird ]] && echo "already installed: ${HOME}/Applications/thunderbird/thunderbird" && return
-	mkdir -pv "${HOME}"/Applications
-	wget -4O- 'https://download.mozilla.org/?product=thunderbird-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Applications
+	[[ -f "${HOME}"/Apps/thunderbird/thunderbird ]] && echo "already installed: ${HOME}/Applications/thunderbird/thunderbird" && return
+	mkdir -pv "${HOME}"/Apps
+	wget -4O- 'https://download.mozilla.org/?product=thunderbird-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Apps
 	mkdir -pv "${HOME}"/.local/bin
-	ln -fsv "${HOME}"/Applications/thunderbird/thunderbird "${HOME}"/.local/bin/thunderbird
+	ln -fsv "${HOME}"/Apps/thunderbird/thunderbird "${HOME}"/.local/bin/thunderbird
 	mkdir -pv "${HOME}"/.local/share/applications
 	wget -4O "${HOME}"/.local/share/applications/thunderbird.desktop 'https://raw.githubusercontent.com/mozilla/sumo-kb/main/installing-thunderbird-linux/thunderbird.desktop'
 	sed -i "s|Name=Thunderbird Mail|Name=Thunderbird (User)|g" "${HOME}"/.local/share/applications/thunderbird.desktop
@@ -78,10 +78,9 @@ gui_thunderbird() {
 
 gui_telegram()
 {
-	wget -4O- 'https://telegram.org/dl/desktop/linux' | tar -xvJ -C "${HOME}"/Applications && (nohup "${HOME}"/Applications/Telegram/Telegram &) &> /tmp/telegram.out
 	wget -4O /tmp/telegram.tar.xz 'https://telegram.org/dl/desktop/linux'
-	tar --file /tmp/telegram.tar.xz -vvv --extract --xz --directory "${HOME}"/Applications
-	(nohup "${HOME}"/Applications/Telegram/Telegram &) &> /tmp/telegram.txt
+	tar --file /tmp/telegram.tar.xz -vvv --extract --xz --directory "${HOME}"/Apps
+	(nohup "${HOME}"/Apps/Telegram/Telegram &) &> /tmp/telegram.txt
 }
 
 gui_toolbox()
