@@ -21,7 +21,6 @@ echo  dism /online /cleanup-image /startcomponentcleanup /resetbase /norestart
 echo ------------------------------------------------------------------------
 dism /online /cleanup-image /startcomponentcleanup /resetbase /norestart
 
-
 echo ------------------------------------------------------------------------
 echo  cleanmgr /verylowdisk /sageset:420
 echo ------------------------------------------------------------------------
@@ -31,7 +30,6 @@ echo ------------------------------------------------------------------------
 echo  cleanmgr /verylowdisk /sagerun:420
 echo ------------------------------------------------------------------------
 cleanmgr /verylowdisk /sagerun:420
-
 
 echo ------------------------------------------------------------------------
 echo  defrag c: /optimize /printprogress /verbose
