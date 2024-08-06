@@ -45,26 +45,25 @@ function dkrun-ps1 {
 	export PS1
 }
 
-function dkrun_apt {
+function dkrun-apt {
 	apt-get clean
 	apt-get update
 	apt-get dist-upgrade
-	for i in ncurses micro xclip git bash-completion; do apt-get install "${i}" -y; done
+	for i in bash-completion git micro ncurses wget xclip; do apt-get install "${i}" -y; done
 	source /usr/share/bash-completion/bash_completion
 }
 
 function dkrun-dnf {
 	dnf clean all
 	dnf upgrade --refresh -y
-	for i in ncurses micro xclip git bash-completion; do dnf install --setopt=install_weak_deps=False "${i}" -y; done
+	for i in bash-completion git micro ncurses wget xclip; do dnf install --setopt=install_weak_deps=False "${i}" -y; done
 	source /usr/share/bash-completion/bash_completion
 }
 
 function dkrun-pacman {
 	rm -frv /var/lib/pacman/sync/
 	rm -frv /var/cache/pacman/pkg/
-	pacman -Syyu --noconfirm --needed
-	for i in sudo reflector ncurses micro xclip git bash-completion base-devel; do pacman -S --noconfirm --needed "${i}" -y; done
+	for i in sudo reflector bash-completion git micro ncurses wget xclip ; do pacman -Syyu --noconfirm --needed "${i}" -y; done
 	source /usr/share/bash-completion/bash_completion
 
 	reflector --verbose --ipv4 --protocol http --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
@@ -72,7 +71,7 @@ function dkrun-pacman {
 	rm -frv /var/cache/pacman/pkg/
 	pacman -Syyu --noconfirm --needed
 
-	rm -frv /tmp/yay*
+	rm -frv /tmp/yay.tar.gz /tmp/yay_12.3.5_x86_64/
 	wget -4O '/tmp/yay.tar.gz' 'https://github.com/Jguer/yay/releases/download/v12.3.5/yay_12.3.5_x86_64.tar.gz'
 	tar -xzvf /tmp/yay.tar.gz -C /tmp
 	mv /tmp/yay_12.3.5_x86_64/yay /usr/local/bin/yay
