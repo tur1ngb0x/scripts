@@ -29,20 +29,22 @@ docker \
 	container run \
 	--interactive \
 	--tty \
-	--cpus '2' \
-	--memory '4096m' \
 	--hostname 'docker' \
 	--workdir '/root' \
 	"${1}" \
 	"${@:2}"
 
-# PS1
-#PS1='\n$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n\$ '
-
 function dkrun-ps1 {
-	PS1='\n$(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n\$ '
+	PS1='\[\e[7m\]\n $(source /etc/os-release; echo ${ID}-${VERSION_ID}) \u@\h \w $(git branch --show-current 2>/dev/null)\n \$ \[\e[0m\] '
 	PS1="\[\e]0;\u@\h \w\a\]${PS1}"
 	export PS1
+}; dkrun-ps1
+
+PS1='\[\e[7m\]\u\[\e[0m\]'
+
+function dkrun-git {
+	git clone --depth=1 https://github.com/tur1ngb0x/dotfiles "${HOME}"/dotfiles
+	git clone --depth=1 https://github.com/tur1ngb0x/scripts "${HOME}"/scripts
 }
 
 function dkrun-apt {
@@ -66,13 +68,13 @@ function dkrun-pacman {
 	for i in sudo reflector bash-completion git micro ncurses wget xclip ; do pacman -Syyu --noconfirm --needed "${i}" -y; done
 	source /usr/share/bash-completion/bash_completion
 
-	reflector --verbose --ipv4 --protocol http --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-	rm -frv /var/lib/pacman/sync/
-	rm -frv /var/cache/pacman/pkg/
-	pacman -Syyu --noconfirm --needed
+	#reflector --verbose --ipv4 --protocol http --protocol https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+	#rm -frv /var/lib/pacman/sync/
+	#rm -frv /var/cache/pacman/pkg/
+	#pacman -Syyu --noconfirm --needed
 
-	rm -frv /tmp/yay.tar.gz /tmp/yay_12.3.5_x86_64/
-	wget -4O '/tmp/yay.tar.gz' 'https://github.com/Jguer/yay/releases/download/v12.3.5/yay_12.3.5_x86_64.tar.gz'
-	tar -xzvf /tmp/yay.tar.gz -C /tmp
-	mv /tmp/yay_12.3.5_x86_64/yay /usr/local/bin/yay
+	#rm -frv /tmp/yay.tar.gz /tmp/yay_12.3.5_x86_64/
+	#wget -4O '/tmp/yay.tar.gz' 'https://github.com/Jguer/yay/releases/download/v12.3.5/yay_12.3.5_x86_64.tar.gz'
+	#tar -xzvf /tmp/yay.tar.gz -C /tmp
+	#mv /tmp/yay_12.3.5_x86_64/yay /usr/local/bin/yay
 }
