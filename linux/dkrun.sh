@@ -8,12 +8,14 @@ Description:
     Run docker containers quickly.
 
 Syntax:
-    $ ${0##*/} <image>     <command>
-    $ ${0##*/} <image:tag> <command>
+    $ ${0##*/} <image>
+    $ ${0##*/} <image:tag>
+    $ ${0##*/} <image:tag> <command(s)>
 
 Usage:
-    $ ${0##*/} 'archlinux' sh
-    $ ${0##*/} 'ubuntu:noble' bash
+    $ ${0##*/} ubuntu
+    $ ${0##*/} ubuntu:devel
+    $ ${0##*/} ubuntu:devel sh
 
 EOF
 }
@@ -27,9 +29,10 @@ docker \
 	--debug \
 	--log-level 'debug' \
 	container run \
+	--hostname 'docker' \
 	--interactive \
 	--tty \
-	--hostname 'docker' \
+	--volume /home/pd/src/:/root/src \
 	--workdir '/root' \
 	"${1}" \
 	"${@:2}"
