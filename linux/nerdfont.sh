@@ -40,13 +40,13 @@ fi
 
 { set -x ; } &> /dev/null
 
-rm -frv "${HOME}"/src/tmp/nerd-fonts/
+rm -fr "${HOME}"/src/tmp/nerd-fonts/
 
-rm -frv "${HOME}"/.local/share/fonts/"${1}"/
+rm -fr "${HOME}"/.local/share/fonts/"${1}"/
 
-mkdir -pv "${HOME}"/src/tmp/nerd-fonts/
+mkdir -p "${HOME}"/src/tmp/nerd-fonts/
 
-mkdir -pv "${HOME}"/.local/share/fonts/"${1}"/
+mkdir -p "${HOME}"/.local/share/fonts/"${1}"/
 
 git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts "${HOME}"/src/tmp/nerd-fonts/
 
@@ -56,9 +56,11 @@ git sparse-checkout add patched-fonts/"${1}"/
 
 pushd "${HOME}"/src/tmp/nerd-fonts/patched-fonts || exit
 
-find "${HOME}"/src/tmp/nerd-fonts/patched-fonts  -type f -iname "*.ttf" -exec mv -fv {} "${HOME}"/.local/share/fonts/"${1}"/ \;
+find "${HOME}"/src/tmp/nerd-fonts/patched-fonts  -type f -iname "*.ttf" -exec mv -f {} "${HOME}"/.local/share/fonts/"${1}"/ \;
 
-echo 'updating font cache...'; fc-cache -r
+echo 'updating font cache...'
+
+fc-cache -r
 
 popd || exit
 
