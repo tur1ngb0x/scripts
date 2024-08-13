@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# b_var = brand name of the item
+# c_var = coupon code of the item
 # d_var = daily cost of the item
 # m_var = monthly cost of the item
 # p_var = total cost of the item
@@ -12,8 +14,8 @@
 CURRENCY = '₹'
 DAYS_MONTH = 30
 DAYS_WEEK = 7
-LINE_LENGTH = 128
 LINE_CHAR = '-'
+LINE_LENGTH = 128
 
 def print_line():
 	print(f"{LINE_CHAR * LINE_LENGTH}")
@@ -28,16 +30,19 @@ def calculate_cost(total_price, total_quantity, serving_size, days=DAYS_WEEK):
 	monthly_cost = daily_cost * DAYS_MONTH
 	return daily_cost, weekly_cost, monthly_cost
 
-# chicken breast
+# chicken
 t_chicken = 'Chicken Breast'
+b_chicken = 'Local Shop'
 p_chicken = 320
 q_chicken = 1000
 s_chicken = 250
 u_chicken = 'gm'
 d_chicken, w_chicken, m_chicken = calculate_cost(p_chicken, q_chicken, s_chicken)
 
-# whey protein
-t_whey = 'Whey Concentrate'
+# whey
+t_whey = 'Whey'
+b_whey = 'Healthfarm Muscle Whey Blend'
+c_whey = 'PFCHF'
 p_whey = 5880
 q_whey = 4000
 s_whey = 35
@@ -45,7 +50,8 @@ u_whey = 'gm'
 d_whey, w_whey, m_whey = calculate_cost(p_whey, q_whey, s_whey)
 
 # magnesium
-t_magnesium = 'Magnesium Glycinate'
+t_magnesium = 'Magnesium'
+b_magnesium = 'Carbamide Forte Magnesium Glycinate 2000mg'
 p_magnesium = 749
 q_magnesium = 120
 s_magnesium = 1
@@ -53,7 +59,9 @@ u_magnesium = 'unit(s)'
 d_magnesium, w_magnesium, m_magnesium = calculate_cost(p_magnesium, q_magnesium, s_magnesium)
 
 # omega
-t_omega = 'Omega3 Fish Oil'
+t_omega = 'Omega 3'
+b_omega = 'MuscleNectar Triple Strength 2500mg'
+c_omega = 'CHIRAG10'
 p_omega = 1829
 q_omega = 240
 s_omega = 2
@@ -62,6 +70,7 @@ d_omega, w_omega, m_omega = calculate_cost(p_omega, q_omega, s_omega)
 
 # vitamin d
 t_vitd = 'Vitamin D3'
+b_vitd = 'Super D3 60000 IU'
 p_vitd = 67
 q_vitd = 4
 s_vitd = (1 / 7)
