@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
-
 # d_var = daily cost of the item
 # m_var = monthly cost of the item
 # p_var = total cost of the item
@@ -11,19 +9,20 @@ import sys
 # u_var = unit of measurement of the item
 # w_var = weekly cost of the item
 
-CURRENCY = 'INR'
+CURRENCY = '₹'
 DAYS_MONTH = 30
 DAYS_WEEK = 7
-SEPARATOR_LENGTH = 128
+LINE_LENGTH = 128
+LINE_CHAR = '-'
 
-def print_separator():
-	print(f"{'-' * SEPARATOR_LENGTH}")
+def print_line():
+	print(f"{LINE_CHAR * LINE_LENGTH}")
 
 def calculate_cost(total_price, total_quantity, serving_size, days=DAYS_WEEK):
-	if total_price == 0 or total_quantity == 0 or serving_size == 0:
-		print("Error: total_price, total_quantity, and serving_size must all be greater than zero.")
-		print("Action: Exiting...")
-		sys.exit(1)
+	# if total_price == 0 or total_quantity == 0 or serving_size == 0:
+	# 	print("Error: total_price, total_quantity, and serving_size must all be greater than zero.")
+	# 	print("Action: Exiting...")
+	# 	exit()
 	daily_cost = (total_price / total_quantity) * serving_size
 	weekly_cost = daily_cost * days
 	monthly_cost = daily_cost * DAYS_MONTH
@@ -98,16 +97,18 @@ total_weekly_cost = total_daily_cost * DAYS_WEEK
 
 total_monthly_cost = total_daily_cost * DAYS_MONTH
 
-print_separator()
-print(f"Item\t\t\tCost\t\tQuantity\tServing\t\tDaily\t\tWeekly\t\tMonthly")
-print_separator()
-print(f"{t_chicken}\t\t{CURRENCY} {p_chicken:.0f}\t\t{q_chicken:.0f} {u_chicken} \t{s_chicken:.0f} {u_chicken}\t\t{CURRENCY} {d_chicken:.2f}\t{CURRENCY} {w_chicken:.2f}\t{CURRENCY} {m_chicken:.2f}")
-print(f"{t_whey}\t{CURRENCY} {p_whey:.0f}\t{q_whey:.0f} {u_whey}\t\t{s_whey:.0f} {u_whey}\t\t{CURRENCY} {d_whey:.2f}\t{CURRENCY} {w_whey:.2f}\t{CURRENCY} {m_whey:.2f}")
-print(f"{t_egg}\t\t{CURRENCY} {p_egg:.0f}\t\t{q_egg:.0f} {u_egg}\t{s_egg:.0f} {u_egg}\t{CURRENCY} {d_egg:.2f}\t{CURRENCY} {w_egg:.2f}\t{CURRENCY} {m_egg:.2f}")
-print(f"{t_omega}\t\t{CURRENCY} {p_omega:.0f}\t{q_omega:.0f} {u_omega}\t{s_omega:.0f} {u_omega}\t{CURRENCY} {d_omega:.2f}\t{CURRENCY} {w_omega:.2f}\t{CURRENCY} {m_omega:.2f}")
-print(f"{t_magnesium}\t{CURRENCY} {p_magnesium:.0f}\t\t{q_magnesium:.0f} {u_magnesium}\t{s_magnesium:.0f} {u_magnesium}\t{CURRENCY} {d_magnesium:.2f}\t{CURRENCY} {w_magnesium:.2f}\t{CURRENCY} {m_magnesium:.2f}")
-print(f"{t_vitb}\t{CURRENCY} {p_vitb:.0f}\t\t{q_vitb:.0f} {u_vitb}\t{s_vitb:.0f} {u_vitb}\t{CURRENCY} {d_vitb:.2f}\t{CURRENCY} {w_vitb:.2f}\t{CURRENCY} {m_vitb:.2f}")
-print(f"{t_vitd}\t\t{CURRENCY} {p_vitd:.0f}\t\t{q_vitd:.0f} {u_vitd}\t{s_vitd:.2f} {u_vitd}\t{CURRENCY} {d_vitd:.2f}\t{CURRENCY} {w_vitd:.2f}\t{CURRENCY} {m_vitd:.2f}")
-print_separator()
-print(f"Total\t\t\t\t\t\t\t\t\t{CURRENCY} {total_daily_cost:.2f}\t{CURRENCY} {total_weekly_cost:.2f}\t{CURRENCY} {total_monthly_cost:.2f}")
-print_separator()
+# print_line()
+# print(f"Item\t\t\tCost\t\tQuantity\tServing\t\tDaily\t\tWeekly\t\tMonthly")
+# print_line()
+# print(f"{t_chicken}\t\t{CURRENCY} {p_chicken:.0f}\t\t{q_chicken:.0f} {u_chicken} \t{s_chicken:.0f} {u_chicken}\t\t{CURRENCY} {d_chicken:.2f}\t{CURRENCY} {w_chicken:.2f}\t{CURRENCY} {m_chicken:.2f}")
+# print(f"{t_whey}\t{CURRENCY} {p_whey:.0f}\t{q_whey:.0f} {u_whey}\t\t{s_whey:.0f} {u_whey}\t\t{CURRENCY} {d_whey:.2f}\t{CURRENCY} {w_whey:.2f}\t{CURRENCY} {m_whey:.2f}")
+# print(f"{t_egg}\t\t{CURRENCY} {p_egg:.0f}\t\t{q_egg:.0f} {u_egg}\t{s_egg:.0f} {u_egg}\t{CURRENCY} {d_egg:.2f}\t{CURRENCY} {w_egg:.2f}\t{CURRENCY} {m_egg:.2f}")
+# print(f"{t_omega}\t\t{CURRENCY} {p_omega:.0f}\t{q_omega:.0f} {u_omega}\t{s_omega:.0f} {u_omega}\t{CURRENCY} {d_omega:.2f}\t{CURRENCY} {w_omega:.2f}\t{CURRENCY} {m_omega:.2f}")
+# print(f"{t_magnesium}\t{CURRENCY} {p_magnesium:.0f}\t\t{q_magnesium:.0f} {u_magnesium}\t{s_magnesium:.0f} {u_magnesium}\t{CURRENCY} {d_magnesium:.2f}\t{CURRENCY} {w_magnesium:.2f}\t{CURRENCY} {m_magnesium:.2f}")
+# print(f"{t_vitb}\t{CURRENCY} {p_vitb:.0f}\t\t{q_vitb:.0f} {u_vitb}\t{s_vitb:.0f} {u_vitb}\t{CURRENCY} {d_vitb:.2f}\t{CURRENCY} {w_vitb:.2f}\t{CURRENCY} {m_vitb:.2f}")
+# print(f"{t_vitd}\t\t{CURRENCY} {p_vitd:.0f}\t\t{q_vitd:.0f} {u_vitd}\t{s_vitd:.2f} {u_vitd}\t{CURRENCY} {d_vitd:.2f}\t{CURRENCY} {w_vitd:.2f}\t{CURRENCY} {m_vitd:.2f}")
+# print_line()
+# print(f"Total\t\t\t\t\t\t\t\t\t{CURRENCY} {total_daily_cost:.2f}\t{CURRENCY} {total_weekly_cost:.2f}\t{CURRENCY} {total_monthly_cost:.2f}")
+# print_line()
+
+print(f"Daily Cost\t{CURRENCY} {total_daily_cost:.2f}\nWeekly Cost\t{CURRENCY} {total_weekly_cost:.2f}\nMonthly Cost\t{CURRENCY} {total_monthly_cost:.2f}")
