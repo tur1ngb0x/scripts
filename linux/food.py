@@ -15,7 +15,7 @@ CURRENCY = '₹'
 DAYS_MONTH = 30
 DAYS_WEEK = 7
 LINE_CHAR = '-'
-LINE_LENGTH = 128
+LINE_LENGTH = 18
 
 def print_line():
 	print(f"{LINE_CHAR * LINE_LENGTH}")
@@ -41,7 +41,7 @@ d_chicken, w_chicken, m_chicken = calculate_cost(p_chicken, q_chicken, s_chicken
 
 # whey
 t_whey = 'Whey'
-b_whey = 'Healthfarm Muscle Whey Blend'
+b_whey = 'Healthfarm Muscle Whey Blend Double Rich Chocolate'
 c_whey = 'PFCHF'
 p_whey = 5880
 q_whey = 4000
@@ -60,7 +60,7 @@ d_magnesium, w_magnesium, m_magnesium = calculate_cost(p_magnesium, q_magnesium,
 
 # omega
 t_omega = 'Omega 3'
-b_omega = 'MuscleNectar Triple Strength 2500mg'
+b_omega = 'MuscleNectar Fish Oil Triple Strength 2500mg'
 c_omega = 'CHIRAG10'
 p_omega = 1829
 q_omega = 240
@@ -79,6 +79,7 @@ d_vitd, w_vitd, m_vitd = calculate_cost(p_vitd, q_vitd, s_vitd)
 
 # vitamin b
 t_vitb = 'Vitamin B Complex'
+b_vitd = 'Becosule Z'
 p_vitb = 52
 q_vitb = 20
 s_vitb = 1
@@ -120,4 +121,8 @@ total_monthly_cost = total_daily_cost * DAYS_MONTH
 # print(f"Total\t\t\t\t\t\t\t\t\t{CURRENCY} {total_daily_cost:.2f}\t{CURRENCY} {total_weekly_cost:.2f}\t{CURRENCY} {total_monthly_cost:.2f}")
 # print_line()
 
-print(f"Daily Cost\t{CURRENCY} {total_daily_cost:.2f}\nWeekly Cost\t{CURRENCY} {total_weekly_cost:.2f}\nMonthly Cost\t{CURRENCY} {total_monthly_cost:.2f}")
+print_line()
+print(f"Period\tCost")
+print_line()
+print(f"Daily\t{CURRENCY}{total_daily_cost:.2f}\nWeekly\t{CURRENCY}{total_weekly_cost:.2f}\nMonthly\t{CURRENCY}{total_monthly_cost:.2f}")
+print_line()
