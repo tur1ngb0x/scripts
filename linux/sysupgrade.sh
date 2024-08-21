@@ -8,7 +8,7 @@ header(){
 	tput sgr0
 }
 
-upg_apt(){
+function upgrade_apt {
 	header 'apt'
 	{ set -x ; } &> /dev/null
 	sudo apt-get clean
@@ -18,7 +18,7 @@ upg_apt(){
 	{ set +x ; } &> /dev/null
 }
 
-upg_dnf(){
+function upgrade_dnf {
 	header 'dnf'
 	{ set -x ; } &> /dev/null
 	sudo dnf  clean all
@@ -27,7 +27,7 @@ upg_dnf(){
 	{ set +x ; } &> /dev/null
 }
 
-upg_pacman(){
+function upgrade_pacman {
 	header 'pacman'
 	{ set -x ; } &> /dev/null
 	sudo reflector --ipv4 --protocol http,https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
@@ -37,7 +37,7 @@ upg_pacman(){
 	{ set +x ; } &> /dev/null
 }
 
-upg_snap(){
+function upgrade_snap {
 	header 'snap'
 	{ set -x ; } &> /dev/null
 	sudo snap refresh
@@ -52,7 +52,7 @@ upg_snap(){
 	{ set +x ; } &> /dev/null
 }
 
-upg_flatpak(){
+function upgrade_flatpak {
 	header 'flatpak'
 	{ set -x ; } &> /dev/null
 	flatpak --user update --appstream
@@ -64,14 +64,14 @@ upg_flatpak(){
 	{ set +x ; } &> /dev/null
 }
 
-upg_code(){
+function upgrade_code {
 	header 'code'
 	{ set -x ; } &> /dev/null
 	code --update-extensions
 	{ set +x ; } &> /dev/null
 }
 
-upg_docker(){
+function upgrade_docker {
 	header 'docker'
 	{ set -x ; } &> /dev/null
 	export DOCKER_CLI_HINTS="false"
@@ -81,41 +81,45 @@ upg_docker(){
 	done
 }
 
-upg_pipx(){
+function upgrade_pipx {
 	header 'pipx'
 	{ set -x ; } &> /dev/null
 	export USE_EMOJI="0"
-	pipx upgrade-all
+	pipx upgrade-all --verbose
 	{ set +x ; } &> /dev/null
 }
 
+function main {
+	if [[ -f /usr/bin/apt ]]; then
+		upgrade_apt
+	elif [[ -f /usr/bin/dnf ]]; then
+		upgrade_dnf
+	elif [[ -f /usr/bin/pacman ]]; then
+		upgrade_pacman
+	else
+		header 'only apt/dnf/pacman are supported.'
+	fi
+
+	if [[ -f /usr/bin/snap ]]; then
+		upgrade_snap
+	fi
+
+	if [[ -f /usr/bin/flatpak ]]; then
+		upgrade_flatpak
+	fi
+
+	if [[ -f /usr/bin/code ]]; then
+		upgrade_code
+	fi
+
+	if [[ -f /usr/bin/docker ]]; then
+		upgrade_docker
+	fi
+
+	if [[ -f /usr/bin/pipx ]]; then
+		upgrade_pipx
+	fi
+}
+
 # begin script from here
-if [[ -f /usr/bin/apt ]]; then
-	upg_apt
-elif [[ -f /usr/bin/dnf ]]; then
-	upg_dnf
-elif [[ -f /usr/bin/pacman ]]; then
-	upg_pacman
-else
-	header 'only apt/dnf/pacman are supported.'
-fi
-
-if [[ -f /usr/bin/snap ]]; then
-	upg_snap
-fi
-
-if [[ -f /usr/bin/flatpak ]]; then
-	upg_flatpak
-fi
-
-if [[ -f /usr/bin/code ]]; then
-	upg_code
-fi
-
-if [[ -f /usr/bin/docker ]]; then
-	upg_docker
-fi
-
-if [[ -f /usr/bin/pipx ]]; then
-	upg_pipx
-fi
+main

@@ -1,16 +1,40 @@
 #!/usr/bin/env bash
 
+packages=(
+	gallery-dl
+	glances
+	mycli
+	ps_mem
+	shellcheck-py
+	speedtest-cli
+	tldr
+	yt-dlp
+)
+
+function install_pipx
+{
+	sudo apt-get install -y pipx || sudo dnf install -y pipx || sudo pacman -S --needed --noconfirm pipx
+}
+
+function install_packages
+{
+	for pkg in "${packages[@]}"; do
+		pipx install --verbose "${pkg}"
+	done
+}
+
+function prompt_user
+{
+	read -p "Do you want to continue? (Y): " -n 1 -r answer; echo
+	if [[ ! "${answer}" =~ ^[Yy]$ ]]; then
+		exit
+	fi
+}
+
 export USE_EMOJI="0"
 
-sudo apt-get install -y pipx || sudo dnf install -y pipx || sudo pacman -S --needed --noconfirm pipx
-
-pipx install gallery-dl
-pipx install glances
-pipx install mycli
-pipx install ps_mem
-pipx install shellcheck-py
-pipx install speedtest-cli
-pipx install tldr
-pipx install yt-dlp
+install_pipx
+prompt_user
+install_packages
 
 unset USE_EMOJI
