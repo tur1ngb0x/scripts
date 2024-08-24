@@ -5,7 +5,7 @@ mkdir -pv "${HOME}"/Apps
 mkdir -pv "${HOME}"/.local/bin
 mkdir -pv "${HOME}"/.local/share/applications
 
-gui_code() {
+function gui_vscode {
 	[[ -f "${HOME}"/Apps/VSCode-linux-x64/bin/code ]] && echo "already installed ${HOME}/Applications/VSCode-linux-x64/bin/code" && return
 	mkdir -pv "${HOME}"/Apps
 	wget -4O- 'https://code.visualstudio.com/sha/download?build=stable&os=linux-x64' | tar -vxz -C "${HOME}"/Apps
@@ -42,7 +42,7 @@ gui_code() {
 	#mkdir -pv "${HOME}"/Apps/VSCode-linux-x64/data/tmp
 }
 
-gui_firefox() {
+function gui_firefox {
 	[[ -f "${HOME}"/Apps/firefox/firefox ]] && echo "already installed: ${HOME}/Applications/firefox/firefox" && return
 	mkdir -pv "${HOME}"/Apps
 	wget -4O- 'https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Apps
@@ -63,7 +63,7 @@ $ sudo pacman -S dbus-glib
 EOF
 }
 
-gui_thunderbird() {
+function gui_thunderbird {
 	[[ -f "${HOME}"/Apps/thunderbird/thunderbird ]] && echo "already installed: ${HOME}/Applications/thunderbird/thunderbird" && return
 	mkdir -pv "${HOME}"/Apps
 	wget -4O- 'https://download.mozilla.org/?product=thunderbird-latest-ssl&os=linux64&lang=en-US' | tar -xvjC "${HOME}"/Apps
@@ -76,15 +76,14 @@ gui_thunderbird() {
 	sed -i "s|Icon=/opt/thunderbird/chrome/icons/default/default128.png|Icon=${HOME}/Applications/thunderbird/chrome/icons/default/default128.png|g" "${HOME}"/.local/share/applications/thunderbird.desktop
 }
 
-gui_telegram()
-{
+function gui_telegram {
+	mkdir -pv "${HOME}"/Apps
 	wget -4O /tmp/telegram.tar.xz 'https://telegram.org/dl/desktop/linux'
 	tar --file /tmp/telegram.tar.xz -vvv --extract --xz --directory "${HOME}"/Apps
 	(nohup "${HOME}"/Apps/Telegram/Telegram &) &> /tmp/telegram.txt
 }
 
-gui_toolbox()
-{
+function gui_toolbox {
 	wget -4O- 'https://data.services.jetbrains.com/products/download?platform=linux&code=TBA' | tar -xvz --strip-components=1 -C /tmp && (nohup /tmp/jetbrains-toolbox &) &> /tmp/jetbrains-toolbox.out
 	wget -4O /tmp/toolbox.tar.gz 'https://data.services.jetbrains.com/products/download?platform=linux&code=TBA'
 	tar --file /tmp/toolbox.tar.gz -vvv --extract --gzip --strip-components 1 --directory /tmp
@@ -92,8 +91,8 @@ gui_toolbox()
 }
 
 # begin script from here
-gui_code
 gui_firefox
 gui_thunderbird
 gui_telegram
 gui_toolbox
+gui_vscode

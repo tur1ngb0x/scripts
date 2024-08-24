@@ -1,35 +1,63 @@
 #!/usr/bin/env bash
 
-[[ $(id -u) -eq 0 ]] && echo "Run the script as a non-root user. Exiting." && exit
-cdir=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
-echo() { tput bold && tput setaf 4 && printf "\\n\\n\\n%s\\n" "${1}" && tput sgr0; }
+text(){ tput rev; printf " %s \n" "${1}"; tput sgr0; }
 
-echo '[SET] - apt'
-printf 'Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;\\nAcquire::Languages none;\\n' | sudo tee /etc/apt/apt.conf.d/99-slim-apt
-sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
-sudo apt-get clean && sudo apt-get update
+function apply_apt {
+	text 'apt'
+	sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
+	printf "Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;\nAcquire::Languages none;" | sudo tee /etc/apt/apt.conf.d/99-slim-apt
+	sudo apt-get clean && sudo apt-get update
+}
 
-echo '[SET] hostname'
-hostnamectl set-hostname a5
-printf '127.0.0.1\\tlocalhost\\n127.0.1.1\\ta5\\n' | sudo tee /etc/hosts
+function apply_hostname {
+	text 'hostname'
+	hostnamectl set-hostname a5
+	[[ ! -f /etc/hosts.bak ]] && sudo cp -fv /etc/hosts /etc/hosts.bak
+	printf "127.0.0.1 localhost\n127.0.1.1 a5\n" | sudo tee /etc/hosts
+}
 
-echo '[SET] locale'
-localectl set-locale LANG=en_IN.UTF-8
-localectl set-locale LANGUAGE=en_IN:en
-sudo locale-gen en_IN.UTF-8
+function apply_locale {
+	text 'locale'
+	sudo locale-gen en_IN.UTF-8
+	localectl set-locale LANG=en_IN.UTF-8
+	localectl set-locale LANGUAGE=en_IN:en
+}
 
-echo '[SET] time'
-timedatectl set-timezone Asia/Kolkata
-timedatectl set-ntp true
-timedatectl set-local-rtc true
-timedatectl --adjust-system-clock
+function apply_swap {
+	text 'swap'
+	printf 'vm.swappiness = 1\\n' | sudo tee /etc/sysctl.d/99-vm-swappiness.conf
+}
 
-# echo '[SET] swap'
-# printf 'vm.swappiness = 1\\n' | sudo tee /etc/sysctl.d/99-vm-swappiness.conf
+function apply_time {
+	text 'time'
+	timedatectl set-timezone Asia/Kolkata
+	timedatectl set-ntp true
+	timedatectl set-local-rtc true
+	timedatectl --adjust-system-clock
+}
 
-echo '[SET] wifi'
-sudo rm -fv /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
-printf "[connection]\\nwifi.powersave = 2\\n" | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave.conf
+function apply_wireless {
+	text 'wireless'
+	sudo rm -fv /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+	printf "[connection]\nwifi.powersave = 2\n" | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave.conf
+}
 
-echo '[SET] - zram'
-sudo apt-get install -y zram-config zram-tools
+function apply_zram {
+	text 'zram'
+	sudo apt-get install -y zram-config zram-tools
+	[[ ! -f /etc/default/zramswap.bak ]] && sudo cp -fv /etc/default/zramswap /etc/default/zramswap.bak
+	printf "ALGO=lz4\nPERCENT=40\nSIZE=4096\nPRIORITY=180\n" | sudo tee /etc/default/zramswap
+}
+
+function main {
+	apply_apt
+	apply_hostname
+	apply_locale
+	apply_swap
+	apply_time
+	apply_wireless
+	apply_zram
+}
+
+# begin script from here
+main "${@}"

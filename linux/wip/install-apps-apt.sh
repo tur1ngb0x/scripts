@@ -20,12 +20,6 @@ function apt_chrome {
 	sudo apt-get install -y /tmp/chrome.deb
 }
 
-function apt_vscode {
-	sudo apt-get install -y wget
-	wget -4O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
-	sudo apt-get install -y /tmp/code.deb
-}
-
 function apt_docker {
 	sudo apt-get install -y curl wget
 	for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get purge --autoremove "${pkg}"; done
@@ -35,8 +29,25 @@ function apt_docker {
 	cat <<-EOF | sudo tee /etc/apt/sources.list.d/docker.list
 	deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu/ ${codename} stable
 	EOF
-	sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+	sudo apt-get update
+	sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 	sudo groupadd -f docker && sudo usermod -aG docker "${USER}"
+}
+
+function apt_spotify {
+	sudo apt-get install -y curl
+	curl -L https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+	cat <<-EOF | sudo tee /etc/apt/sources.list.d/spotify.list
+	deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/spotify.gpg] http://repository.spotify.com stable non-free
+	EOF
+	sudo apt-get update
+	sudo apt-get install -y spotify-client
+}
+
+function apt_vscode {
+	sudo apt-get install -y wget
+	wget -4O /tmp/code.deb 'https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64'
+	sudo apt-get install -y /tmp/code.deb
 }
 
 # begin script from here
