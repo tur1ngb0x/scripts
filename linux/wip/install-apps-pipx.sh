@@ -25,7 +25,8 @@ function install_packages
 
 function prompt_user
 {
-	read -p "Do you want to continue? (Y): " -n 1 -r answer; echo
+	echo "These pipx packages will be installed: ${packages[*]}"
+	read -p "Press Y/y to continue, any other key to exit: " -n 1 -r answer; echo
 	if [[ ! "${answer}" =~ ^[Yy]$ ]]; then
 		exit
 	fi
