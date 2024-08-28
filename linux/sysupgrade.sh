@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 
-LC_ALL=C; export LC_ALL
+LC_ALL=C
 
-header(){
-	tput rev
-	printf ' %s \n' "${1}";
-	tput sgr0
-}
+function text { tput rev; printf ' %s \n' "${1}";tput sgr0; }
 
 function upgrade_apt {
-	header 'apt'
+	text 'apt'
 	{ set -x ; } &> /dev/null
 	sudo apt-get clean
 	sudo apt-get update
@@ -19,16 +15,16 @@ function upgrade_apt {
 }
 
 function upgrade_dnf {
-	header 'dnf'
+	text 'dnf'
 	{ set -x ; } &> /dev/null
-	sudo dnf  clean all
+	sudo dnf clean all
 	sudo dnf upgrade --refresh
 	sudo dnf autoremove
 	{ set +x ; } &> /dev/null
 }
 
 function upgrade_pacman {
-	header 'pacman'
+	text 'pacman'
 	{ set -x ; } &> /dev/null
 	sudo reflector --ipv4 --protocol http,https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 	sudo pacman -Scc
@@ -38,7 +34,7 @@ function upgrade_pacman {
 }
 
 function upgrade_snap {
-	header 'snap'
+	text 'snap'
 	{ set -x ; } &> /dev/null
 	sudo snap refresh
 	sudo snap refresh --hold
@@ -53,7 +49,7 @@ function upgrade_snap {
 }
 
 function upgrade_flatpak {
-	header 'flatpak'
+	text 'flatpak'
 	{ set -x ; } &> /dev/null
 	flatpak --user update --appstream
 	flatpak --user update
@@ -65,14 +61,14 @@ function upgrade_flatpak {
 }
 
 function upgrade_code {
-	header 'code'
+	text 'code'
 	{ set -x ; } &> /dev/null
 	code --update-extensions
 	{ set +x ; } &> /dev/null
 }
 
 function upgrade_docker {
-	header 'docker'
+	text 'docker'
 	{ set -x ; } &> /dev/null
 	export DOCKER_CLI_HINTS="false"
 	for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
@@ -82,9 +78,9 @@ function upgrade_docker {
 }
 
 function upgrade_pipx {
-	header 'pipx'
+	text 'pipx'
 	{ set -x ; } &> /dev/null
-	export USE_EMOJI="0"
+	USE_EMOJI="0"; export USE_EMOJI
 	pipx upgrade-all --verbose
 	{ set +x ; } &> /dev/null
 }
@@ -97,7 +93,7 @@ function main {
 	elif [[ -f /usr/bin/pacman ]]; then
 		upgrade_pacman
 	else
-		header 'only apt/dnf/pacman are supported.'
+		text 'only apt/dnf/pacman are supported.'
 	fi
 
 	if [[ -f /usr/bin/snap ]]; then
@@ -122,4 +118,6 @@ function main {
 }
 
 # begin script from here
-main
+main "${@}"
+
+unset LC_ALL
