@@ -68,6 +68,7 @@ function upgrade_snap {
 			"${ELEVATE}" snap remove --purge "${name}" --revision="${revision}"
 		fi; done
 	unset name version revision tracking publisher notes
+	#sudo snap remove --purge $(sudo snap list --all | awk 'NR > 1 {print $1}' | xargs)
 	{ set +x ; } &> /dev/null
 }
 
