@@ -9,9 +9,9 @@ function apt_brave {
 	sudo curl -Lo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 	cat <<-EOF | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 	deb [arch=amd64 signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main
+	EOF
 	sudo apt-get update
 	sudo apt-get install -y brave-browser
-	EOF
 }
 
 function apt_chrome {
