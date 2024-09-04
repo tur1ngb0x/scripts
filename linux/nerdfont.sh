@@ -1,69 +1,48 @@
 #!/usr/bin/env bash
 
-usage()
-{
-	cat << EOF
-Fonts:
-
-Syntax:
-	${0##*/} 'font-name'
-Usage:
-	${0##*/} 'IBMPlexMono'
-	${0##*/} 'Terminus'
-EOF
-}
-
-usage()
-{
+function usage {
 	cat << EOF
 
 Description:
-Install any nerd font in ${HOME}/.local/share/fonts/
+Install https://github.com/ryanoasis/nerd-fonts in ${HOME}/.local/share/fonts
 
 Syntax:
 $ ${0##*/} 'font-name'
 
-Fonts:
-https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts
-
 Usage:
-$ ${0##*/} 'LiberationMono'
+$ ${0##*/} 'Terminus'
 
 EOF
 }
 
+function get_fonts {
+	echo "Fonts:"
+	[[ ! -f /tmp/nf-folders.txt ]] && (curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &> /tmp/nf-folders.txt
+	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' /tmp/nf-folders.txt
+}
+
 if [[ "${#}" -eq 0 ]]; then
-	usage
-	exit
+	usage; get_fonts; exit
 fi
 
+{ set -x -e; } &> /dev/null
 
-{ set -x ; } &> /dev/null
+# Create folders
+mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
 
-rm -fr "${HOME}"/src/tmp/nerd-fonts/
+# Download font
+curl -s -L -o /tmp/nerd-fonts/"${1}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${1}".tar.xz
 
-rm -fr "${HOME}"/.local/share/fonts/"${1}"/
+# Extract fonts
+tar --file /tmp/nerd-fonts/"${1}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${1}"
 
-mkdir -p "${HOME}"/src/tmp/nerd-fonts/
+# Fix ownership and permissions
+chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
 
-mkdir -p "${HOME}"/.local/share/fonts/"${1}"/
-
-git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts "${HOME}"/src/tmp/nerd-fonts/
-
-pushd "${HOME}"/src/tmp/nerd-fonts || exit
-
-git sparse-checkout add patched-fonts/"${1}"/
-
-pushd "${HOME}"/src/tmp/nerd-fonts/patched-fonts || exit
-
-find "${HOME}"/src/tmp/nerd-fonts/patched-fonts  -type f -iname "*.ttf" -exec mv -f {} "${HOME}"/.local/share/fonts/"${1}"/ \;
-
-echo 'updating font cache...'
-
+# Regenerate font cache
 fc-cache -r
 
-popd || exit
+# Show fonts
+xdg-open "${HOME}"/.local/share/fonts &> /dev/null
 
-popd || exit
-
-{ set +x ; } &> /dev/null
+{ set +x +e; } &> /dev/null

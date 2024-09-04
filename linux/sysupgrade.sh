@@ -62,10 +62,13 @@ function upgrade_snap {
 	"${ELEVATE}" snap refresh
 	"${ELEVATE}" snap refresh --hold
 	"${ELEVATE}" snap set system snapshots.automatic.retention=no
+	{ set +x ; } &> /dev/null
 	"${ELEVATE}" snap list --all | while read -r name version revision tracking publisher notes
 		do if [[ "${notes}" = *disabled* ]]; then
 			echo "${name}" "${version}" "${tracking}" "${publisher}" "${notes}"
+			{ set -x ; } &> /dev/null
 			"${ELEVATE}" snap remove --purge "${name}" --revision="${revision}"
+			{ set +x ; } &> /dev/null
 		fi; done
 	unset name version revision tracking publisher notes
 	#sudo snap remove --purge $(sudo snap list --all | awk 'NR > 1 {print $1}' | xargs)
@@ -104,11 +107,9 @@ function upgrade_docker {
 function upgrade_pipx {
 	text 'pipx'
 	{ set -x ; } &> /dev/null
-	USE_EMOJI="0"; export USE_EMOJI
-	pipx upgrade-all
+	USE_EMOJI="0" pipx upgrade-all
 	{ set +x ; } &> /dev/null
 }
-
 
 function pm_first_party {
 	for pm in apt dnf pacman; do
@@ -133,5 +134,3 @@ function main {
 
 # begin script from here
 main "${@}"
-
-unset LC_ALL

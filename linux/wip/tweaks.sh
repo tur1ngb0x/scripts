@@ -18,9 +18,11 @@ function apply_hostname {
 
 function apply_locale {
 	text 'locale'
-	sudo locale-gen en_IN.UTF-8
-	localectl set-locale LANG=en_IN.UTF-8
-	localectl set-locale LANGUAGE=en_IN:en
+	_locale_="en_IN"
+	_locale_="en_US"
+	sudo locale-gen "${_locale_}".UTF-8
+	localectl set-locale LANG="${_locale_}".UTF-8
+	localectl set-locale LANGUAGE="${_locale_}":en
 }
 
 function apply_swap {
