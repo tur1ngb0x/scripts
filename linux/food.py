@@ -17,18 +17,21 @@ DAYS_WEEK = 7
 LINE_CHAR = '-'
 LINE_LENGTH = 18
 
+
 def print_line():
-	print(f"{LINE_CHAR * LINE_LENGTH}")
+    print(f"{LINE_CHAR * LINE_LENGTH}")
+
 
 def calculate_cost(total_price, total_quantity, serving_size, days=DAYS_WEEK):
-	# if total_price == 0 or total_quantity == 0 or serving_size == 0:
-	# 	print("Error: total_price, total_quantity, and serving_size must all be greater than zero.")
-	# 	print("Action: Exiting...")
-	# 	exit()
-	daily_cost = (total_price / total_quantity) * serving_size
-	weekly_cost = daily_cost * days
-	monthly_cost = daily_cost * DAYS_MONTH
-	return daily_cost, weekly_cost, monthly_cost
+    # if total_price == 0 or total_quantity == 0 or serving_size == 0:
+    # 	print("Error: total_price, total_quantity, and serving_size must all be greater than zero.")
+    # 	print("Action: Exiting...")
+    # 	exit()
+    daily_cost = (total_price / total_quantity) * serving_size
+    weekly_cost = daily_cost * days
+    monthly_cost = daily_cost * DAYS_MONTH
+    return daily_cost, weekly_cost, monthly_cost
+
 
 # chicken
 t_chicken = 'Chicken Breast'
@@ -70,8 +73,8 @@ d_omega, w_omega, m_omega = calculate_cost(p_omega, q_omega, s_omega)
 
 # vitamin d
 t_vitd = 'Vitamin D3'
-b_vitd = 'Super D3 60000 IU'
-p_vitd = 67
+b_vitd = 'Gemsoline 60000 IU'
+p_vitd = 90
 q_vitd = 4
 s_vitd = (1 / 7)
 u_vitd = 'unit(s)'
@@ -79,7 +82,7 @@ d_vitd, w_vitd, m_vitd = calculate_cost(p_vitd, q_vitd, s_vitd)
 
 # vitamin b
 t_vitb = 'Vitamin B Complex'
-b_vitd = 'Becosule Z'
+b_vitb = 'Becosule Z'
 p_vitb = 52
 q_vitb = 20
 s_vitb = 1
@@ -88,20 +91,20 @@ d_vitb, w_vitb, m_vitb = calculate_cost(p_vitb, q_vitb, s_vitb)
 
 # egg
 t_egg = 'Whole Eggs'
-p_egg = 200
+p_egg = 180
 q_egg = 30
 s_egg = 3
 u_egg = 'unit(s)'
 d_egg, w_egg, m_egg = calculate_cost(p_egg, q_egg, s_egg)
 
 total_daily_cost = \
-	d_chicken + \
-	d_egg + \
-	d_magnesium + \
-	d_omega + \
-	d_vitb + \
-	d_vitd + \
-	d_whey
+    d_chicken + \
+    d_egg + \
+    d_magnesium + \
+    d_omega + \
+    d_vitb + \
+    d_vitd + \
+    d_whey
 
 total_weekly_cost = total_daily_cost * DAYS_WEEK
 
