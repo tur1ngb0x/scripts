@@ -51,7 +51,7 @@ function apt_vscode {
 }
 
 # begin script from here
-apt_brave
-apt_chrome
-apt_vscode
-apt_docker
+#apt_brave
+#apt_chrome
+#apt_vscode
+#apt_docker
