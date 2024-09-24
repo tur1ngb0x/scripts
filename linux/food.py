@@ -52,6 +52,15 @@ s_whey = 35
 u_whey = 'gm'
 d_whey, w_whey, m_whey = calculate_cost(p_whey, q_whey, s_whey)
 
+# yogurt
+t_yogurt = 'Yogurt'
+b_yogurt = 'Milky Mist Natural Greek Yogurt'
+p_yogurt = 30
+q_yogurt = 100
+s_yogurt = 100
+u_yogurt = 'gm'
+d_yogurt, w_yogurt, m_yogurt = calculate_cost(p_yogurt, q_yogurt, s_yogurt)
+
 # magnesium
 t_magnesium = 'Magnesium'
 b_magnesium = 'Carbamide Forte Magnesium Glycinate 2000mg'
@@ -100,6 +109,7 @@ d_egg, w_egg, m_egg = calculate_cost(p_egg, q_egg, s_egg)
 total_daily_cost = \
     d_chicken + \
     d_egg + \
+	d_yogurt + \
     d_magnesium + \
     d_omega + \
     d_vitb + \
@@ -116,6 +126,7 @@ print(f"Item\t\t\tCost\t\tQuantity\tServing\t\tDaily\t\tWeekly\t\tMonthly")
 print_line()
 print(f"{t_chicken}\t\t{CURRENCY} {p_chicken:.0f}\t\t{q_chicken:.0f} {u_chicken} \t{s_chicken:.0f} {u_chicken}\t\t{CURRENCY} {d_chicken:.2f}\t\t{CURRENCY} {w_chicken:.2f}\t{CURRENCY} {m_chicken:.2f}")
 print(f"{t_whey}\t\t\t{CURRENCY} {p_whey:.0f}\t\t{q_whey:.0f} {u_whey}\t\t{s_whey:.0f} {u_whey}\t\t{CURRENCY} {d_whey:.2f}\t\t{CURRENCY} {w_whey:.2f}\t{CURRENCY} {m_whey:.2f}")
+print(f"{t_yogurt}\t\t\t{CURRENCY} {p_yogurt:.0f}\t\t{q_yogurt:.0f} {u_yogurt}\t\t{s_yogurt:.0f} {u_yogurt}\t\t{CURRENCY} {d_yogurt:.2f}\t\t{CURRENCY} {w_yogurt:.2f}\t{CURRENCY} {m_yogurt:.2f}")
 print(f"{t_egg}\t\t{CURRENCY} {p_egg:.0f}\t\t{q_egg:.0f} {u_egg}\t\t{s_egg:.0f} {u_egg}\t\t{CURRENCY} {d_egg:.2f}\t\t{CURRENCY} {w_egg:.2f}\t{CURRENCY} {m_egg:.2f}")
 print(f"{t_omega}\t\t\t{CURRENCY} {p_omega:.0f}\t\t{q_omega:.0f} {u_omega}\t\t{s_omega:.0f} {u_omega}\t\t{CURRENCY} {d_omega:.2f}\t\t{CURRENCY} {w_omega:.2f}\t{CURRENCY} {m_omega:.2f}")
 print(f"{t_magnesium}\t\t{CURRENCY} {p_magnesium:.0f}\t\t{q_magnesium:.0f} {u_magnesium}\t\t{s_magnesium:.0f} {u_magnesium}\t\t{CURRENCY} {d_magnesium:.2f}\t\t{CURRENCY} {w_magnesium:.2f}\t\t{CURRENCY} {m_magnesium:.2f}")

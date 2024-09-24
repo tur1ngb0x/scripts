@@ -2,16 +2,27 @@
 
 LC_ALL=C
 
-function text { printf "# %s\n" "${1}"; }
+function text {
+	tput rev
+	printf " %s \n" "$(which "${1}")"
+	tput sgr0
+}
 
 function elevate_privileges {
 	if [[ $(id -ur) -eq 0 ]]; then
 		echo 'Re-run this script as a non-root user'
 		exit
+	fi
+
+	if [[ $(command -v sudo) ]]; then
+		ELEVATE="sudo"
 	elif [[ $(command -v doas) ]]; then
 		ELEVATE="doas"
-	elif [[ $(command -v sudo) ]]; then
-		ELEVATE="sudo"
+	elif [[ $(command -v sudo-rs) ]]; then
+		ELEVATE="sudo-rs"
+	else
+		echo "No elevation tool found. Please install 'doas' or 'sudo' or 'sudo-rs'"
+		exit
 	fi
 }
 
