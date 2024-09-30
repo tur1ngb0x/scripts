@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-usage()
-{
-	cat << EOF
+usage() {
+	cat <<EOF
 
 Description:
     Uses 'rsync' to copy data and then performs 'sync' twice.
@@ -22,7 +21,7 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-rsync_flags=( --verbose --recursive --no-inc-recursive --compress-level=0 --human-readable --progress --stats )
+rsync_flags=(--verbose --recursive --no-inc-recursive --compress-level=0 --human-readable --progress --stats)
 
 echo ' copying files using rsync '
 rsync "${rsync_flags[@]}" "${@}"

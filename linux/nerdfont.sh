@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function usage {
-	cat << EOF
+	cat <<EOF
 
 Description:
 Install https://github.com/ryanoasis/nerd-fonts in ${HOME}/.local/share/fonts
@@ -17,15 +17,17 @@ EOF
 
 function get_fonts {
 	echo "Fonts:"
-	[[ ! -f /tmp/nf-folders.txt ]] && (curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &> /tmp/nf-folders.txt
+	[[ ! -f /tmp/nf-folders.txt ]] && (curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &>/tmp/nf-folders.txt
 	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' /tmp/nf-folders.txt
 }
 
 if [[ "${#}" -eq 0 ]]; then
-	usage; get_fonts; exit
+	usage
+	get_fonts
+	exit
 fi
 
-{ set -x -e; } &> /dev/null
+{ set -x -e; } &>/dev/null
 
 # Create folders
 mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
@@ -43,6 +45,6 @@ chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
 fc-cache -r
 
 # Show fonts
-xdg-open "${HOME}"/.local/share/fonts &> /dev/null
+xdg-open "${HOME}"/.local/share/fonts &>/dev/null
 
-{ set +x +e; } &> /dev/null
+{ set +x +e; } &>/dev/null

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-usage()
-{
-	cat << EOF
+usage() {
+	cat <<EOF
 
 Description:
 Record the entire of currently active screen using ffmpeg.
@@ -37,22 +36,22 @@ quality="${2}"
 
 # create screenrecord directory
 if [[ ! -d "${rootdir}" ]]; then
-	mkdir -pv "${rootdir}" &> /dev/null
+	mkdir -pv "${rootdir}" &>/dev/null
 fi
 
 # capture screenrecord
 if [[ $(command -pv ffmpeg) ]]; then
-	(\
+	(
 		ffmpeg \
-		-f 'x11grab' \
-		-s '1920x1080' \
-		-r "${framerate}" \
-		-i "${DISPLAY}" \
-		-c:v 'libx264rgb' \
-		-preset 'ultrafast' \
-		-crf "${quality}" \
-		"${file}" \
-	) &> "${log}"
+			-f 'x11grab' \
+			-s '1920x1080' \
+			-r "${framerate}" \
+			-i "${DISPLAY}" \
+			-c:v 'libx264rgb' \
+			-preset 'ultrafast' \
+			-crf "${quality}" \
+			"${file}"
+	) &>"${log}"
 	echo -e "file\t${file}"
 	echo -e "log\t${log}"
 elif [[ $(command -pv notify-send) ]]; then

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-usage()
-{
-	cat << EOF
+usage() {
+	cat <<EOF
 
 Description:
     Change the brightness level of the monitor using ddcutil.

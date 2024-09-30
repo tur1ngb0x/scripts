@@ -19,7 +19,10 @@ for REPO in "${REPOS[@]}"; do
 	# remove .git from repo
 	REPO="${REPO%.git}"
 	# print repo name
-	tput rev; tput bold; echo -e "\n ${REPO} "; tput sgr0
+	tput rev
+	tput bold
+	echo -e "\n ${REPO} "
+	tput sgr0
 	# show git branch
 	#git --git-dir="${REPO}/.git" --work-tree="${REPO}" branch --all --no-color
 	# show git remote

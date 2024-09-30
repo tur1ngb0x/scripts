@@ -54,11 +54,10 @@ function upgrade_snap {
 	"${ELEVATE}" snap refresh
 	"${ELEVATE}" snap refresh --hold
 	"${ELEVATE}" snap set system snapshots.automatic.retention=no
-	"${ELEVATE}" snap list --all | while read -r name version revision tracking publisher notes
-		do if [[ "${notes}" = *disabled* ]]; then
-			echo "${name}" "${version}" "${tracking}" "${publisher}" "${notes}"
-			"${ELEVATE}" snap remove --purge "${name}" --revision="${revision}"
-		fi; done
+	"${ELEVATE}" snap list --all | while read -r name version revision tracking publisher notes; do if [[ "${notes}" = *disabled* ]]; then
+		echo "${name}" "${version}" "${tracking}" "${publisher}" "${notes}"
+		"${ELEVATE}" snap remove --purge "${name}" --revision="${revision}"
+	fi; done
 	unset name version revision tracking publisher notes
 	#sudo snap remove --purge $(sudo snap list --all | awk 'NR > 1 {print $1}' | xargs)
 }
@@ -82,7 +81,7 @@ function upgrade_docker {
 	text 'docker'
 	export DOCKER_CLI_HINTS="false"
 	for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
-			docker pull "${img}"
+		docker pull "${img}"
 	done
 }
 

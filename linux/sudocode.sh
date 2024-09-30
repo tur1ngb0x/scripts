@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-usage()
-{
-	cat << EOF
+usage() {
+	cat <<EOF
 Description:
 	Open a file or folder using Visual Studio Code as superuser
 Syntax:
@@ -18,7 +17,9 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-tput rev; echo -e "\n opening ${*} with $(which code) as superuser \n"; tput sgr0
+tput rev
+echo -e "\n opening ${*} with $(which code) as superuser \n"
+tput sgr0
 
 sudo code \
 	--disable-chromium-sandbox \
