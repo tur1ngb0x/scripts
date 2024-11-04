@@ -13,3 +13,41 @@ products = [
     {"name": "whey_60", "protein_per_100g": 78, "quantity": 60 * 32, "price": 3500},
     {"name": "whey_choco", "protein_per_100g": 74, "quantity": 30 * 34, "price": 2299}
 ]
+
+def calculate_protein_per_inr(products):
+    """Calculates the protein per INR for each product.
+
+    Args:
+        products: A list of dictionaries, each representing a product with
+            the following keys:
+            - name: The name of the product.
+            - protein_per_pack: The protein content per pack (in grams).
+            - quantity: The total quantity of the product (in grams).
+            - price: The price of the product (in INR).
+
+    Returns:
+        A list of tuples, each containing the product name and the
+        calculated protein per INR.
+    """
+
+    results = []
+    for product in products:
+        # Calculate total protein content
+        if 'protein_per_100g' in product:
+            total_protein = product['quantity'] * product['protein_per_100g'] / 100
+        else:
+            total_protein = product['quantity'] * product['protein_per_pack']
+
+        # Calculate protein per INR
+        protein_per_inr = total_protein / product['price']
+
+        results.append((product['name'], protein_per_inr))
+
+    return results
+
+# Calculate protein per INR for each product
+results = calculate_protein_per_inr(products)
+
+# Print the results
+for name, protein_per_inr in results:
+    print(f"{name}: {protein_per_inr:.2f} g/INR")
