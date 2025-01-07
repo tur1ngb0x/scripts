@@ -15,15 +15,21 @@ $ ${0##*/} 'Terminus'
 EOF
 }
 
-function get_fonts {
-	echo "Fonts:"
+function fonts_local {
+	printf "\nInstalled Fonts:\n"
+	find "${HOME}"/.local/share/fonts -mindepth 1 -type d -exec basename {} \; | awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}'
+}
+
+function fonts_remote {
+	printf "\nAvailable Fonts:\n"
 	[[ ! -f /tmp/nf-folders.txt ]] && (curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &>/tmp/nf-folders.txt
 	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' /tmp/nf-folders.txt
 }
 
 if [[ "${#}" -eq 0 ]]; then
 	usage
-	get_fonts
+	fonts_local
+	fonts_remote
 	exit
 fi
 
