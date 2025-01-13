@@ -141,14 +141,18 @@ function upgrade_pipx {
 function main {
     LC_ALL=C
     export PS1='\[$(printf "\033[7m")\] \u@\h \w \[$(printf "\033[0m")\]\n\$ ';
+
     elevate_user
+
     upgrade_apt
     upgrade_apk
     upgrade_dnf
     upgrade_pacman
+
     upgrade_code
     upgrade_docker
     upgrade_pipx
+
     upgrade_flatpak
     upgrade_snap
 }
