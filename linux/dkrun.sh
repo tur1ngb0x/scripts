@@ -15,10 +15,10 @@ Images/Tags:
     amazonlinux: 2024, 2023
     archlinux: base
     clearlinux: base
-    fedora: 42, 41
     oraclelinux: 9, 8
-    ubuntu: noble, jammy
-    debian: bookworm, bullseye
+    fedora: 42, 41 | rawhide
+    ubuntu: noble, jammy | devel, rolling
+    debian: bookworm, bullseye | sid trixie
 
 Shells:
     Bash: bash
