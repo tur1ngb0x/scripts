@@ -28,7 +28,7 @@ function live_updates {
 }
 
 function live_git {
-	mkdir -pv $HOME/src/
+	mkdir -pv "${HOME}"/src/
 	git clone https://github.com/tur1ngb0x/dotfiles $HOME/src/dotfiles
 	git clone https://github.com/tur1ngb0x/scripts $HOME/src/scripts
 }
