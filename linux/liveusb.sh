@@ -47,6 +47,7 @@ live_brave() {
     if ! command -v brave-browser > /dev/null 2>&1; then
         wget -4O '/tmp/brave.sh' 'https://dl.brave.com/install.sh'
         sh '/tmp/brave.sh'
+		sudo sed -i 's|deb \[|deb [arch=amd64 |' /etc/apt/sources.list.d/brave-browser-release.list
     else
         echo "already installed at $(command -v brave-browser)"
     fi
