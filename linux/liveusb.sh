@@ -5,8 +5,6 @@ live_network() {
     sudo sh -c 'sysctl -w net.ipv6.conf.default.disable_ipv6=1'
     sudo sh -c 'sysctl -w net.ipv6.conf.lo.disable_ipv6=1'
     sudo sh -c 'systemctl restart NetworkManager'
-    echo 'sleep 15'
-    sleep 15
 }
 
 live_host() {
