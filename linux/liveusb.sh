@@ -32,7 +32,7 @@ live_git() {
 }
 
 live_brave() {
-    if ! command -v brave-browser 2>&1; then
+    if ! command -v brave-browser > /dev/null 2>&1; then
         wget -4O '/tmp/brave.sh' 'https://dl.brave.com/install.sh'
         sh '/tmp/brave.sh'
     else
@@ -41,7 +41,7 @@ live_brave() {
 }
 
 live_chrome() {
-    if ! command -v google-chrome 2>&1; then
+    if ! command -v google-chrome > /dev/null 2>&1; then
         wget -4O '/tmp/chrome.deb' 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
         sudo sh -c 'apt-get install -y /tmp/chrome.deb'
     else
@@ -50,7 +50,7 @@ live_chrome() {
 }
 
 live_edge() {
-    if ! command -v microsoft-edge 2>&1; then
+    if ! command -v microsoft-edge > /dev/null 2>&1; then
         wget -4O '/tmp/edge.deb' 'https://go.microsoft.com/fwlink?linkid=2149051'
         sudo sh -c 'apt-get install -y /tmp/edge.deb'
     else
