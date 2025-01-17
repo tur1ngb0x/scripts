@@ -27,8 +27,20 @@ live_updates() {
 
 live_git() {
     mkdir -p "$HOME/src/"
-    git clone https://github.com/tur1ngb0x/dotfiles "$HOME/src/dotfiles"
-    git clone https://github.com/tur1ngb0x/scripts "$HOME/src/scripts"
+
+	if [ -d "${HOME}"/src/dotfiles ]; then
+		cd "${HOME}"/src/dotfiles || return
+		git pull
+	else
+		git clone https://github.com/tur1ngb0x/dotfiles "${HOME}"/src/dotfiles
+	fi
+
+	if [ -d "${HOME}"/src/scripts ]; then
+		cd "${HOME}"/src/scripts || return
+		git pull
+	else
+		git clone https://github.com/tur1ngb0x/scripts "${HOME}"/src/scripts
+	fi
 }
 
 live_brave() {
