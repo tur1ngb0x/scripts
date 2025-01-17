@@ -5,6 +5,8 @@ sudo bash -c 'sysctl -w net.ipv6.conf.all.disable_ipv6=1'
 sudo bash -c 'sysctl -w net.ipv6.conf.default.disable_ipv6=1'
 sudo bash -c 'sysctl -w net.ipv6.conf.lo.disable_ipv6=1'
 sudo bash -c 'systemctl restart NetworkManager'
+echo 'sleep 15'
+sleep 15
 
 # hostname
 sudo bash -c 'printf "127.0.0.1 localhost\n127.0.1.1 live\n" | tee /etc/hosts'
@@ -18,7 +20,7 @@ timedatectl --adjust-system-clock
 
 # updates
 sudo bash -c 'apt-get clean'
-sudo bash -c 'apt-get update
+sudo bash -c 'apt-get update'
 sudo bashd -c 'apt-get install -y curl wget git micro nano vim xclip'
 
 # git
@@ -27,7 +29,7 @@ git clone https://github.com/tur1ngb0x/dotfiles $HOME/src/dotfiles
 git clone https://github.com/tur1ngb0x/scripts $HOME/src/scripts
 
 # brave
-wget -4O '/tmp/brave.sh' 'https://dl.brave.com/install.sh
+wget -4O '/tmp/brave.sh' 'https://dl.brave.com/install.sh'
 sh '/tmp/brave.sh'
 
 # chrome
