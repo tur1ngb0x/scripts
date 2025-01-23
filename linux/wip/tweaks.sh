@@ -46,6 +46,10 @@ function apply_wireless {
 	printf "[connection]\nwifi.powersave = %s\n" "${tweak_wireless}" | sudo tee /etc/NetworkManager/conf.d/99-wifi-powersave.conf
 }
 
+function apply_x11 {
+	sudo sed -i 's|ERRFILE=$HOME/.xsession-errors|ERRFILE=/tmp/xsession-errors|g' /etc/X11/Xsession
+}
+
 function apply_zram {
 	text 'zram'
 	tweak_zram="4096"
@@ -60,6 +64,7 @@ function main {
 	apply_locale
 	apply_time
 	apply_wireless
+	apply_x11
 	apply_zram
 }
 

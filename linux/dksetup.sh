@@ -59,8 +59,8 @@ docker-ps1
 
 # launch distro specific functions
 case "${PKG}" in
-apt) docker-apt ;;
-dnf) docker-dnf ;;
-pacman) docker-pacman ;;
-*) echo 'unsupported package manager' ;;
+	apt) docker-apt ;;
+	dnf) docker-dnf ;;
+	pacman) docker-pacman ;;
+	*) echo 'unsupported package manager' ;;
 esac

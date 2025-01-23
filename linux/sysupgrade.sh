@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-function text {
-    printf "\n# %s\n" "$(command -v "${1}")"
-}
+function text { printf "\033[7m # %s \033[0m\n" "$(command -v "${1}")"; }
 
 function elevate_user() {
     if [[ "$(id -ur)" -eq 0 ]]; then
@@ -20,21 +18,24 @@ function elevate_user() {
 function upgrade_apt {
     if [[ -f /usr/bin/apt-get ]]; then
         text 'apt'
+		{ set -x ; } &> /dev/null
         ${ELEVATE} apt-get clean
         ${ELEVATE} apt-get update
         ${ELEVATE} apt-get dist-upgrade
-        ${ELEVATE} apt-get install bash-completion curl wget git nano vim xclip
+		${ELEVATE} apt-get install --assume-yes bash bash-completion curl wget git nano vim xclip
         ${ELEVATE} apt-get purge --autoremove
-        source /usr/share/bash-completion/bash_completion
+		{ set +x ; } &> /dev/null
     fi
 }
 
 function upgrade_apk {
     if [[ -f /usr/bin/apk ]]; then
+		text 'apk'
         ${ELEVATE} apk cache clean
         ${ELEVATE} apk update
         ${ELEVATE} apk upgrade --progress
-    fi
+		${ELEVATE} apk add bash bash-completion curl wget ncurses git nano vim xclip
+	fi
 }
 
 function upgrade_dnf {
@@ -42,16 +43,15 @@ function upgrade_dnf {
         text 'dnf'
         ${ELEVATE} dnf clean all
         ${ELEVATE} dnf upgrade --refresh --assumeyes
-        ${ELEVATE} dnf install --assumeyes bash-completion curl wget ncurses git nano vim xclip
+		${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano vim xclip
         ${ELEVATE} dnf autoremove
-        source /usr/share/bash-completion/bash_completion
     fi
 }
 
 function upgrade_pacman {
     if [[ -f /usr/bin/pacman ]]; then
         text 'pacman'
-        cat <<-EOF | ${ELEVATE} tee /etc/pacman.conf
+        cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
 Architecture = x86_64
 HoldPkg = pacman glibc
@@ -77,11 +77,9 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 EOF
         ${ELEVATE} pacman -Scc
-        ${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash-completion git nano vim xclip
+		${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion git nano vim xclip
         ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-        ${ELEVATE} pacman -Scc
         ${ELEVATE} pacman -Syyu
-        source /usr/share/bash-completion/bash_completion
     fi
 }
 
@@ -103,12 +101,12 @@ function upgrade_snap {
 function upgrade_flatpak {
     if [[ -f /usr/bin/flatpak ]]; then
         text 'flatpak'
-        flatpak --user update --appstream
-        flatpak --user update
-        flatpak --user uninstall --unused --delete-data
-        flatpak --system update --appstream
-        flatpak --system update
-        flatpak --system uninstall --unused --delete-data
+        flatpak --user update --appstream --assumeyes
+        flatpak --user update --assumeyes
+        flatpak --user uninstall --unused --delete-data --assumeyes
+        flatpak --system update --appstream --assumeyes
+        flatpak --system update --assumeyes
+        flatpak --system uninstall --unused --delete-data --assumeyes
     fi
 }
 
@@ -136,23 +134,36 @@ function upgrade_pipx {
     fi
 }
 
+function set_shell {
+	if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+		source /usr/share/bash-completion/bash_completion
+	fi
+}
+
+function set_ps1 {
+	PS1='\n$(tput rev) \u@\h \w $(tput sgr0)\n\$ '; PS1="\[\e]0;\u@\h \w\a\]${PS1}"
+	export PS1
+}
+
 function main {
     export LC_ALL=C
-    #export PS1='\[$(printf "\033[7m")\] \u@\h \w \[$(printf "\033[0m")\]\n\$ '
 
     elevate_user
 
     upgrade_apt
-    upgrade_apk
-    upgrade_dnf
-    upgrade_pacman
+    # upgrade_apk
+    # upgrade_dnf
+    # upgrade_pacman
 
-    upgrade_code
-    upgrade_docker
-    upgrade_pipx
+    # upgrade_code
+    # upgrade_docker
+    # upgrade_pipx
 
-    upgrade_flatpak
-    upgrade_snap
+    # upgrade_flatpak
+    # upgrade_snap
+
+	# set_shell
+	# set_ps1
 }
 
 # begin script from here

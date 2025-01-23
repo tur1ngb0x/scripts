@@ -1,34 +1,50 @@
 #!/bin/sh
 
-live_network() {
-    sudo sh -c 'sysctl -w net.ipv6.conf.all.disable_ipv6=1'
-    sudo sh -c 'sysctl -w net.ipv6.conf.default.disable_ipv6=1'
-    sudo sh -c 'sysctl -w net.ipv6.conf.lo.disable_ipv6=1'
-    sudo sh -c 'systemctl restart NetworkManager'
-    echo 'sleep 15'; sleep 15
+live_sysctl() {
+	sudo sh -c '
+		sysctl -w net.ipv6.conf.all.disable_ipv6=1
+		sysctl -w net.ipv6.conf.default.disable_ipv6=1
+		sysctl -w net.ipv6.conf.lo.disable_ipv6=1
+		sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+		sysctl -w vm.swappiness=0
+		sysctl -w vm.overcommit_memory=2
+	'
+}
+
+live_systemd() {
+	{ set -x; }
+	sudo sh -c '
+		systemctl restart NetworkManager
+		i=10; while [ "$i" -ge 0 ]; do printf "\r%2d" "$i"; sleep 1; i=$((i-1)); done; echo
+		ping -4 -c10 google.com
+	'
+	{ set +x; }
 }
 
 live_host() {
-    sudo sh -c 'printf "127.0.0.1 localhost\n127.0.1.1 live\n" > /etc/hosts'
-    sudo sh -c 'hostnamectl hostname live'
+    sudo sh -c '
+		printf "127.0.0.1 localhost\n127.0.1.1 live\n" > /etc/hosts
+    	hostnamectl hostname live
+	'
 }
 
 live_time() {
-    timedatectl set-timezone Asia/Kolkata
-    timedatectl set-local-rtc 1
-    timedatectl set-ntp 1
-    timedatectl --adjust-system-clock
+	sudo sh -c '
+		timedatectl set-timezone Asia/Kolkata
+		timedatectl set-local-rtc 1
+		timedatectl set-ntp 1
+		timedatectl --adjust-system-clock
+	'
 }
 
 live_updates() {
-	sudo sh -c 'apt-get clean || dnf clean all || pacman -Scc'
-    sudo sh -c 'apt-get update || dnf upgrade --refresh || pacman -Syu'
-    sudo sh -c 'apt-get install -y curl wget git micro nano vim xclip || dnf install -y curl wget git micro nano vim xclip || pacman -S curl wget git micro nano vim xclip'
+	sudo sh -c '
+		apt-get clean || dnf clean all || pacman -Scc
+    	apt-get update || dnf upgrade --refresh || pacman -Syu
+		packages="curl wget git micro nano vim xclip"
+		apt-get install -y ${packages} || dnf install -y ${packages} || pacman -S ${packages}
+	'
 }
-
-live_security() {
-	sudo sh -c 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0'
- }
 
 live_git() {
     mkdir -p "$HOME/src/"
@@ -77,15 +93,16 @@ live_edge() {
 }
 
 main() {
-    live_network
-    live_host
-    live_time
-    live_updates
-	live_security
-    live_git
-    live_brave
-    live_chrome
-    live_edge
+    #live_sysctl
+    #live_host
+    #live_time
+	live_systemd
+    #live_updates
+    #live_git
+    #live_brave
+    #live_chrome
+    #live_edge
 }
+
 
 main "$@"
