@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+usage() {
+	cat << EOF
+
+Description:
+    Collection of adb commands to perform tasks.
+
+Syntax:
+    $ ${0##*/} <option>
+
+Options:
+    opt     Optimize apps.
+    reboot  Reboot the device.
+
+Usage:
+    $ ${0##*/} opt
+    $ ${0##*/} reboot
+
+EOF
+}
+
+if [[ "${#}" -eq 0 ]]; then
+	usage
+	exit
+fi
+
 adb stop-server
 adb start-server
 

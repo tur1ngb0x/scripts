@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 usage() {
-	cat <<EOF
+	cat << EOF
 
 Description:
     Uses 'rsync' to copy data and then performs 'sync' twice.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 usage() {
-    cat <<EOF
+    cat << EOF
 
 Description:
     Run docker containers quickly.

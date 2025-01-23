@@ -12,7 +12,7 @@ unset MANPAGER
 BASEDIR="${HOME}/src"
 
 # get list of git repositories from base directory
-readarray -t REPOS < <(find "${BASEDIR}" -type d -name '.git')
+readarray -t REPOS < <(find "${BASEDIR}" -type d -name '.git' | sort)
 
 # loop through each repo in base directory
 for REPO in "${REPOS[@]}"; do
@@ -20,7 +20,6 @@ for REPO in "${REPOS[@]}"; do
 	REPO="${REPO%.git}"
 	# print repo name
 	tput rev
-	tput bold
 	echo -e "\n ${REPO} "
 	tput sgr0
 	# show git branch
