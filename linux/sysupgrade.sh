@@ -138,7 +138,7 @@ function upgrade_pipx {
 
 function main {
     export LC_ALL=C
-    export PS1='\[$(printf "\033[7m")\] \u@\h \w \[$(printf "\033[0m")\]\n\$ '
+    #export PS1='\[$(printf "\033[7m")\] \u@\h \w \[$(printf "\033[0m")\]\n\$ '
 
     elevate_user
 

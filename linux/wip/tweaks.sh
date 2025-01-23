@@ -9,6 +9,7 @@ text() {
 function apply_apt {
 	text 'apt'
 	sudo sed -i 's/Enabled: yes/Enabled: no/' /etc/apt/sources.list.d/pop-os-apps.sources
+	sudo sed -i 's/^/#/' /var/lib/ubuntu-advantage/apt-esm/etc/apt/sources.list.d/ubuntu-esm-apps.sources
 	printf "Acquire::IndexTargets::deb::Contents-deb::DefaultEnabled false;\nAcquire::Languages none;" | sudo tee /etc/apt/apt.conf.d/99-slim-apt
 	sudo apt-get clean && sudo apt-get update
 }
