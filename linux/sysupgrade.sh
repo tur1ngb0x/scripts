@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-function text { printf "\033[7m # %s \033[0m\n" "$(command -v "${1}")"; }
+function text { printf "\033[7m# %s \033[0m\n" "$(command -v "${1}")"; }
+
+function show() { (set -x; "${@:?}"); }
 
 function elevate_user() {
     if [[ "$(id -ur)" -eq 0 ]]; then
@@ -18,13 +20,11 @@ function elevate_user() {
 function upgrade_apt {
     if [[ -f /usr/bin/apt-get ]]; then
         text 'apt'
-		{ set -x ; } &> /dev/null
-        ${ELEVATE} apt-get clean
-        ${ELEVATE} apt-get update
-        ${ELEVATE} apt-get dist-upgrade
-		${ELEVATE} apt-get install --assume-yes bash bash-completion curl wget git nano vim xclip
-        ${ELEVATE} apt-get purge --autoremove
-		{ set +x ; } &> /dev/null
+        show ${ELEVATE} apt-get clean
+        show ${ELEVATE} apt-get update
+        show ${ELEVATE} apt-get dist-upgrade
+		show ${ELEVATE} apt-get install --assume-yes bash bash-completion curl wget git nano vim xclip
+        show ${ELEVATE} apt-get purge --autoremove
     fi
 }
 
