@@ -23,19 +23,19 @@ function upgrade_apt {
         show ${ELEVATE} apt-get clean
         show ${ELEVATE} apt-get update
         show ${ELEVATE} apt-get dist-upgrade
-		show ${ELEVATE} apt-get install --assume-yes bash bash-completion curl wget git nano vim xclip
+        show ${ELEVATE} apt-get install --assume-yes bash bash-completion curl wget git nano vim xclip
         show ${ELEVATE} apt-get purge --autoremove
     fi
 }
 
 function upgrade_apk {
     if [[ -f /usr/bin/apk ]]; then
-		text 'apk'
+        text 'apk'
         ${ELEVATE} apk cache clean
         ${ELEVATE} apk update
         ${ELEVATE} apk upgrade --progress
-		${ELEVATE} apk add bash bash-completion curl wget ncurses git nano vim xclip
-	fi
+        ${ELEVATE} apk add bash bash-completion curl wget ncurses git nano vim xclip
+    fi
 }
 
 function upgrade_dnf {
@@ -43,7 +43,7 @@ function upgrade_dnf {
         text 'dnf'
         ${ELEVATE} dnf clean all
         ${ELEVATE} dnf upgrade --refresh --assumeyes
-		${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano vim xclip
+        ${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano vim xclip
         ${ELEVATE} dnf autoremove
     fi
 }
@@ -77,7 +77,7 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 EOF
         ${ELEVATE} pacman -Scc
-		${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion git nano vim xclip
+        ${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion git nano vim xclip
         ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
         ${ELEVATE} pacman -Syyu
     fi
@@ -135,14 +135,14 @@ function upgrade_pipx {
 }
 
 function set_shell {
-	if [[ -f /usr/share/bash-completion/bash_completion ]]; then
-		source /usr/share/bash-completion/bash_completion
-	fi
+    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+        source /usr/share/bash-completion/bash_completion
+    fi
 }
 
 function set_ps1 {
-	PS1='\n$(tput rev) \u@\h \w $(tput sgr0)\n\$ '; PS1="\[\e]0;\u@\h \w\a\]${PS1}"
-	export PS1
+    PS1='\n$(tput rev) \u@\h \w $(tput sgr0)\n\$ '; PS1="\[\e]0;\u@\h \w\a\]${PS1}"
+    export PS1
 }
 
 function main {
@@ -151,19 +151,19 @@ function main {
     elevate_user
 
     upgrade_apt
-    # upgrade_apk
-    # upgrade_dnf
-    # upgrade_pacman
+    upgrade_apk
+    upgrade_dnf
+    upgrade_pacman
 
-    # upgrade_code
-    # upgrade_docker
-    # upgrade_pipx
+    upgrade_code
+    upgrade_docker
+    upgrade_pipx
 
-    # upgrade_flatpak
-    # upgrade_snap
+    upgrade_flatpak
+    upgrade_snap
 
-	# set_shell
-	# set_ps1
+    set_shell
+    set_ps1
 }
 
 # begin script from here
