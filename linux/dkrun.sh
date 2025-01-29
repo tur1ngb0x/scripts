@@ -3,31 +3,31 @@
 usage() {
     cat << EOF
 
-Description:
+Description
     Run docker containers quickly.
 
-Syntax:
+Syntax
     $ ${0##*/} <image>
     $ ${0##*/} <image:tag>
     $ ${0##*/} <image:tag> <command(s)>
 
-Images/Tags:
-    amazonlinux: 2024, 2023
-    archlinux: base
-    clearlinux: base
-    oraclelinux: 9, 8
-    fedora: 42, 41 | rawhide
-    ubuntu: noble, jammy | devel, rolling
-    debian: bookworm, bullseye | sid trixie
+Image (Tags)
+    archlinux
+    amazonlinux (2023, 2, latest)
+    clearlinux
+    debian (bookworm, bullseye, sid)
+    fedora (41, 40, rawhide)
+    oraclelinux (9, 8)
+    ubuntu (noble, jammy, devel)
 
-Shells:
-    Bash: bash
-    Dash: dash
+Shell Commands
+    sh
+    bash
 
-Usage:
-    $ ${0##*/} ubuntu
+Usage
+    $ ${0##*/} archlinux
+    $ ${0##*/} debian:sid sh
     $ ${0##*/} ubuntu:devel
-    $ ${0##*/} ubuntu:devel sh
 
 EOF
 }
@@ -45,9 +45,9 @@ docker \
     --debug \
     --log-level 'debug' \
     container run \
-    --hostname "${DKRHOST}" \
     --interactive \
     --tty \
+    --hostname "${DKRHOST}" \
     --volume "${HOME}"/src/:/root/src:ro \
     --workdir '/root' \
     "${1}" \
