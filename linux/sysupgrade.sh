@@ -18,7 +18,7 @@ function elevate_user() {
 }
 
 function upgrade_apt {
-    if [[ -f /usr/bin/apt-get ]]; then
+    if [[ $(command -v apt-get) ]]; then
         text 'apt'
         show ${ELEVATE} apt-get clean
         show ${ELEVATE} apt-get update
@@ -29,7 +29,7 @@ function upgrade_apt {
 }
 
 function upgrade_apk {
-    if [[ -f /usr/bin/apk ]]; then
+    if [[ $(command -v apk) ]]; then
         text 'apk'
         ${ELEVATE} apk cache clean
         ${ELEVATE} apk update
@@ -39,17 +39,17 @@ function upgrade_apk {
 }
 
 function upgrade_dnf {
-    if [[ -f /usr/bin/dnf ]]; then
+    if [[ $(command -v dnf) ]]; then
         text 'dnf'
         ${ELEVATE} dnf clean all
         ${ELEVATE} dnf upgrade --refresh --assumeyes
-        ${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano vim xclip
+        ${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano procps-ng vim xclip
         ${ELEVATE} dnf autoremove
     fi
 }
 
 function upgrade_pacman {
-    if [[ -f /usr/bin/pacman ]]; then
+    if [[ $(command -v pacman) ]]; then
         text 'pacman'
         cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
@@ -77,14 +77,14 @@ Include = /etc/pacman.d/mirrorlist
 #SigLevel = PackageRequired
 EOF
         ${ELEVATE} pacman -Scc
-        ${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion git nano vim xclip
-        ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+        ${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion curl wget git nano vim xclip
+        ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
         ${ELEVATE} pacman -Syyu
     fi
 }
 
 function upgrade_snap {
-    if [[ -f /usr/bin/snap ]]; then
+    if [[ $(command -v snap) ]]; then
         text 'snap'
         ${ELEVATE} snap refresh
         ${ELEVATE} snap refresh --hold
@@ -99,7 +99,7 @@ function upgrade_snap {
 }
 
 function upgrade_flatpak {
-    if [[ -f /usr/bin/flatpak ]]; then
+    if [[ $(command -v flatpak) ]]; then
         text 'flatpak'
         flatpak --user update --appstream --assumeyes
         flatpak --user update --assumeyes
@@ -111,14 +111,14 @@ function upgrade_flatpak {
 }
 
 function upgrade_code {
-    if [[ -f /usr/bin/code ]]; then
+    if [[ $(command -v code) ]]; then
         text 'code'
         code --update-extensions
     fi
 }
 
 function upgrade_docker {
-    if [[ -f /usr/bin/docker ]]; then
+    if [[ $(command -v docker) ]]; then
         text 'docker'
         export DOCKER_CLI_HINTS="false"
         for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
@@ -128,14 +128,14 @@ function upgrade_docker {
 }
 
 function upgrade_pipx {
-    if [[ -f /usr/bin/pipx ]]; then
+    if [[ $(command -v pipx) ]]; then
         text 'pipx'
         USE_EMOJI="0" pipx upgrade-all
     fi
 }
 
 function set_shell {
-    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    if [[ $(command -v bash) ]] && [[ -f /usr/share/bash-completion/bash_completion ]]; then
         source /usr/share/bash-completion/bash_completion
     fi
 }
@@ -161,9 +161,6 @@ function main {
 
     upgrade_flatpak
     upgrade_snap
-
-    set_shell
-    set_ps1
 }
 
 # begin script from here

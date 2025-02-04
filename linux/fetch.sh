@@ -51,17 +51,9 @@ get_now() {
     fi
 }
 
-get_vendor() {
-    if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]]; then
-        printf '%s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)"
-    else
-        printf '%s' '-'
-    fi
-}
-
-get_machine() {
-    if [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
-        printf '%s' "$(cat /sys/devices/virtual/dmi/id/product_name)"
+get_hardware() {
+    if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
+        printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
     else
         printf '%s' '-'
     fi
@@ -109,33 +101,17 @@ get_desktop() {
     fi
 }
 
-get_ram_total() {
+get_ram() {
     if [[ -f /usr/bin/free ]]; then
-        printf '%s' "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
+    printf '%s / %s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB" "$(free --mebi | awk 'FNR == 2 {print $2}')MiB"
     else
         printf '%s' '-'
     fi
 }
 
-get_ram_used() {
+get_swap() {
     if [[ -f /usr/bin/free ]]; then
-        printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB"
-    else
-        printf '%s' '-'
-    fi
-}
-
-get_swap_total() {
-    if [[ -f /usr/bin/free ]]; then
-        printf '%s' "$(free --mebi | awk 'FNR == 3 {print $2}')MiB"
-    else
-        printf '%s' '-'
-    fi
-}
-
-get_swap_used() {
-    if [[ -f /usr/bin/free ]]; then
-        printf '%s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB"
+    printf '%s / %s' "$(free --mebi | awk 'FNR == 3 {print $3}')MiB" "$(free --mebi | awk 'FNR == 3 {print $2}')MiB"
     else
         printf '%s' '-'
     fi
@@ -143,7 +119,7 @@ get_swap_used() {
 
 get_uptime() {
     if [[ -f /usr/bin/uptime ]]; then
-        printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"
+        printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hours/hr/g; s/ hour/hr/g; s/ minutes/min/g')"
     else
         printf '%s' '-'
     fi
@@ -167,46 +143,35 @@ get_packages() {
 }
 
 get_colors() {
-    for c in {0..8}; do
-        printf '\e[48;5;%dm ' "${c}"
+    for i in {0..15}; do
+        printf '\e[48;5;%dm  ' "${i}"
     done
     printf "\e[0m\n"
 }
 
-fetch-short() {
-    cat <<EOF | tr '[:upper:]' '[:lower:]'
+fetch_short() {
+    cat << EOF | tr '[:upper:]' '[:lower:]'
 
- distro : $(printf '%s' "$(
-        source /etc/os-release
-        echo "${ID}-${VERSION_ID}"
- )")
+ distro : $(printf '%s' "$(source /etc/os-release; echo "${ID}-${VERSION_ID}")")
  kernel : $(printf '%s' "$(uname --kernel-release)")
  memory : $(printf '%s' "$(free --mebi | awk 'FNR == 2 {print $3}')MiB")
  uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
-
+ colors: $(for i in {0..15}; do printf '\e[48;5;%dm ' "${i}"; done; printf "\e[0m\n")
 EOF
 }
 
-# function fetch-short {
-# 	separator
-# 	row 'Distro'	"$(get_distro)"
-# 	row 'Kernel'	"$(get_kernel)"
-# 	row 'Memory'	"$(get_ram_used)"
-# 	row 'Uptime'	"$(get_uptime)"
-# 	separator
-# }
-
-fetch-long() {
+fetch_long() {
     separator
-    row 'Hardware' "$(get_vendor) $(get_machine)"
+    row 'Hardware' "$(get_hardware)"
     row 'Distro' "$(get_distro)"
     row 'Kernel' "$(get_kernel)"
     row 'Display' "$(get_display)"
     row 'Desktop' "$(get_desktop)"
-    row 'Memory' "$(get_ram_used) / $(get_ram_total)"
-    row 'Swap' "$(get_swap_used) / $(get_swap_total)"
+    row 'RAM' "$(get_ram)"
+    row 'Swap' "$(get_swap)"
     row 'Uptime' "$(get_uptime)"
     row 'Packages' "$(get_packages)"
+    row 'Colors' "$(get_colors)"
     separator
 }
 
@@ -217,7 +182,7 @@ option="${1}"
 shift
 
 case "${option}" in
-    --help | -help | help | --h | -h | h) usage ;;
-    --short | -short | --s | -s) fetch-short ;;
-    *) fetch-long ;;
+    --help | -help | help | --h | -h | h)   usage ;;
+    --short | -short | --s | -s)            fetch_short ;;
+    *)                                      fetch_long ;;
 esac

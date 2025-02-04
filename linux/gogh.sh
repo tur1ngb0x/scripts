@@ -4,4 +4,4 @@ wget -4O /tmp/gogh.sh 'https://raw.githubusercontent.com/Mayccoll/Gogh/master/go
 
 chmod +x /tmp/gogh.sh
 
-bash /tmp/gogh.sh
+/tmp/gogh.sh
