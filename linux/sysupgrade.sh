@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function text { printf "\033[7m# %s \033[0m\n" "$(command -v "${1}")"; }
+function text { printf "\033[7m # %s \033[0m\n" "$(command -v "${1}")"; }
 
 function show() { (set -x; "${@:?}"); }
 

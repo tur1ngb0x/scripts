@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ "${XDG_SESSION_TYPE}" == 'x11' ]]; then
-    if [[ -f /usr/bin/xrandr ]]; then
+    if [[ $(command -v xrandr) ]]; then
         if xrandr | grep -E '^(eDP-.*|HDMI-.*) connected'; then
             xrandr --output 'eDP-1' --off
             xrandr --output 'HDMI-1' --auto --primary \

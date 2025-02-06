@@ -1,34 +1,37 @@
 #!/usr/bin/env bash
 
-usage() {
-    cat << EOF
+function usage {
+    local bold=$(tput bold)
+    local reset=$(tput sgr0)
+    local rev=$(tput rev)
+    local blink=$(tput blink)
+    local dim=$(tput dim)
+	cat << EOF
+${rev}${bold} DESCRIPTION ${reset}
+Run docker containers quickly.
 
-Description
-    Run docker containers quickly.
+${rev}${bold} SYNTAX ${reset}
+$ ${0##*/} <image>
+$ ${0##*/} <image:tag>
+$ ${0##*/} <image:tag> <command(s)>
 
-Syntax
-    $ ${0##*/} <image>
-    $ ${0##*/} <image:tag>
-    $ ${0##*/} <image:tag> <command(s)>
+${rev}${bold} IMAGES ${reset}
+archlinux
+amazonlinux (2023, 2, latest)
+clearlinux
+debian (bookworm, bullseye, sid)
+fedora (41, 40, rawhide)
+oraclelinux (9, 8)
+ubuntu (noble, jammy, devel)
 
-Image (Tags)
-    archlinux
-    amazonlinux (2023, 2, latest)
-    clearlinux
-    debian (bookworm, bullseye, sid)
-    fedora (41, 40, rawhide)
-    oraclelinux (9, 8)
-    ubuntu (noble, jammy, devel)
+${rev}${bold} COMMANDS ${reset}
+sh, /bin/sh
+bash, /bin/bash
 
-Shell Commands
-    sh
-    bash
-
-Usage
-    $ ${0##*/} archlinux
-    $ ${0##*/} debian:sid sh
-    $ ${0##*/} ubuntu:devel
-
+${rev}${bold} USAGE ${reset}
+$ ${0##*/} archlinux
+$ ${0##*/} debian:sid sh
+$ ${0##*/} ubuntu:devel
 EOF
 }
 

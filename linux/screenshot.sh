@@ -1,35 +1,33 @@
 #!/usr/bin/env bash
 
-# variables
-rootdir="${HOME}/Pictures/screenshots"
+screenshot_dir="${HOME}/Pictures/screenshots"
 timestamp="$(date +'%Y%m%d-%H%M%S')"
-file="${rootdir}/screenshot-${timestamp}.png"
-log="/tmp/screenshot-$(date +'%Y%m%d-%H%M%S').log"
+filestamp="ss-${timestamp}"
+screenshot_file="${rootdir}/${filestamp}.png"
+screenshot_log="${rootdir}/${filestamp}.log"
 
-# create screenshot directory
-if [[ ! -d "${rootdir}" ]]; then
-	mkdir -pv "${rootdir}" &>/dev/null
+if [[ ! -d "${screenshot_dir}" ]]; then
+	mkdir -pv "${screenshot_dir}"
 fi
 
-# capture screenshot
 if [[ $(command -pv gnome-screenshot) ]]; then
-	gnome-screenshot --area --clipboard --file="${file}" &>"${log}"
+    screenshot_command="gnome-screenshot --area --clipboard --file=\"${screenshot_file}\""
 elif [[ $(command -pv xfce4-screenshooter) ]]; then
-	xfce4-screenshooter --region --clipboard --save="${file}" &>"${log}"
+    screenshot_command="xfce4-screenshooter --region --clipboard --save=\"${screenshot_file}\""
 elif [[ $(command -pv spectacle) ]]; then
-	spectacle --background --nonotify --region --copy-image --output="${file}" &>"${log}"
+    screenshot_command="spectacle --background --nonotify --region --copy-image --output=\"${screenshot_file}\""
 elif [[ $(command -pv scrot) ]]; then
-	scrot --quality 100 --select --freeze --file="${file}" &>"${log}"
-elif [[ $(command -pv notify-send) ]]; then
-	notify-send 'screenshot app not found'
-else
-	echo 'screenshot app not found'
+    screenshot_command="scrot --quality 100 --select --freeze \"${screenshot_file}\""
 fi
 
-echo -e "file\t${file}"
-echo -e "log\t${log}"
 
-# xdg-open "${output_video}"
-# xdg-open "${output_log}"
+if [[ -n "${screenshot_command}" ]]; then
+    "${screenshot_command}" &> "${screenshot_log}"
+    if [[ ! "${?}" -eq 0 ]]; then
+        echo "Error capturing screenshot. Check ${screenshot_log}"
+    fi
+else
+    echo "No screenshot utility found. Install"
+fi
 
-unset rootdir timestamp file log
+printf '\nfile\t%s\nlog\t%s\n' "${output}" "${log}"
