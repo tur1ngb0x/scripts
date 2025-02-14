@@ -24,13 +24,14 @@ declare Creset="\e[0m"
 
 #function ps1_datime { printf '%s' "$(date +'%Y-%m-%d %a %H:%M:%S')"; }
 #function ps1_status { printf '%s' "${?}"; }
+
 function ps1_userhostdir { printf "${Creverse}${Cwhite} %s@%s:%s ${Creset}" "$(id --user --name)" "$(hostname --short)" "$(pwd -L)"; }
 function ps1_sign { printf "${Cwhite}%s${Creset}" "\$"; }
 function ps1_git {
 	# printf '%s' "$(git branch --no-color --show-current 2> /dev/null)"
 	local git_status git_local git_remote git_untracked git_unstaged git_staged
 	if [[ $(git rev-parse --is-inside-git-repository 2>/dev/null) ]]; then
-		git_status="$(git --no-pager status --porcelain | wc -l)"
+		git_status="$(git --no-pager status --porcelain 2>/dev/null | wc -l)"
 		git_local="$(git --no-pager rev-parse --abbrev-ref HEAD 2>/dev/null)"
 		git_remote="$(git --no-pager rev-parse --abbrev-ref HEAD@{upstream} 2>/dev/null)"
 		if [[ "${git_status}" -eq 0 ]]; then

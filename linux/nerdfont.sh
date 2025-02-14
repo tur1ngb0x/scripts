@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+function show { (set -x; "${@:?}"); }
+
 function usage {
     local bold=$(tput bold)
     local reset=$(tput sgr0)
@@ -9,7 +11,7 @@ function usage {
 	cat << EOF
 
 ${rev}${bold} DESCRIPTION ${reset}
-Install https://github.com/ryanoasis/nerd-fonts in ${HOME}/.local/share/fonts
+Install https://github.com/ryanoasis/nerd-fonts in home directory
 
 ${rev}${bold} SYNTAX ${reset}
 $ ${0##*/} 'font-name'
@@ -22,15 +24,21 @@ $ ${0##*/} 'UbuntuMono'
 EOF
 }
 
+function format_list {
+	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' "${@}"
+}
+
 function fonts_local {
 	printf "Installed Fonts\n"
-	find "${HOME}"/.local/share/fonts -mindepth 1 -type d -exec basename {} \; | awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}'
+	find "${HOME}"/.local/share/fonts -mindepth 1 -type d -exec basename {} \; | format_list
 }
 
 function fonts_remote {
 	printf "\nAvailable Fonts\n"
-	[[ ! -f /tmp/nf-folders.txt ]] && (curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &>/tmp/nf-folders.txt
-	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' /tmp/nf-folders.txt
+	if [[ ! -f /tmp/nf-folders.txt ]]; then
+		(curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &>/tmp/nf-folders.txt
+		format_list /tmp/nf-folders.txt
+	fi
 }
 
 if [[ "${#}" -eq 0 ]]; then
@@ -40,24 +48,20 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-{ set -x -e; } &>/dev/null
-
 # Create folders
-mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
+show mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
 
 # Download font
-curl -s -L -o /tmp/nerd-fonts/"${1}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${1}".tar.xz
+show curl -s -L -o /tmp/nerd-fonts/"${1}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${1}".tar.xz
 
 # Extract fonts
-tar --file /tmp/nerd-fonts/"${1}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${1}"
+show tar --file /tmp/nerd-fonts/"${1}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${1}"
 
 # Fix ownership and permissions
-chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
+show chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
 
 # Regenerate font cache
-fc-cache -r
+show fc-cache -r
 
 # Show fonts
-xdg-open "${HOME}"/.local/share/fonts &>/dev/null
-
-{ set +x +e; } &>/dev/null
+show xdg-open "${HOME}"/.local/share/fonts &>/dev/null
