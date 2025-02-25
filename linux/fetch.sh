@@ -11,7 +11,7 @@ row () { printf -- '%8s : %s\n' "${1}" "${2}"; }
 separator () { printf -- '*%.0s' {1..60}; printf '\n'; }
 
 usage () {
-    cat <<EOF
+    cat << EOF
 Description
     Show distribution information using pure bash.
 Syntax
@@ -24,12 +24,12 @@ EOF
 }
 
 usage () {
-    local Treset=$(tput sgr0)
-    local Tbold=$(tput bold)
-    local Titalic=$(tput sitm)
-    local Tunderline=$(tput ul)
-    local Treverse=$(tput rev)
-    local Tdim=$(tput dim)
+    Treset=$(tput sgr0)
+    Tbold=$(tput bold)
+    Titalic=$(tput sitm)
+    Tunderline=$(tput ul)
+    Treverse=$(tput rev)
+    Tdim=$(tput dim)
     cat << EOF
 ${Treverse}${Tbold} DESCRIPTION ${Treset}
 Show distribution information using pure bash
@@ -54,7 +54,7 @@ EOF
 # get data
 #######################################################################
 get_user () {
-    if [[$(command -v id) ]]; then
+    if [[ $(command -v id) ]]; then
         printf '%s' "$(id --user --name)"
     else
         printf '%s' '-'
@@ -169,11 +169,16 @@ get_packages () {
 }
 
 get_shell () {
-	if [[ -n "${SHELL}" ]]; then
-	    printf '%s' "${SHELL}"
-	else
-		printf '%s' '-'
-	fi
+    if [[ -n "${SHELL}" ]]; then
+        case "${SHELL}" in
+            */bash) printf 'bash %s\n' "${BASH_VERSION}" ;;
+            */zsh) printf 'zsh %s\n' "${ZSH_VERSION}" ;;
+            */fish) printf 'fish %s\n' "${FISH_VERSION}" ;;
+            *) printf '%s\n' "${SHELL}" ;;
+        esac
+    else
+        printf '%s' '-'
+    fi
 }
 
 get_colors () {
@@ -188,7 +193,7 @@ get_colors () {
 #######################################################################
 fetch_short() {
     cat << EOF | tr '[:upper:]' '[:lower:]'
-distro : $(printf '%s' "$(source /etc/os-release;echo "${PRETTY_NAME}")")
+distro : $(printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")")
 kernel : $(printf '%s' "$(uname --kernel-release)")
 memory : $(printf '%sMiB' "$(free --mebi | awk 'FNR == 2 {print $3}')")
 uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
@@ -205,7 +210,7 @@ fetch_long() {
     row 'RAM'       "$(get_ram)"
     row 'Swap'      "$(get_swap)"
     row 'Uptime'    "$(get_uptime)"
-	row 'Shell'     "$(get_shell)"
+    row 'Shell'     "$(get_shell)"
     row 'Packages'  "$(get_packages)"
     row 'Colors'    "$(get_colors)"
 }
