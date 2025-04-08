@@ -24,6 +24,7 @@ $ ${0##*/} 'UbuntuMono'
 EOF
 }
 
+
 function format_list {
 	awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}' "${@}"
 }
@@ -34,6 +35,7 @@ function fonts_local {
 }
 
 function fonts_remote {
+
 	printf "\nAvailable Fonts\n"
 	if [[ ! -f /tmp/nf-folders.txt ]]; then
 		(curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' | grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' | sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' | sort | uniq) &>/tmp/nf-folders.txt
@@ -41,27 +43,40 @@ function fonts_remote {
 	fi
 }
 
-if [[ "${#}" -eq 0 ]]; then
-	usage
-	fonts_local
-	fonts_remote
-	exit
-fi
 
-# Create folders
-show mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
+function fonts_install {
+	# Create folders
+	show mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${1}"
 
-# Download font
-show curl -s -L -o /tmp/nerd-fonts/"${1}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${1}".tar.xz
+	# Download font
+	show curl -s -L -o /tmp/nerd-fonts/"${1}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${1}".tar.xz
 
-# Extract fonts
-show tar --file /tmp/nerd-fonts/"${1}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${1}"
+	# Extract fonts
+	show tar --file /tmp/nerd-fonts/"${1}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${1}"
 
-# Fix ownership and permissions
-show chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
+	# Fix ownership and permissions
+	show chown -R "${USER}":"${USER}" "${HOME}"/.local/share/fonts
 
-# Regenerate font cache
-show fc-cache -r
+	# Regenerate font cache
+	show fc-cache -r
 
-# Show fonts
-show xdg-open "${HOME}"/.local/share/fonts &>/dev/null
+	# Show fonts
+	show xdg-open "${HOME}"/.local/share/fonts &>/dev/null
+}
+
+
+main () {
+	if [[ "${#}" -eq 0 ]]; then
+		if ! command -v curl; then echo 'curl not found, exiting...'; exit; fi
+		usage
+		fonts_local
+		fonts_remote
+		fonts_install "${1}"
+		exit
+	fi
+
+}
+
+# begin script from here
+
+main "${@}"

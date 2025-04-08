@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 function usage {
-    local bold=$(tput bold)
-    local reset=$(tput sgr0)
-    local rev=$(tput rev)
-    local blink=$(tput blink)
-    local dim=$(tput dim)
+    bold=$(tput bold)
+    reset=$(tput sgr0)
+    rev=$(tput rev)
+    blink=$(tput blink)
+    dim=$(tput dim)
 	cat << EOF
 ${rev}${bold} DESCRIPTION ${reset}
 Run docker containers quickly.
