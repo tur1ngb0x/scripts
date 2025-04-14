@@ -3,6 +3,22 @@
 # directories
 mkdir -pv "${HOME}"/.local/bin
 
+cli_adb() {
+	pushd /tmp || return
+	mv -fv '/tmp/adb-linux.zip' "/tmp/adb-linux-$(date +%Y%m%d%H%M%S).zip"
+	wget -4O '/tmp/adb-linux.zip' https://dl.google.com/android/repository/platform-tools-latest-linux.zip
+	mv -fv '/tmp/platform-tools' "/tmp/platform-tools-$(date +%Y%m%d%H%M%S)"
+	unzip '/tmp/adb-linux.zip'
+	mkdir -pv "${HOME}"/src
+	mv -fv "${HOME}"/src/adb "${HOME}/src/adb-$(date +%Y%m%d%H%M%S)"
+	mv -fv /tmp/platform-tools "${HOME}"/src/adb
+	if ! grep -q '# adb-latest' "${HOME}"/.bashrc; then
+		echo '# adb-latest' | tee -a "${HOME}/.bashrc"
+		echo 'alias adb="${HOME}/src/adb/adb"' | tee -a "${HOME}/.bashrc"
+	fi
+	popd || return
+}
+
 cli_golang()
 {
 	permalink="https://go.dev/dl"

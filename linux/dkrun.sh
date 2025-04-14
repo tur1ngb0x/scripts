@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+function show { (set -x; "${@:?}"); }
+
 function usage {
     bold=$(tput bold)
     reset=$(tput sgr0)
@@ -44,7 +46,7 @@ UUIDTAG="$(uuidgen | awk -F '-' '{print $1}')"
 DKRHOST="docker-${1}-${UUIDTAG}"
 DKRHOST="${DKRHOST//:/-}"
 
-docker \
+show docker \
     --debug \
     --log-level 'debug' \
     container run \

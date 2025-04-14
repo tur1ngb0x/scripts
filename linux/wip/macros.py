@@ -58,11 +58,11 @@ def calculate_goal(tdee, goal):
 
 def main():
     # Ask the user for input
-    gender = input("Male/Female: ")
+    gender = input("Gender: ")
     age = int(input("Age: "))
     height = float(input("Height: "))
     weight = float(input("Weight: "))
-    activity_level = input("Sedentary, Light, Moderate, Active, Athlete): ")
+    activity_level = input("Sedentary, Light, Moderate, Active, Athlete: ")
 
     # Calculate BMR and TDEE
     bmr = calculate_bmr(gender, age, height, weight)
@@ -72,7 +72,6 @@ def main():
     tdee = calculate_tdee(bmr, activity_level)
 
     # Ask the user for their goal
-    print("\nWhat is your goal?")
     print("1. Lose 0.25 kg per week")
     print("2. Lose 0.5 kg per week")
     print("3. Maintain weight")

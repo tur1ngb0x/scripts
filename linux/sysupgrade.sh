@@ -2,9 +2,9 @@
 
 function text { printf "\033[7m # %s \033[0m\n" "$(command -v "${1}")"; }
 
-function show() { (set -x; "${@:?}"); }
+function show { (set -x; "${@:?}"); }
 
-function elevate_user() {
+function elevate_user {
     if [[ "$(id -ur)" -eq 0 ]]; then
         ELEVATE=""
     elif [[ -f /usr/bin/doas ]]; then
@@ -18,7 +18,7 @@ function elevate_user() {
 }
 
 function upgrade_apt {
-    if [[ $(command -v apt-get) ]]; then
+    if command -v apt-get &> /dev/null; then
         text 'apt'
         show ${ELEVATE} apt-get clean
         show ${ELEVATE} apt-get update
@@ -29,7 +29,7 @@ function upgrade_apt {
 }
 
 function upgrade_apk {
-    if [[ $(command -v apk) ]]; then
+    if command -v apk &> /dev/null; then
         text 'apk'
         ${ELEVATE} apk cache clean
         ${ELEVATE} apk update
@@ -39,7 +39,7 @@ function upgrade_apk {
 }
 
 function upgrade_dnf {
-    if [[ $(command -v dnf) ]]; then
+    if command -v dnf &> /dev/null; then
         text 'dnf'
         ${ELEVATE} dnf clean all
         ${ELEVATE} dnf upgrade --refresh --assumeyes
@@ -49,7 +49,7 @@ function upgrade_dnf {
 }
 
 function upgrade_pacman {
-    if [[ $(command -v pacman) ]]; then
+    if command -v pacman &> /dev/null; then
         text 'pacman'
         cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
@@ -84,7 +84,7 @@ EOF
 }
 
 function upgrade_snap {
-    if [[ $(command -v snap) ]]; then
+    if command -v snap &> /dev/null; then
         text 'snap'
         ${ELEVATE} snap refresh
         ${ELEVATE} snap refresh --hold
@@ -99,7 +99,7 @@ function upgrade_snap {
 }
 
 function upgrade_flatpak {
-    if [[ $(command -v flatpak) ]]; then
+    if command -v flatpak &> /dev/null; then
         text 'flatpak'
         flatpak --user update --appstream --assumeyes
         flatpak --user update --assumeyes
@@ -111,14 +111,14 @@ function upgrade_flatpak {
 }
 
 function upgrade_code {
-    if [[ $(command -v code) ]]; then
+    if command -v code &> /dev/null; then
         text 'code'
         code --update-extensions
     fi
 }
 
 function upgrade_docker {
-    if [[ $(command -v docker) ]]; then
+    if command -v docker &> /dev/null; then
         text 'docker'
         export DOCKER_CLI_HINTS="false"
         for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
@@ -128,15 +128,17 @@ function upgrade_docker {
 }
 
 function upgrade_pipx {
-    if [[ $(command -v pipx) ]]; then
+    if command -v pipx &> /dev/null; then
         text 'pipx'
         USE_EMOJI="0" pipx upgrade-all
     fi
 }
 
 function set_shell {
-    if [[ $(command -v bash) ]] && [[ -f /usr/share/bash-completion/bash_completion ]]; then
-        source /usr/share/bash-completion/bash_completion
+    if command -v bash &> /dev/null; then
+        if -f /usr/share/bash-completion/bash_completion; then
+            source /usr/share/bash-completion/bash_completion
+        fi
     fi
 }
 
