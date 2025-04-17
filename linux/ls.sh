@@ -121,7 +121,7 @@ EOL
 list_dir() {
     local path="${1}"
     # Heading
-    echo -e "${COLORS[cyan]}$path${COLORS[reset]}"
+    echo -e "${COLORS[cyan]}# ${path}${COLORS[reset]}"
     # ls + awk + column pipeline
     command ls "${LS_OPTIONS[@]}" "$path" 2>/dev/null | \
         awk -v yellow="${COLORS[yellow]}" \
