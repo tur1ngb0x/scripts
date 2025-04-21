@@ -29,7 +29,7 @@ function stderr { tput bold; tput setaf 1; printf "\n# Error: %s\n" "${1}"; tput
 
 # Exit if curl is not installed
 if ! command -v curl &> /dev/null; then
-    echo 'curl not found in PATH'
+    stderr  'curl not found in PATH'
     exit
 fi
 
