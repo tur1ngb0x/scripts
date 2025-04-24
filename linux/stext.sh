@@ -2,18 +2,13 @@
 
 usage() {
 	cat << EOF
-
-Description:
+DESCRIPTION
     Search text in a given directory
-
-Syntax:
+SYNTAX
     $ ${0##*/} <pattern> <directory>
-
-Usage:
+USAGE
     $ ${0##*/} git .
-	$ ${0##*/} apt /etc/apt
-
-
+    $ ${0##*/} apt /etc/apt
 EOF
 }
 

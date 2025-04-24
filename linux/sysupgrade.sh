@@ -17,6 +17,11 @@ function elevate_user {
     fi
 }
 
+function pause_script {
+    echo "${1}"
+    read -r -n 1 -p "${2}"
+}
+
 function upgrade_apt {
     if command -v apt-get &> /dev/null; then
         text 'apt'
@@ -136,7 +141,7 @@ function upgrade_pipx {
 
 function set_shell {
     if command -v bash &> /dev/null; then
-        if -f /usr/share/bash-completion/bash_completion; then
+        if [ -f /usr/share/bash-completion/bash_completion ]; then
             source /usr/share/bash-completion/bash_completion
         fi
     fi
@@ -163,6 +168,8 @@ function main {
 
     upgrade_flatpak
     upgrade_snap
+
+    pause_script 'End of the script. Press any key to exit'
 }
 
 # begin script from here

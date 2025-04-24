@@ -45,10 +45,8 @@ fi
 # Show available fonts remotely
 header "Available Fonts at github.com/ryanoasis/nerd-fonts"
 if [[ ! -f /tmp/nerdfont-curl ]]; then
-    curl -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' > /tmp/nerdfont-curl
+    curl -4 -s -L 'https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts' > /tmp/nerdfont-curl
 fi
-
-# Process nerd font data and format it
 grep -o '/ryanoasis/nerd-fonts/tree/master/patched-fonts/[^"]*' /tmp/nerdfont-curl > /tmp/nerdfont-grep
 sed 's|/ryanoasis/nerd-fonts/tree/master/patched-fonts/||' /tmp/nerdfont-grep > /tmp/nerdfont-sed
 sort -u /tmp/nerdfont-sed > /tmp/nerdfont-sort
@@ -85,5 +83,3 @@ show chown -Rc "${USER}":"${USER}" "${HOME}"/.local/share/fonts
 show fc-cache -r
 show xdg-open "${HOME}"/.local/share/fonts &>/dev/null
 header "Installed Nerd Font - ${1}"
-
-rm /tmp/nerdfont-*

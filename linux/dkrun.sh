@@ -3,37 +3,28 @@
 function show { (set -x; "${@:?}"); }
 
 function usage {
-    bold=$(tput bold)
-    reset=$(tput sgr0)
-    rev=$(tput rev)
-    blink=$(tput blink)
-    dim=$(tput dim)
 	cat << EOF
-${rev}${bold} DESCRIPTION ${reset}
-Run docker containers quickly.
-
-${rev}${bold} SYNTAX ${reset}
-$ ${0##*/} <image>
-$ ${0##*/} <image:tag>
-$ ${0##*/} <image:tag> <command(s)>
-
-${rev}${bold} IMAGES ${reset}
-archlinux
-amazonlinux (2023, 2, latest)
-clearlinux
-debian (bookworm, bullseye, sid)
-fedora (41, 40, rawhide)
-oraclelinux (9, 8)
-ubuntu (noble, jammy, devel)
-
-${rev}${bold} COMMANDS ${reset}
-sh, /bin/sh
-bash, /bin/bash
-
-${rev}${bold} USAGE ${reset}
-$ ${0##*/} archlinux
-$ ${0##*/} debian:sid sh
-$ ${0##*/} ubuntu:devel
+DESCRIPTION
+    Run docker containers quickly.
+SYNTAX
+    $ ${0##*/} <image>
+    $ ${0##*/} <image:tag>
+    $ ${0##*/} <image:tag> <command(s)>
+IMAGES
+    archlinux
+    amazonlinux (2023, 2, latest)
+    clearlinux
+    debian (bookworm, bullseye, sid)
+    fedora (41, 40, rawhide)
+    oraclelinux (9, 8)
+    ubuntu (noble, jammy, devel)
+COMMANDS
+    sh, /bin/sh
+    bash, /bin/bash
+USAGE
+    $ ${0##*/} archlinux
+    $ ${0##*/} debian:sid sh
+    $ ${0##*/} ubuntu:devel
 EOF
 }
 
@@ -46,14 +37,18 @@ UUIDTAG="$(uuidgen | awk -F '-' '{print $1}')"
 DKRHOST="docker-${1}-${UUIDTAG}"
 DKRHOST="${DKRHOST//:/-}"
 
-show docker \
-    --debug \
-    --log-level 'debug' \
-    container run \
-    --interactive \
-    --tty \
-    --hostname "${DKRHOST}" \
-    --volume "${HOME}"/src/:/root/src:ro \
-    --workdir '/root' \
-    "${1}" \
-    "${@:2}"
+if command -v docker &> /dev/null; then
+    show docker \
+        --debug \
+        --log-level 'debug' \
+        container run \
+        --interactive \
+        --tty \
+        --hostname "${DKRHOST}" \
+        --volume "${HOME}"/src/:/root/src:ro \
+        --workdir '/root' \
+        "${1}" \
+        "${@:2}"
+else
+    echo 'docker not found in PATH'
+fi

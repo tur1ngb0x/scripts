@@ -3,23 +3,13 @@
 function show() { (set -x; "${@:?}"); }
 
 function usage {
-    local Treset=$(tput sgr0)
-    local Tbold=$(tput bold)
-	local Titalic=$(tput sitm)
-	local Tunderline=$(tput ul)
-    local Treverse=$(tput rev)
-    local Tdim=$(tput dim)
 	cat << EOF
-
-${Treverse}${Tbold} DESCRIPTION ${Treset}
-Uses 'rsync' to copy data and then performs 'sync' twice.
-
-${Treverse}${Tbold} SYNTAX ${Treset}
-$ ${0##*/} <source> <destination>
-
-${Treverse}${Tbold} USAGE ${Treset}
-$ ${0##*/} '/home/user/Downloads/arch-linux.iso' '/mnt/backup/iso'
-
+DESCRIPTION
+    Uses 'rsync' to copy data and then performs 'sync' twice.
+SYNTAX
+    $ ${0##*/} <source> <destination>
+USAGE
+    $ ${0##*/} '/home/user/Downloads/arch-linux.iso' '/mnt/backup/iso'
 EOF
 }
 
@@ -28,13 +18,13 @@ if [[ "${#}" -eq 0 ]]; then
 	exit
 fi
 
-rsync_flags=(--verbose --recursive --no-inc-recursive --compress-level=0 --human-readable --progress --stats)
-
+rsync_flags=(--verbose --recursive --no-inc-recursive --compress-level=0 --human-readable --progress --stats --ipv4)
 
 show rsync "${rsync_flags[@]}" "${@}"
 
-show sync
-
-show sync
+if [ "${?}" -eq 0 ]; then
+	show sync
+	show sync
+fi
 
 # watch -c -t -n1 'grep -iE "(dirty|write|writeback|writebacktmp)" /proc/meminfo; echo; echo; for i in /sys/block/*; do awk "{ print \"$i: \"  \$9 }" "$i/stat"; done'

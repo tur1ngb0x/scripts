@@ -2,23 +2,18 @@
 
 usage() {
 	cat <<EOF
-
-Description:
-Record the entire of currently active screen using ffmpeg.
-
-Syntax:
-$ ${0##*/} <framerate> <quality>
-
-Options:
-framerate - 0(worst) to 60(best)
-quality - 0(best) to 51(worst)
-
-Usage:
-$ ${0##*/} 60 0
-$ ${0##*/} 60 25
-$ ${0##*/} 30 0
-$ ${0##*/} 60 25
-
+DESCRIPTION
+	Record the entire of currently active screen using ffmpeg.
+SYNTAX
+	$ ${0##*/} <framerate> <quality>
+OPTIONS
+	framerate - 0(worst) to 60(best)
+	quality - 0(best) to 51(worst)
+USAGE
+	$ ${0##*/} 60 0
+	$ ${0##*/} 60 25
+	$ ${0##*/} 30 0
+	$ ${0##*/} 60 25
 EOF
 }
 
@@ -40,7 +35,7 @@ if [[ ! -d "${rootdir}" ]]; then
 fi
 
 # capture screenrecord
-if [[ $(command -pv ffmpeg) ]]; then
+if command -v ffmpeg &> /dev/null; then
 	(
 		ffmpeg \
 			-f 'x11grab' \
@@ -54,7 +49,7 @@ if [[ $(command -pv ffmpeg) ]]; then
 	) &>"${log}"
 	echo -e "file\t${file}"
 	echo -e "log\t${log}"
-elif [[ $(command -pv notify-send) ]]; then
+elif command -v notify-send &> /dev/null; then
 	notify-send 'ffmpeg not found'
 else
 	echo 'ffmpeg not found'

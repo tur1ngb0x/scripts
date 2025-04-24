@@ -73,9 +73,9 @@
 #     column --output-separator ' ' --table
 
 
-#### rewrite
+#### rewrite 1
 
-# Colors using tput
+# set colors
 declare -A COLORS=(
     [red]=$(tput setaf 1)
     [green]=$(tput setaf 2)
@@ -87,21 +87,22 @@ declare -A COLORS=(
     [reset]=$(tput sgr0)
 )
 
-# Date/time format
-FORMAT_TIME="%Y%m%d-%a-%H%M%S"
+# timestamp
+#TIMESTAMP="%Y%m%d-%a-%H%M%S"
+TIMESTAMP="%Y%m%d-%H%M%S"
 
-# LS options as an array for modularity
+# ls command arguments
 LS_OPTIONS=(
     "--almost-all"
     "--classify"
     "--format=verbose"
     "--group-directories-first"
     "--human-readable"
-    "--time-style=+${FORMAT_TIME}"
+    "--time-style=+${TIMESTAMP}"
     "--color=always"
 )
 
-# Updated AWK script
+# awk script
 AWK_SCRIPT=$(cat <<'EOL'
 /^[dl-]/ {
     item = $7
@@ -109,33 +110,48 @@ AWK_SCRIPT=$(cat <<'EOL'
         item = item "@"      # Add @ for symlinks
     }
     printf "%s%s%s %s%s%s %s%s%s %s\n",
-    yellow, $1, reset,         # perms
     red, $3 ":" $4, reset,     # user:group
-    green, $6, reset,          # modified
+    yellow, $1, reset,         # permissions
+    green, $6, reset,          # last modified
     item                       # filename (with @ if symlink)
 }
 EOL
 )
 
-# Function to print a formatted listing for a given path
+# function to print a formatted listing for a given path
 list_dir() {
     local path="${1}"
-    # Heading
-    echo -e "${COLORS[cyan]}# ${path}${COLORS[reset]}"
-    # ls + awk + column pipeline
-    command ls "${LS_OPTIONS[@]}" "$path" 2>/dev/null | \
+
+    # print if directory does not exist
+    if [[ ! -d "${path}" ]]; then
+        echo "Directory '${path}' does not exist."
+        exit
+    fi
+
+    # print if directory is empty
+    if [ -z "$(command ls -A "${path}")" ]; then
+        echo "Directory '${path}' is empty."
+    fi
+
+    # dir name as heading
+    echo -e "${COLORS[cyan]}${path}:${COLORS[reset]}"
+
+    # ls output as body
+    command ls "${LS_OPTIONS[@]}" "${path}" | \
         awk -v yellow="${COLORS[yellow]}" \
             -v green="${COLORS[green]}" \
             -v red="${COLORS[red]}" \
             -v reset="${COLORS[reset]}" "${AWK_SCRIPT}" | \
-        column --output-separator ' ' --table
+        column --separator $'\0' --output-separator ' ' --table
 }
 
-# Logic for handling arguments
+
+# if multiple dirs as args, print ls per dir
+# else show current dir name
 if [[ ${#} -ge 1 ]]; then
     for arg in "${@}"; do
         list_dir "${arg}"
     done
 else
-    list_dir "$(pwd)"  # Use "." (current directory) if no arg is given
+    list_dir "$(pwd)"
 fi

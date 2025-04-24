@@ -4,22 +4,16 @@
 usage()
 {
 	cat << EOF
-Description:
-	Check system and user logs
-Syntax:
-	$ ${0##*/} <scope>
-Usage:
-	$ ${0##*/} system
-	$ ${0##*/} user
-	$ ${0##*/} all
+DESCRIPTION
+    Check system and user logs
+SYNTAX
+    $ ${0##*/} <scope>
+USAGE
+    $ ${0##*/} system
+    $ ${0##*/} user
+    $ ${0##*/} all
 EOF
 }
-
-# if no arguments are provided, exit
-if [[ "${#}" -eq 0 ]]; then
-	usage
-	exit
-fi
 
 # header function
 text() { tput rev; printf "\n %s \n" "${1}"; tput sgr0; }
@@ -62,6 +56,13 @@ logs_all(){
 }
 
 # begin script from here
+
+# if no arguments are provided, exit
+if [[ "${#}" -eq 0 ]]; then
+	usage
+	exit
+fi
+
 if [[ "${log_scope}" == 'system' ]]; then
 	logs_system
 elif [[ "${log_scope}" == 'user' ]]; then

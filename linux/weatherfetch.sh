@@ -5,29 +5,29 @@ location="${1}"
 timestamp="$(date +'%Y-%m-%d %a %H:%M:%S')"
 
 # Function to fetch data
-# Function to fetch data
 if command -v curl &> /dev/null; then
-    fetch_data() { curl -s "wttr.in/${location}?format=${1}"; }
+    function fetch_data { curl -s "wttr.in/${location}?format=${1}"; }
 elif command -v wget &> /dev/null; then
-	fetch_data() { wget -q -O- "wttr.in/${location}?format=${1}"; }
+	function fetch_data { wget -q -O- "wttr.in/${location}?format=${1}"; }
 else
     echo "Install curl or wget to proceed. Exiting..."
     exit 1
 fi
 
 # Function to format output
-row () { printf -- '%s • %s\n' "${1}" "${2}"; }
-separator () { printf -- '—%.0s' {1..24}; printf '\n'; }
+function row { printf -- '%s • %s\n' "${1}" "${2}"; }
+#function row { printf -- '%s * %s\n' "${1}" "${2}"; }
+function separator { printf -- '—%.0s' {1..24}; printf '\n'; }
 
 # Fetch each data row separately
-location=$(fetch_data "%l")
-weather=$(fetch_data "%C")
-temperature=$(fetch_data "%t")
-feelslike=$(fetch_data "%f")
-humidity=$(fetch_data "%h")
-wind=$(fetch_data "%w")
-rain=$(fetch_data "%p")
-uv_index=$(fetch_data "%u")
+location="$(fetch_data "%l")"
+weather="$(fetch_data "%C")"
+temperature="$(fetch_data "%t")"
+feelslike="$(fetch_data "%f")"
+humidity="$(fetch_data "%h")"
+wind="$(fetch_data "%w")"
+rain="$(fetch_data "%p")"
+uv_index="$(fetch_data "%u")"
 
 # Remove + sign from temperature and feelslike
 temperature="${temperature//+/}"
@@ -66,7 +66,8 @@ else
 fi
 
 # Begin script from here
-printf "**%s**\n" "${timestamp}"
+#printf "%s\n" "${timestamp}"
+row "Now" "${timestamp}"
 row "Location" "${location}"
 row "Weather" "${weather}"
 row "Temp" "${temperature} (${feelslike})"

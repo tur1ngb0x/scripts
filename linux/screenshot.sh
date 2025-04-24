@@ -1,4 +1,4 @@
-# #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # set variables
 screenshot_tools=("gnome-screenshot" "xfce4-screenshooter" "spectacle" "scrot")
@@ -20,7 +20,7 @@ done
 
 # if screenshot tool was not found, exit the script
 if [[ -z "${screenshot_tool}" ]]; then
-    printf '%s\n' "No screenshot tools found. Install any one from these:\n* gnome-screenshot (GNOME)\n* xfce4-screenshooter (XFCE)\n* spectacle (KDE)\n* scrot (Agnostic)\n"
+    printf '%s\n%s\n' "No screenshot tool found." "Install any one from these: ${screenshot_tools[*]}"
     exit 1  # Exit with an error code
 fi
 
@@ -48,4 +48,4 @@ fi
 # Capture screenshot
 printf '%s\n' "${screenshot_command}"
 (eval "${screenshot_command}") &> "${screenshot_log}"
-printf 'file - %s\nlog  - %s\n' "${screenshot_file}" "${screenshot_log}"
+printf 'file\t%s\nlog\t%s\n' "${screenshot_file}" "${screenshot_log}"
