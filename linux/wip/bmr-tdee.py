@@ -26,11 +26,11 @@ while True:
 
 # ACTIVITY FACTOR
 activity_factors = {
-    1.2: "No exercise",
-    1.375: "Light exercise",
-    1.55: "Moderate exercise",
-    1.725: "Heavy exercise",
-    1.9: "Extreme exercise"
+    1.2:   "Zero Exercise",
+    1.375: "Light Exercise",
+    1.55:  "Moderate Exercise",
+    1.725: "Heavy Exercise",
+    1.9:   "Extreme Exercise"
 }
 
 # BMR AND TDEE CALCULATION FOR MALE

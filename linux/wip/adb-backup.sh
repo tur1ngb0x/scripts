@@ -7,23 +7,23 @@ adb devices -l
 
 device="$(adb shell getprop ro.product.device)"
 version="A$(adb shell getprop ro.build.version.release)"
-tstamp="$(date +%Y%m%d-%a-%H%M%S-%Z)"
-template="${device}-${version}-${tstamp}"
+timestamp="$(date +%Y%m%d-%a-%H%M%S-%Z)"
+template="${device}-${version}-${timestamp}"
 backupdir="${HOME}/backups/android/${template}"
-echo "${backupdir}"
+echo "Backup saved at ${backupdir}"
 
 # backup folders
 mkdir -pv "${backupdir}"
 pushd "${backupdir}" || exit
-adb pull -a /sdcard/Android/media/com.whatsapp/WhatsApp
-adb pull -a /sdcard/DCIM
-adb pull -a /sdcard/Documents
-adb pull -a /sdcard/Download
-adb pull -a /sdcard/Movies
-adb pull -a /sdcard/Music
-adb pull -a /sdcard/Pictures
-adb pull -a /sdcard/Ringtones
-adb pull -a /sdcard/Videos
+adb pull -a "/sdcard/Android/media/com.whatsapp/WhatsApp"
+adb pull -a "/sdcard/DCIM"
+adb pull -a "/sdcard/Documents"
+adb pull -a "/sdcard/Download"
+adb pull -a "/sdcard/Movies"
+adb pull -a "/sdcard/Music"
+adb pull -a "/sdcard/Pictures"
+adb pull -a "/sdcard/Ringtones"
+adb pull -a "/sdcard/Videos"
 popd || exit
 
 # open backup

@@ -2,23 +2,23 @@
 
 usage()
 {
-	cat << EOF
+    cat << EOF
 Syntax:
-	${0##*/} <full-path-of-binary> <desktop-file-name> <app-menu-name>
+    ${0##*/} <full-path-of-binary> <desktop-file-name> <app-menu-name>
 Usage:
-	${0##*/} '/home/user/apps/telegram/telegram' 'telegram.desktop' 'Telegram'
-	${0##*/} '/home/user/apps/visual studio code/bin/code' 'vscode.desktop' 'Visual Studio Code'
+    ${0##*/} '/home/user/apps/telegram/telegram' 'telegram.desktop' 'Telegram'
+    ${0##*/} '/home/user/apps/visual studio code/bin/code' 'vscode.desktop' 'Visual Studio Code'
 EOF
 }
 
 if [[ "${#}" -eq 0 ]]; then
-	usage
-	exit
+    usage
+    exit
 fi
 
 if [[ ! -f "${1}" ]]; then
-	echo 'binary name incorrect or does not exist'
-	exit
+    echo 'binary name incorrect or does not exist'
+    exit
 fi
 
 cat << EOF | tee "${HOME}/.local/share/applications/${2}"
