@@ -53,17 +53,21 @@ function upgrade_dnf {
     fi
 }
 
-function upgrade_pacman {
+function setup_pacman {
+    # https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/blob/main/pacman.conf
+    # https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf
+    # cat /tmp/pacman.conf | grep -v '^#' | sed 's/ \{2,\}/ /g' | awk NF
     if command -v pacman &> /dev/null; then
         text 'pacman'
         cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
 Architecture = x86_64
 HoldPkg = pacman glibc
-LocalFileSigLevel = Optional
+DownloadUser = alpm
 ParallelDownloads = 8
+LocalFileSigLevel = Optional
 SigLevel = Required DatabaseOptional
-
+CheckSpace
 Color
 ILoveCandy
 VerbosePkgLists
@@ -81,6 +85,12 @@ Include = /etc/pacman.d/mirrorlist
 #Include = /etc/pacman.d/endeavouros-mirrorlist
 #SigLevel = PackageRequired
 EOF
+    fi
+}
+
+function upgrade_pacman {
+    if command -v pacman &> /dev/null; then
+        text 'pacman'
         ${ELEVATE} pacman -Scc
         ${ELEVATE} pacman -Syyu --needed --noconfirm base-devel reflector bash bash-completion curl wget git nano vim xclip
         ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
@@ -158,15 +168,21 @@ function main {
     elevate_user
 
     upgrade_apt
+
     upgrade_apk
+
     upgrade_dnf
-    upgrade_pacman
+
+    setup_pacman;upgrade_pacman
 
     upgrade_code
+
     upgrade_docker
+    
     upgrade_pipx
 
     upgrade_flatpak
+    
     upgrade_snap
 
     pause_script 'End of the script. Press any key to exit'
