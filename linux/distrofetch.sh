@@ -7,13 +7,15 @@ export LC_ALL
 function usage {
 	cat << EOF
 DESCRIPTION
-    Show distribution information using pure bash
+    Show distribution information
 SYNTAX
     $ ${0##*/} <option>
 OPTIONS
-    --long, -long, long, --l, -l, l       use long format (default)
-    --short, -short, short, --s, -s, s    use short format
-    --help, -help, help, --h, -h, h       show help
+    -c    check requirements
+    -h    show help
+    -l    use long format (default)
+    -s    use short format
+
 USAGE
     $ ${0##*/}
     $ ${0##*/} -s
@@ -23,8 +25,25 @@ EOF
 #######################################################################
 # helpers
 #######################################################################
-function row { printf -- '%9s : %s\n' "${1}" "${2}"; }
-function separator { printf -- '*%.0s' {1..60}; printf '\n'; }
+function print_row { printf -- '%9s : %s\n' "${1}" "${2}"; }
+function print_sep { printf -- '*%.0s' {1..60}; printf '\n'; }
+function print_na { printf '%s' '?'; }
+function check_cmd {
+    cmdlist=(date hostname free id uname uptime xrandr)
+    cmdyes=()
+    cmdno=()
+
+    for cmd in "${cmdlist[@]}"; do
+        if command -v "${cmd}" &> /dev/null; then
+            cmdyes+=("${cmd}") # Append to cmdyes array
+        else
+            cmdno+=("${cmd}")   # Append to cmdno array
+        fi
+    done
+
+    echo "Commands found in PATH: ${cmdyes[*]}"
+    echo "Commands not found in PATH: ${cmdno[*]}"
+}
 
 #######################################################################
 # get data
@@ -33,7 +52,7 @@ function get_user {
     if command -v id &> /dev/null; then
         printf '%s' "$(id --user --name)"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -41,7 +60,7 @@ function get_host {
     if command -v hostname &> /dev/null; then
         printf '%s' "$(hostname --long)"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -49,7 +68,7 @@ function get_now {
     if command -v date &> /dev/null; then
         printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -57,7 +76,7 @@ function get_hardware {
     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
         printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -65,7 +84,7 @@ function get_distro {
     if [[ -f /etc/os-release ]]; then
         printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -73,22 +92,22 @@ function get_kernel {
     if command -v uname &> /dev/null; then
         printf '%s' "$(uname --kernel-release)"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
 function get_display {
     if [[ $(tty) == *tty* ]]; then
-        printf '%s' '-'
+        print_na
     elif command -v xrandr &> /dev/null; then
         xrandr &> /dev/null
         if [[ ${?} == '1' ]]; then
-            printf '%s' '-'
+            print_na
         else
             printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
         fi
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -96,7 +115,7 @@ function get_desktop {
     if [[ -n "${XDG_CURRENT_DESKTOP}" ]] && [[ -n "${XDG_SESSION_TYPE}" ]]; then
         printf '%s@%s' "${XDG_CURRENT_DESKTOP}" "${XDG_SESSION_TYPE}"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -104,7 +123,7 @@ function get_ram {
     if command -v free &> /dev/null; then
         printf '%sMiB / %sMiB' "$(free --mebi | awk 'FNR == 2 {print $3}')" "$(free --mebi | awk 'FNR == 2 {print $2}')"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -112,7 +131,7 @@ function get_swap {
     if command -v free &> /dev/null; then
         printf '%sMiB / %sMiB' "$(free --mebi | awk 'FNR == 3 {print $3}')" "$(free --mebi | awk 'FNR == 3 {print $2}')"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -120,7 +139,7 @@ function get_uptime {
     if command -v uptime &> /dev/null; then
         printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hours/hr/g; s/ hour/hr/g; s/ minutes/min/g')"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
@@ -144,11 +163,11 @@ function get_shell {
     if [[ -n "${SHELL}" ]]; then
         printf '%s' "${SHELL}"
     else
-        printf '%s' '-'
+        print_na
     fi
 }
 
-get_colors () {
+function get_colors {
     for i in {0..15}; do
         printf '\e[48;5;%dm    ' "${i}"
     done
@@ -158,7 +177,7 @@ get_colors () {
 #######################################################################
 # display data short format
 #######################################################################
-fetch_short() {
+function fetch_short {
     cat <<-EOF | tr '[:upper:]' '[:lower:]'
  Distro : $(printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")")
  Kernel : $(printf '%s' "$(uname --kernel-release)")
@@ -171,18 +190,18 @@ EOF
 #######################################################################
 # display data long format (default)
 #######################################################################
-fetch_long() {
+function fetch_long {
     get_colors
-    row 'Hardware'  "$(get_hardware)"
-    row 'Distro'    "$(get_distro)"
-    row 'Kernel'    "$(get_kernel)"
-    row 'Display'   "$(get_display)"
-    row 'Desktop'   "$(get_desktop)"
-    row 'RAM'       "$(get_ram)"
-    row 'Swap'      "$(get_swap)"
-    row 'Uptime'    "$(get_uptime)"
-    row 'Shell'     "$(get_shell)"
-    row 'Packages'  "$(get_packages)"
+    print_row 'Hardware'  "$(get_hardware)"
+    print_row 'Distro'    "$(get_distro)"
+    print_row 'Kernel'    "$(get_kernel)"
+    print_row 'Display'   "$(get_display)"
+    print_row 'Desktop'   "$(get_desktop)"
+    print_row 'RAM'       "$(get_ram)"
+    print_row 'Swap'      "$(get_swap)"
+    print_row 'Uptime'    "$(get_uptime)"
+    print_row 'Shell'     "$(get_shell)"
+    print_row 'Packages'  "$(get_packages)"
     get_colors
 }
 
@@ -193,8 +212,9 @@ option="${1}"
 shift
 
 case "${option}" in
-    --help | -help | help | --h | -h | h)       usage ;;
-    --long | -long | long | --l | -l | l)       fetch_long ;;
-    --short | -short | short | --s | -s | s)    fetch_short ;;
-    *)                                          fetch_long ;;
+    -c)    check_cmd ;;
+    -h)    usage ;;
+    -l)    fetch_long ;;
+    -s)    fetch_short ;;
+    *)     fetch_long ;;
 esac

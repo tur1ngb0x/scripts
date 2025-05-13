@@ -5,50 +5,106 @@ function show { (set -x; "${@:?}"); }
 function usage {
 	cat << EOF
 DESCRIPTION
-    Run docker containers quickly.
+Manage docker containers.
+
 SYNTAX
-    $ ${0##*/} <image>
-    $ ${0##*/} <image:tag>
-    $ ${0##*/} <image:tag> <command(s)>
-IMAGES
-    archlinux
-    amazonlinux (2023, 2, latest)
-    clearlinux
-    debian (bookworm, bullseye, sid)
-    fedora (41, 40, rawhide)
-    oraclelinux (9, 8)
-    ubuntu (noble, jammy, devel)
+$ ${0##*/} <options>
+$ ${0##*/} <image:tag> <command(s)>
+
+OPTIONS
+info       show docker information
+disk       show local containers and images
+cleanup    remove local containers and images
+
+IMAGES (https://hub.docker.com/search)
+alpine         latest, edge
+archlinux      latest
+amazonlinux    latest, 2023, 2
+debian         latest, bookworm, bullseye, sid
+fedora         latest, 42, 41, rawhide
+oraclelinux    9, 9-slim, 8, 8-slim
+ubuntu         noble, jammy, rolling, devel
+
 COMMANDS
-    sh, /bin/sh
-    bash, /bin/bash
+sh      /bin/sh
+bash    /bin/bash
+
 USAGE
-    $ ${0##*/} archlinux
-    $ ${0##*/} debian:sid sh
-    $ ${0##*/} ubuntu:devel
+$ ${0##*/} alpine
+$ ${0##*/} debian:latest
+$ ${0##*/} fedora:rawhide bash
 EOF
 }
 
-if [[ "${#}" -eq 0 ]]; then
-    usage
-    exit
-fi
+function docker_info {
+    show docker info
+}
 
-UUIDTAG="$(uuidgen | awk -F '-' '{print $1}')"
-DKRHOST="docker-${1}-${UUIDTAG}"
-DKRHOST="${DKRHOST//:/-}"
+function docker_cleanup {
+    show sudo docker system prune --all --force
+}
 
-if command -v docker &> /dev/null; then
-    show docker \
-        --debug \
-        --log-level 'debug' \
-        container run \
+function docker_disk {
+    show docker system df --verbose | awk NF
+}
+
+function docker_run {
+    local image="${1}"
+    shift
+    local uuidtag
+    uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
+    local dkrhost
+    dkrhost="docker-${image}-${uuidtag}"
+    dkrhost="${dkrhost//:/-}"
+
+    show docker --debug=true --log-level=debug container run \
         --interactive \
         --tty \
-        --hostname "${DKRHOST}" \
+        --hostname "${dkrhost}" \
         --volume "${HOME}"/src/:/root/src:ro \
         --workdir '/root' \
-        "${1}" \
+        "${image}" \
         "${@:2}"
-else
+        # --volume "/etc/timezone:/etc/timezone:ro" \
+        # --volume "/etc/localtime:/etc/localtime:ro" \
+}
+
+# Check docker availability
+if ! command -v docker &> /dev/null; then
     echo 'docker not found in PATH'
+    exit 1
 fi
+
+# Main logic
+case "${1}" in
+    cleanup)      docker_cleanup ;;
+    disk)         docker_disk ;;
+    info)         docker_info ;;
+    '')           usage ;;
+    *)            docker_run "${@}" ;;
+esac
+
+# if [[ "${#}" -eq 0 ]]; then
+#     usage
+#     exit
+# fi
+
+# UUIDTAG="$(uuidgen | awk -F '-' '{print $1}')"
+# DKRHOST="docker-${1}-${UUIDTAG}"
+# DKRHOST="${DKRHOST//:/-}"
+
+# if command -v docker &> /dev/null; then
+#     show docker \
+#         --debug \
+#         --log-level 'debug' \
+#         container run \
+#         --interactive \
+#         --tty \
+#         --hostname "${DKRHOST}" \
+#         --volume "${HOME}"/src/:/root/src:ro \
+#         --workdir '/root' \
+#         "${1}" \
+#         "${@:2}"
+# else
+#     echo 'docker not found in PATH'
+# fi

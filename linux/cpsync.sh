@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function show() { (set -x; "${@:?}"); }
+function show { (set -x; "${@:?}"); }
 
 function usage {
 	cat << EOF
