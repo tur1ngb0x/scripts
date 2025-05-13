@@ -62,6 +62,29 @@ $ nerdfont.sh 'FiraMono' 'IBMPlexMono' 'RobotoMono'
 EOF
 }
 
+function PatchFonts {
+
+    stock_fonts="${1}"
+    patched_fonts="${2}"
+
+    mkdir -pv "${1}" "${2}"
+    
+    show docker --debug --log-level 'debug' container run --rm \
+    --volume "${stock_fonts}":/in:Z \
+    --volume "${patched_fonts}":/out:Z \
+    --env "PN=4" \
+    nerdfonts/patcher \
+        --debug 3 \
+        --complete \
+        --mono \
+        --single-width-glyphs \
+        --removeligs \
+        --adjust-line-height \
+        --progressbars
+
+    sudo chown -Rc "${USER}":"${USER}" "${2}"
+}
+
 function InstallFonts {
     # if no arguments are provided, exit
     if [[ -z "${1}" ]]; then

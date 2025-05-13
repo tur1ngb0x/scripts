@@ -181,13 +181,13 @@ function upgrade_dnf {
 
 function upgrade_pacman {
     header 'pacman'
-        text 'pacman found in PATH'
 #     # https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/blob/main/pacman.conf
 #     # https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf
 #     # cat /tmp/pacman.conf | grep -v '^#' | sed 's/ \{2,\}/ /g' | awk NF
 #     # for VM/containers : DisableSandbox
 #     # for bare metal : DownloadUser = alpm 
     if command -v pacman &> /dev/null; then
+        text 'pacman found in PATH'
         header 'pacman.conf'
         cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
