@@ -41,8 +41,24 @@ function check_cmd {
         fi
     done
 
-    echo "Commands found in PATH: ${cmdyes[*]}"
-    echo "Commands not found in PATH: ${cmdno[*]}"
+    printf '%s\n' "Requirements: ${cmdlist[*]}"
+
+    # Check if cmdno array contains missing requirements
+    if [ "${#cmdno[@]}" -eq 0 ]; then
+        printf '%s\n' 'Status: Pass'
+    else
+        printf '%s\n' 'Status: Fail'
+        printf '%s\n' "Found: ${cmdyes[*]}"
+       printf '%s\n' "Missing: ${cmdno[*]}"
+        cat << EOF
+Debian/Ubuntu: apt install coreutils procps x11-utils
+RHEL/Fedora:   dnf install coreutils procps-ng hostname xrandr
+Arch:          pacman -Syu coreutils inetutils procps-ng uutils-coreutils xorg-xrandr
+Alpine:        apk add     busybox procps xrandr
+EOF
+    fi
+
+
 }
 
 #######################################################################
@@ -82,7 +98,9 @@ function get_hardware {
 
 function get_distro {
     if [[ -f /etc/os-release ]]; then
-        printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
+#        printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")"
+#        printf '%s' "$(source /etc/os-release; printf '%s' "${PRETTY_NAME}")"
+        source /etc/os-release; printf '%s' "${PRETTY_NAME}"
     else
         print_na
     fi
@@ -104,7 +122,13 @@ function get_display {
         if [[ ${?} == '1' ]]; then
             print_na
         else
-            printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
+            #printf '%s' "$(xrandr | awk '/connected primary/{getline;{print $1"@"$2}}' | sed "s/\..*//")"
+            df_display_id="$(xrandr | awk '/[^ ]* connected primary/ {print $1}')"
+            df_display_xy="$(xrandr | grep '.*+$' | awk '{print $1}')"
+            df_display_hz="$(xrandr | grep '.*+$' | awk '{print $2}' | sed 's/*+//')"
+            printf '%s@%s@%s' "${df_display_id}" "${df_display_xy}" "${df_display_hz}"
+
+           # printf '%s' "$(xrandr | awk '/connected primary/{getline; print $1 "@" $2 "@" $4}' | sed "s/\..*//")"
         fi
     else
         print_na
@@ -179,7 +203,7 @@ function get_colors {
 #######################################################################
 function fetch_short {
     cat <<-EOF | tr '[:upper:]' '[:lower:]'
- Distro : $(printf '%s' "$(source /etc/os-release; echo "${PRETTY_NAME}")")
+ Distro : $(source /etc/os-release; printf '%s' "${PRETTY_NAME}")
  Kernel : $(printf '%s' "$(uname --kernel-release)")
  Memory : $(printf '%sMiB' "$(free --mebi | awk 'FNR == 2 {print $3}')")
  Uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")

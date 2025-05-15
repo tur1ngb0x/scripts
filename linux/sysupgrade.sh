@@ -215,6 +215,9 @@ Include = /etc/pacman.d/mirrorlist
 #[endeavouros]
 #Include = /etc/pacman.d/endeavouros-mirrorlist
 #SigLevel = PackageRequired
+
+#[chaotic-aur]
+#Include = /etc/pacman.d/chaotic-mirrorlist
 EOF
         header 'pacman cache'
         show ${ELEVATE} find /var/cache/pacman/pkg/ -mindepth 1 -exec rm -f {} \;

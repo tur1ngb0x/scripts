@@ -15,15 +15,7 @@ OPTIONS
 info       show docker information
 disk       show local containers and images
 cleanup    remove local containers and images
-
-IMAGES (https://hub.docker.com/search)
-alpine         latest, edge
-archlinux      latest
-amazonlinux    latest, 2023, 2
-debian         latest, bookworm, bullseye, sid
-fedora         latest, 42, 41, rawhide
-oraclelinux    9, 9-slim, 8, 8-slim
-ubuntu         noble, jammy, rolling, devel
+images     list popular images with their tags
 
 COMMANDS
 sh      /bin/sh
@@ -69,6 +61,23 @@ function docker_run {
         # --volume "/etc/localtime:/etc/localtime:ro" \
 }
 
+function docker_images () {
+    cat << EOF
+
+IMAGES          TAGS
+alpine          latest, edge
+archlinux       latest
+debian          latest, bookworm, bullseye, sid
+fedora          latest, 42, 41, rawhide
+ubuntu          noble, jammy, rolling, devel
+----            ----
+python          latest, 3, 2
+mysql           latest, 9, 8
+
+Source: https://hub.docker.com/search
+EOF
+}
+
 # Check docker availability
 if ! command -v docker &> /dev/null; then
     echo 'docker not found in PATH'
@@ -79,6 +88,7 @@ fi
 case "${1}" in
     cleanup)      docker_cleanup ;;
     disk)         docker_disk ;;
+    images)       docker_images ;;
     info)         docker_info ;;
     '')           usage ;;
     *)            docker_run "${@}" ;;
