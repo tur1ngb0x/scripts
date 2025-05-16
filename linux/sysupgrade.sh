@@ -87,11 +87,11 @@ function create_user () {
     else
         read -r -p 'Enter name: ' DKRUSER
         if grep -q "^${DKRUSER}" /etc/passwd; then
-            text "${DKRUSER} already exists on the system."
+            text "User '${DKRUSER}' already exists on this system."
         else
             show ${ELEVATE} groupadd --force --gid 27 sudo
-            show ${ELEVATE} groupadd --force --gid wheel
-            show ${ELEVATE} groupadd --force --gid adm
+            show ${ELEVATE} groupadd --force --gid 28 wheel
+            show ${ELEVATE} groupadd --force --gid 29 adm
 
             show ${ELEVATE} useradd --create-home --shell /bin/bash  "${DKRUSER}"
             show ${ELEVATE} passwd "${DKRUSER}"
@@ -116,19 +116,19 @@ EOF
 source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
-        fi
         # user shell permissions
         ${ELEVATE} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.profile &> /dev/null
-        ${ELEVATE} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.bashrc &> /dev/null  
+        ${ELEVATE} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.bashrc &> /dev/null
 
         # all users
         header 'current users'
         show ${ELEVATE} cat /etc/passwd | awk -F: '$3 == 0 || $3 >= 1000' | sort
         header 'user details'
         awk -F: '$3 == 0 || $3 >= 1000 {print $1}' /etc/passwd | while IFS= read -r i; do
-           show ${ELEVATE} id "${i}" 
+           show ${ELEVATE} id "${i}"
         done
-        header "sudo --user ${DKRUSER} --login"
+        fi
+		text " > sudo --user ${DKRUSER} --login"
     fi
 }
 
@@ -185,7 +185,7 @@ function upgrade_pacman {
 #     # https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/raw/main/pacman.conf
 #     # cat /tmp/pacman.conf | grep -v '^#' | sed 's/ \{2,\}/ /g' | awk NF
 #     # for VM/containers : DisableSandbox
-#     # for bare metal : DownloadUser = alpm 
+#     # for bare metal : DownloadUser = alpm
     if command -v pacman &> /dev/null; then
         text 'pacman found in PATH'
         header 'pacman.conf'
@@ -235,18 +235,18 @@ EOF
 
         header 'pacman packages'
         show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl dialog git micro nano pacman-contrib reflector sudo vim wget
-    
+
         header 'yay'
         if command -v yay &> /dev/null; then
             text 'yay is already installed.'
         else
             show rm -fr /tmp/yay-bin
             show git clone --depth=1 https://aur.archlinux.org/yay-bin.git /tmp/yay-bin
-            
+
             # disable debug flag
             show cp -f /etc/makepkg.conf /etc/makepkg.conf.bak
             sed -i "/^OPTIONS=(/s/ *debug//" /etc/makepkg.conf
-            
+
             # bypass root warning
             show cp -f /usr/sbin/makepkg /usr/sbin/makepkg.bak
             show sed -i "/exit \$E_ROOT/ s/^/#/g" /usr/sbin/makepkg

@@ -167,25 +167,122 @@ function get_uptime {
     fi
 }
 
+# function get_packages {
+#     for pm in dpkg dnf pacman flatpak snap docker pipx; do
+#         if command -v "${pm}" &> /dev/null; then
+#             case "${pm}" in
+#                 dpkg) printf '%s(dpkg) ' "$(dpkg --list | grep -c '^ii')" ;;
+#                 dnf) printf '%s(dnf) ' "$(dnf list --installed | grep -c '')" ;;
+#                 pacman) printf '%s(pacman) ' "$(pacman -Qq | wc -l)" ;;
+#                 flatpak) printf '%s(flatpak) ' "$(flatpak list --all | wc -l)" ;;
+#                 snap) printf '%s(snap) ' "$(snap list --all | wc -l)" ;;
+#                 docker) printf '%s(docker) ' "$(docker images --format "{{.Repository}}" | wc -l)" ;;
+#                 pipx) printf '%s(pipx) ' "$(pipx list --short | wc -l)" ;;
+#             esac
+#         fi
+#     done
+# }
+
+
+# function get_packages {
+#     for pm in dpkg dnf pacman; do
+#         if command -v "${pm}" &> /dev/null; then
+#             case "${pm}" in
+#                 dpkg)   printf '%s(dpkg) '   "$(dpkg --list | grep -c '^ii')" ;;
+#                 dnf)    printf '%s(dnf) '    "$(dnf list --installed | grep -c '')" ;;
+#                 pacman) printf '%s(pacman) ' "$(pacman -Qq | wc -l)" ;;
+#             esac
+#         fi
+#     done
+# 	pm_user=()
+# 	for pm in docker pipx flatpak snap; do
+# 		if command -v "${pm}" &> /dev/null; then
+# 			dc="$(docker images --format '{{.Repository}}' &> /dev/null | wc -l)(docker)"
+# 			fc="$(flatpak list --all &> /dev/null | wc -l)(flatpak)"
+# 			pc="$(pipx list --short &> /dev/null | wc -l)(pipx)"
+# 			sc="$(snap list &> /dev/null | wc -l)(snap)"
+# 			pm_user=("${dc}" "${fc}" "${pc}""${sc}")
+# 			printf '%s' "${pm_user[@]}"
+# 		fi
+# 	done
+# }
+
+# function get_packages {
+# 	pm_total=()
+# 	pm_1p=()
+# 	pm_3p=()
+#     for pm in dpkg dnf pacman; do
+#         if command -v "${pm}" &> /dev/null; then
+#             case "${pm}" in
+#                 dpkg)   count="$(printf '%s(dpkg) '   "$(dpkg --list | grep -c '^ii')")" ;;
+#                 dnf)    count="$(printf '%s(dnf) '    "$(dnf list --installed | grep -c '')")" ;;
+#                 pacman) count="$(printf '%s(pacman) ' "$(pacman -Qq | wc -l)")" ;;
+#             esac
+# 			pm_1p+=("${count}(${pm})")
+#         fi
+#     done
+
+# 	pm_3p=()
+# 	for pm in snap docker pipx flatpak snap; do
+# 		if command -v "${pm}" &> /dev/null; then
+# 			count=""
+# 			case "${pm}" in
+# 				docker)  count="$(docker images --format '{{.Repository}}' &> /dev/null | wc -l)" ;;
+# 				flatpak) count="$(flatpak list --all &> /dev/null | wc -l)" ;;
+# 				pipx)    count="$(pipx list --short &> /dev/null | wc -l)" ;;
+# 				snap)    count="$(snap list &> /dev/null | wc -l)";;
+# 			esac
+# 			pm_3p+=("${count}(${pm})")
+# 		fi
+# 	done
+# 	pm_total+=("${pm_1p[@]}")
+# 	pm_total+=("${pm_3p[@]}")
+# 	printf '%s' "${pm_total[@]}"
+# }
+
+
 function get_packages {
-    for pm in dpkg dnf pacman flatpak snap docker pipx; do
+    pm_all=()
+    pm_1p=()
+    pm_3p=()
+    for pm in dpkg dnf pacman; do
         if command -v "${pm}" &> /dev/null; then
+            count=""
             case "${pm}" in
-                dpkg) printf '%s(dpkg) ' "$(dpkg --list | grep -c '^ii')" ;;
-                dnf) printf '%s(dnf) ' "$(dnf list --installed | grep -c '')" ;;
-                pacman) printf '%s(pacman) ' "$(pacman -Qq | wc -l)" ;;
-                flatpak) printf '%s(flatpak) ' "$(flatpak list --all | wc -l)" ;;
-                snap) printf '%s(snap) ' "$(snap list --all | wc -l)" ;;
-                docker) printf '%s(docker) ' "$(docker images --format "{{.Repository}}" | wc -l)" ;;
-                pipx) printf '%s(pipx) ' "$(pipx list --short | wc -l)" ;;
+                dpkg)   count="$(dpkg --list | grep -c '^ii')(dpkg)" ;;
+                dnf)    count="$(dnf list --installed | wc -l)(dnf)" ;;
+                pacman) count="$(pacman -Qq | wc -l)(pacman)" ;;
             esac
+            pm_1p+=("${count}" )
         fi
     done
+
+    pm_3p=()
+    for pm in docker pipx flatpak snap; do
+        if command -v "${pm}" &> /dev/null; then
+            count=""
+            case "${pm}" in
+                docker)  count="$(docker images --format '{{.Repository}}' | wc -l)(docker)" ;;
+                flatpak) count="$(flatpak list --all | wc -l)(flatpak)" ;;
+                pipx)    count="$(pipx list --short | wc -l)(pipx)" ;;
+                snap)    count="$(snap list &> /dev/null | wc -l)(snap)" ;;
+            esac
+            pm_3p+=("${count}")
+        fi
+    done
+    pm_all+=("${pm_1p[@]}")
+    pm_all+=("${pm_3p[@]}")
+    printf '%s ' "${pm_all[@]}"
 }
 
 function get_shell {
     if [[ -n "${SHELL}" ]]; then
-        printf '%s' "${SHELL}"
+		case "${SHELL}" in
+			/bin/bash)  printf '%s\n' "bash" ;;
+			/bin/zsh)   printf '%s\n' "zsh" ;;
+			/bin/fish)  printf '%s\n' "fish" ;;
+			*)          printf '%s\n' "${SHELL}" ;;
+		esac
     else
         print_na
     fi
