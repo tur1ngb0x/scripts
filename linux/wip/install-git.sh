@@ -1,63 +1,60 @@
 #!/usr/bin/env bash
 
-text() { tput rev; printf "\n %s \n" "${1}"; tput sgr0; }
+function show () { (set -x; "${@:?}"); }
 
-git_apt(){
-    text 'installing git'
-    sudo apt-add-repository --yes ppa:git-core/ppa
-    sudo apt update
-    sudo apt install --assume-yes git build-essential
-    sudo apt install --reinstall --assume-yes libsecret-1-0 libsecret-1-dev
-    sudo rm -fv /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
-    sudo make -C /usr/share/doc/git/contrib/credential/libsecret
-    sudo strip --strip-unneeded /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
-    sed -i 's/#apt/helper/g' "${HOME}"/.config/git/config
+function text () { tput rev; printf "\n %s \n" "${1}"; tput sgr0; }
+
+function git_apt () {
+    #show sudo apt-add-repository ppa:git-core/ppa
+    show sudo apt update
+    show sudo apt install --assume-yes git build-essential
+    show sudo apt install --reinstall --assume-yes libsecret-1-0 libsecret-1-dev
+    show sudo rm -fv /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+    show sudo make -C /usr/share/doc/git/contrib/credential/libsecret
+    show sudo strip --strip-unneeded /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+    show sed -i 's/#apt/helper/g' "${HOME}"/.config/git/config
 }
 
-git_dnf(){
-    text 'installing git'
-    sudo dnf install --assumeyes git git-credential-libsecret
-    sed -i 's/#dnf/helper/g' "${HOME}"/.config/git/config
+function git_dnf () {
+    show sudo dnf install --assumeyes git git-credential-libsecret
+    show sed -i 's/#dnf/helper/g' "${HOME}"/.config/git/config
 }
 
-git_pacman(){
-    text 'installing git'
-    sudo pacman -Syu --needed --noconfirm git
-    sed -i 's/#pacman/helper/g' "${HOME}"/.config/git/config
+function git_pacman () {
+    show sudo pacman -Syu --needed --noconfirm git
+    show sed -i 's/#pacman/helper/g' "${HOME}"/.config/git/config
 }
 
-key_ssh(){
+function key_ssh () {
     name_remote="${1}"
     name_user="${2}"
     key_private="ssh-rsa4096-${1}-${2}"
     key_public="${key_private}.pub"
+
     echo -e "name_remote: ${name_remote}"
     echo -e "name_user: ${name_user}"
     echo -e "key_private: ${key_private}"
     echo -e "key_public: ${key_public}"
-    text "generating private ssh key for ${2}@${1}"
-    ssh-keygen -t rsa -b 4096 -f "${HOME}/.ssh/${key_private}" -C "${key_private}"
-    text "adding ssh agent"
-    eval "$(ssh-agent -s)" &> /dev/null
-    text "adding private ssh key for ${2}@${1}"
-    ssh-add "${HOME}/.ssh/${key_private}"
-    text "generated public ssh key for ${2}@${1}"
-    cat "${HOME}/.ssh/${key_public}"
+    
+    show ssh-keygen -t rsa -b 4096 -f "${HOME}/.ssh/${key_private}" -C "${key_private}"
+    show eval "$(ssh-agent -s)" &> /dev/null
+    show ssh-add "${HOME}/.ssh/${key_private}"
+    show cat "${HOME}/.ssh/${key_public}"
 }
 
-repo_clone(){
-	mkdir "${HOME}"/src
-	pushd "${HOME}"/src || exit
-	git clone "${@}"
-	popd || exit
+function repo_clone () {
+	show mkdir "${HOME}"/src
+	show pushd "${HOME}"/src || exit
+	show git clone "${@}"
+	show popd || exit
 }
 
 # detect package managers
-if [[ -f /usr/bin/apt ]]; then
+if command -v apt &> /dev/null; then
     PKG="apt"
-elif [[ -f /usr/bin/dnf ]]; then
+elif command -v dnf &> /dev/null; then
     PKG="dnf"
-elif [[ -f /usr/bin/pacman ]]; then
+elif command -v pacman &> /dev/null; then
     PKG="pacman"
 else
     echo 'only apt, dnf, pacman are supported'
@@ -72,8 +69,10 @@ case "${PKG}" in
 esac
 
 # common
-#key_ssh 'github' 'tur1ngb0x'
-#key_ssh 'gitlab' 'tur1ngb0x'
+# key_ssh $REMOTE $USER
+key_ssh 'github' 'tur1ngb0x'
+key_ssh 'gitlab' 'tur1ngb0x'
+
 #repo_clone 'https://github.com/smxi/inxi'
 #repo_clone 'https://github.com/dylanaraps/neofetch'
 #repo_clone 'https://github.com/tur1ngb0x/scripts'

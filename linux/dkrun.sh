@@ -9,13 +9,14 @@ Manage docker containers.
 
 SYNTAX
 $ ${0##*/} <options>
-$ ${0##*/} <image:tag> <command(s)>
+$ ${0##*/} <image:tag> <command>
 
 OPTIONS
-info       show docker information
+cleanup    remove containers and images
 disk       show local containers and images
-cleanup    remove local containers and images
 images     list popular images with their tags
+info       show system information
+stats      show statistics
 
 COMMANDS
 sh      /bin/sh
@@ -40,18 +41,27 @@ function docker_disk {
     show docker system df --verbose | awk NF
 }
 
+function docker_stats {
+    show docker ps
+    show docker stats --no-stream
+}
+
 function docker_run {
     local image="${1}"
     shift
     local uuidtag
     uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
     local dkrhost
-    dkrhost="docker-${image}-${uuidtag}"
-    dkrhost="${dkrhost//:/-}"
+    # dkrhost="docker-${image}-${uuidtag}"
+    # dkrhost="${dkrhost//:/-}"
+    dkrhost="docker"
 
     show docker --debug=true --log-level=debug container run \
         --interactive \
         --tty \
+        --cpus '2' \
+        --memory '2G' \
+        --user 'root' \
         --hostname "${dkrhost}" \
         --volume "${HOME}"/src/:/root/src:ro \
         --workdir '/root' \
@@ -78,43 +88,24 @@ Source: https://hub.docker.com/search
 EOF
 }
 
-# Check docker availability
+# if docker is not found, exit.
 if ! command -v docker &> /dev/null; then
     echo 'docker not found in PATH'
     exit 1
 fi
 
-# Main logic
-case "${1}" in
-    cleanup)      docker_cleanup ;;
-    disk)         docker_disk ;;
-    images)       docker_images ;;
-    info)         docker_info ;;
-    '')           usage ;;
-    *)            docker_run "${@}" ;;
-esac
+function main () {
+    # switch case
+    case "${1}" in
+        cleanup)      docker_cleanup ;;
+        disk)         docker_disk ;;
+        images)       docker_images ;;
+        info)         docker_info ;;
+        stats)        docker_stats ;;
+        '')           usage ;;
+        *)            docker_run "${@}" ;;
+    esac
+}
 
-# if [[ "${#}" -eq 0 ]]; then
-#     usage
-#     exit
-# fi
-
-# UUIDTAG="$(uuidgen | awk -F '-' '{print $1}')"
-# DKRHOST="docker-${1}-${UUIDTAG}"
-# DKRHOST="${DKRHOST//:/-}"
-
-# if command -v docker &> /dev/null; then
-#     show docker \
-#         --debug \
-#         --log-level 'debug' \
-#         container run \
-#         --interactive \
-#         --tty \
-#         --hostname "${DKRHOST}" \
-#         --volume "${HOME}"/src/:/root/src:ro \
-#         --workdir '/root' \
-#         "${1}" \
-#         "${@:2}"
-# else
-#     echo 'docker not found in PATH'
-# fi
+# main
+main "${@}"

@@ -53,7 +53,7 @@ function prompt_user () {
 }
 
 function elevate_user () {
-    if [[ "$(id --user --real)" -eq 0 ]]; then
+    if [[ "$(id -ur)" -eq 0 ]]; then
         ELEVATE=""
     else
         if command -v sudo &> /dev/null; then
@@ -88,6 +88,7 @@ function create_user () {
         read -r -p 'Enter name: ' DKRUSER
         if grep -q "^${DKRUSER}" /etc/passwd; then
             text "User '${DKRUSER}' already exists on this system."
+
         else
             show ${ELEVATE} groupadd --force --gid 27 sudo
             show ${ELEVATE} groupadd --force --gid 28 wheel

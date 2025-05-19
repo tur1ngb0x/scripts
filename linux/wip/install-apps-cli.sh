@@ -46,9 +46,10 @@ cli_ncdu()
 }
 
 # begin script from here
+cli_adb
 #cli_golang
-cli_micro
-cli_ncdu
+#cli_micro
+#cli_ncdu
 
 # set permissions
 chmod -fvR 0755 "${HOME}"/.local/bin/
