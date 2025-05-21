@@ -49,13 +49,12 @@ function docker_stats {
 function docker_run {
     local image="${1}"
     shift
-    local uuidtag
-    uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
-    local dkrhost
+	local dkrhost
+	dkrhost="docker"
+    # local uuidtag
+    # uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
     # dkrhost="docker-${image}-${uuidtag}"
     # dkrhost="${dkrhost//:/-}"
-    dkrhost="docker"
-
     show docker --debug=true --log-level=debug container run \
         --interactive \
         --tty \
@@ -66,7 +65,8 @@ function docker_run {
         --volume "${HOME}"/src/:/root/src:ro \
         --workdir '/root' \
         "${image}" \
-        "${@:2}"
+		"${@}"
+        # "${@:2}"
         # --volume "/etc/timezone:/etc/timezone:ro" \
         # --volume "/etc/localtime:/etc/localtime:ro" \
 }

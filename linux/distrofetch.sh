@@ -96,7 +96,7 @@ function get_hardware {
 
 function get_distro {
     if [[ -f /etc/os-release ]]; then
-        source /etc/os-release; printf '%s(%s)' "${PRETTY_NAME}" "${VERSION_CODENAME}"
+        source /etc/os-release; printf '%s %s' "${NAME}" "${VERSION}"
     else
         print_na
     fi
@@ -221,9 +221,9 @@ function get_packages {
         if command -v "${pm}" &> /dev/null; then
             count=""
             case "${pm}" in
-                dpkg)   count="$(dpkg --list | grep -c '^ii')@dpkg" ;;
-                dnf)    count="dnf-$(dnf list --installed | wc -l)@dnf" ;;
-                pacman) count="pacman-$(pacman -Qq | wc -l)@pacman" ;;
+                dpkg)   count="$(dpkg --list 2>/dev/null | grep -c '^ii')@dpkg" ;;
+                dnf)    count="$(dnf list --installed 2>/dev/null | wc -l)@dnf" ;;
+                pacman) count="$(pacman -Qq 2>/dev/null | wc -l)@pacman" ;;
             esac
             pm_1p+=("${count}" )
         fi
@@ -234,10 +234,10 @@ function get_packages {
         if command -v "${pm}" &> /dev/null; then
             count=""
             case "${pm}" in
-                docker)  count="$(docker images --format '{{.Repository}}' | wc -l)"; count="${count}@docker";;
-                flatpak) count="$(flatpak list --all | wc -l)"; count="${count}(flatpak)";;
-                pipx)    count="$(pipx list --short | wc -l)"; count="${count}(pipx)";;
-                snap)    count="$(snap list --all | wc -l)"; count="${count}(snap)";;
+                docker)  count="$(docker images --format '{{.Repository}}' 2>/dev/null | wc -l)"; count="${count}@docker";;
+                flatpak) count="$(flatpak list --all 2>/dev/null | wc -l)"; count="${count}@flatpak";;
+                pipx)    count="$(pipx list --short 2>/dev/null | wc -l)"; count="${count}@pipx";;
+                snap)    count="$(snap list --all 2>/dev/null | wc -l)"; count="${count}@snap";;
             esac
             pm_3p+=("${count}")
         fi
