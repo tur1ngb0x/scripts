@@ -29,7 +29,6 @@ dnf     Upgrade DNF packages
 docker  Upgrade docker images
 flatpak Upgrade flatpak packages
 pacman  Upgrade pacman packages
-pip     Upgrade pip and pipx
 pipx    Upgrade pipx packages
 snap    Upgrade snap packages
 user    Create non-root user
@@ -294,38 +293,27 @@ function upgrade_flatpak {
 function upgrade_code {
     if command -v code &> /dev/null; then
         header 'code'
-        #show code --update-extensions
-        for ext in $(code --list-extensions); do
-            show code --install-extension "${ext}" --force
-        done
+		show code --list-extensions
+        show code --update-extensions
     fi
 }
 
 function upgrade_docker {
     if command -v docker &> /dev/null; then
         header 'docker'
+		show docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.Size}}"
         DOCKER_CLI_HINTS="false"; export DOCKER_CLI_HINTS
-        for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
-            show docker pull "${img}"
-        done
-    fi
-}
-
-function upgrade_pip {
-    if command -v pip &> /dev/null; then
-        header 'pip'
-        show pip install --user --upgrade pip
-        show pip install --user --upgrade pipx
+		for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
+			show docker pull "${img}"
+		done
     fi
 }
 
 function upgrade_pipx {
     if command -v pipx &> /dev/null; then
         header 'pipx'
-        for pkg in $(pipx list --short | awk '{print $1}'); do
-            show pipx upgrade "${pkg}"
-            #show pipx upgrade-all
-        done
+        show pipx list --short
+        show pipx upgrade-all
     fi
 }
 
@@ -351,14 +339,10 @@ function upgrade_all {
     upgrade_apt
     upgrade_dnf
     upgrade_pacman
-
     upgrade_snap
     upgrade_flatpak
-
     upgrade_code
     upgrade_docker
-
-    upgrade_pip
     upgrade_pipx
 }
 
@@ -397,7 +381,6 @@ function handle_arguments {
             docker)     upgrade_docker  ;;
             flatpak)    upgrade_flatpak ;;
             pacman)     upgrade_pacman  ;;
-            pip)        upgrade_pip     ;;
             pipx)       upgrade_pipx    ;;
             snap)       upgrade_snap    ;;
             user)       create_user     ;;

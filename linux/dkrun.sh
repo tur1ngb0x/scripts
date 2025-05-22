@@ -2,30 +2,39 @@
 
 function show { (set -x; "${@:?}"); }
 
-function usage {
+function usage () {
+    Treset=$(tput sgr0)
+    Tbold=$(tput bold)
+    Titalic=$(tput sitm)
+    Tunderline=$(tput ul)
+    Treverse=$(tput rev)
+    Tdim=$(tput dim)
 	cat << EOF
-DESCRIPTION
-Manage docker containers.
+${Treverse}${Tbold} DESCRIPTION ${Treset}
+Bash wrapper for quickly spinning up docker containers.
 
-SYNTAX
+${Treverse}${Tbold} SYNTAX ${Treset}
 $ ${0##*/} <options>
 $ ${0##*/} <image:tag> <command>
 
-OPTIONS
-cleanup    remove containers and images
-disk       show local containers and images
+${Treverse}${Tbold} OPTIONS ${Treset}
 images     list popular images with their tags
+disk       show local images and containers
+cleanup    remove local images and containers
 info       show system information
-stats      show statistics
+stats      show local containers statistics
+help       show help
 
-COMMANDS
+${Treverse}${Tbold} COMMANDS ${Treset}
 sh      /bin/sh
 bash    /bin/bash
+dash    /bin/dash
 
-USAGE
+${Treverse}${Tbold} USAGE ${Treset}
 $ ${0##*/} alpine
 $ ${0##*/} debian:latest
 $ ${0##*/} fedora:rawhide bash
+$ ${0##*/} archlinux:latest bash -c 'cat /etc/pacman.conf'
 EOF
 }
 
@@ -94,16 +103,28 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
+# function main () {
+#     # switch case
+#     case "${1}" in
+#         cleanup)      docker_cleanup ;;
+#         disk)         docker_disk ;;
+#         images)       docker_images ;;
+#         info)         docker_info ;;
+#         stats)        docker_stats ;;
+#         '')           usage ;;
+#         *)            docker_run "${@}" ;;
+#     esac
+# }
+
 function main () {
-    # switch case
     case "${1}" in
-        cleanup)      docker_cleanup ;;
-        disk)         docker_disk ;;
-        images)       docker_images ;;
-        info)         docker_info ;;
-        stats)        docker_stats ;;
-        '')           usage ;;
-        *)            docker_run "${@}" ;;
+        cleanup)      						docker_cleanup ;;
+        disk)         						docker_disk ;;
+        images)       						docker_images ;;
+        info)         						docker_info ;;
+        stats)        						docker_stats ;;
+		''|help|-help|--help|h|-h|--h)      usage ;;
+        *)    								docker_run "${@}" ;;
     esac
 }
 

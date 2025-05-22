@@ -249,13 +249,14 @@ function get_packages {
 
 function get_shell {
     if [[ -n "${SHELL}" ]]; then
-		# case "${SHELL}" in
-		# 	/bin/bash)  printf '%s %s' "bash" "$(bash --version | awk 'FNR==1 {print $4}')" ;;
-		# 	/bin/zsh)   printf '%s %s' "zsh"  "$(zsh --version | awk 'FNR==1 {print $2}')"  ;;
-		# 	/bin/fish)  printf '%s %s' "fish" "$(fish --version | awk 'FNR==1 {print $3}')" ;;
-		# 	*)          printf '%s\n' "${SHELL}" ;;
-		# esac
-		printf '%s' "${SHELL}"
+		case "${SHELL}" in
+			/bin/bash)  printf '%s %s' "bash" "$(bash --version | awk 'FNR==1 {print $4}' | cut -d '-' -f1)" ;;
+			/bin/zsh)   printf '%s %s' "zsh"  "$(zsh --version | awk 'FNR==1 {print $2}')"  ;;
+			/bin/fish)  printf '%s %s' "fish" "$(fish --version | awk 'FNR==1 {print $3}')" ;;
+			/bin/dash)  printf '%s %s' "dash" " " ;;
+			*)          printf '%s\n' "${SHELL}" ;;
+		esac
+		# printf '%s' "${SHELL}"
     else
         print_na
     fi

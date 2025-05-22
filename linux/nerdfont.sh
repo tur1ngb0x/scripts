@@ -68,7 +68,7 @@ function PatchFonts {
     patched_fonts="${2}"
 
     mkdir -pv "${1}" "${2}"
-    
+
     show docker --debug --log-level 'debug' container run --rm \
     --volume "${stock_fonts}":/in:Z \
     --volume "${patched_fonts}":/out:Z \
@@ -105,8 +105,9 @@ function InstallFonts {
 
         # install font
         header "Installing Nerd Font - ${font}"
+		show mkdir -p /tmp/nerd-fonts
         show curl -s -L -o /tmp/nerd-fonts/"${font}".tar.xz https://github.com/ryanoasis/nerd-fonts/releases/latest/download/"${font}".tar.xz
-        show mkdir -p /tmp/nerd-fonts "${HOME}"/.local/share/fonts/"${font}"
+		show mkdir -p "${HOME}"/.local/share/fonts/"${font}"
         show tar --file /tmp/nerd-fonts/"${font}".tar.xz --extract --xz --directory "${HOME}"/.local/share/fonts/"${font}"
     done
 }
