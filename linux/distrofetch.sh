@@ -300,16 +300,20 @@ function fetch_long {
     get_colors
 }
 
+function main () {
+	option="${1}"
+	shift
+
+	case "${option}" in
+		-c)    check_cmd ;;
+		-h)    usage ;;
+		-l)    fetch_long ;;
+		-s)    fetch_short ;;
+		*)     fetch_long ;;
+	esac
+}
+
 #######################################################################
 # begin script from here
 #######################################################################
-option="${1}"
-shift
-
-case "${option}" in
-    -c)    check_cmd ;;
-    -h)    usage ;;
-    -l)    fetch_long ;;
-    -s)    fetch_short ;;
-    *)     fetch_long ;;
-esac
+main "${@}"

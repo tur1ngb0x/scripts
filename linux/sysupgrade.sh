@@ -225,16 +225,22 @@ EOF
 
         header 'pacman update'
         show ${ELEVATE} pacman -Syyu --needed --noconfirm reflector
-        header 'pacman mirrors'
-        if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2> /dev/null)" ]; then
-            text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
-            show ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
-        else
-            text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
-        fi
+
+		header 'reflector'
+		if command -v reflector &> /dev/null; then
+
+			if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2> /dev/null)" ]; then
+				text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
+				show ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+			else
+				text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
+			fi
+		else
+			text 'reflector is not available for this distribution'
+		fi
 
         header 'pacman packages'
-        show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl dialog git micro nano pacman-contrib reflector sudo vim wget
+	    show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
 
         header 'yay'
         if command -v yay &> /dev/null; then
@@ -251,12 +257,12 @@ EOF
             show cp -f /usr/sbin/makepkg /usr/sbin/makepkg.bak
             show sed -i "/exit \$E_ROOT/ s/^/#/g" /usr/sbin/makepkg
 
-            show makepkg --dir /tmp/yay-bin --clean --cleanbuild --force --syncdeps --install --needed --noconfirm
+            show makepkg --dir /tmp/yay-bin --syncdeps --install --needed --noconfirm
         fi
 
         header 'pacman *.pacnew *.pacsave'
-        show sudo find /etc -name '*.pacnew' 2> /dev/null
-        show sudo find /etc -name '*.pacsave' 2> /dev/null
+        show ${ELEVATE} find /etc -name '*.pacnew' 2> /dev/null
+        show ${ELEVATE} find /etc -name '*.pacsave' 2> /dev/null
     else
         text 'pacman not found in PATH'
     fi

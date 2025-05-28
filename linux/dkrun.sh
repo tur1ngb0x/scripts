@@ -18,6 +18,7 @@ $ ${0##*/} <options>
 $ ${0##*/} <image:tag> <command>
 
 ${Treverse}${Tbold} OPTIONS ${Treset}
+check      check common issues and problems
 images     list popular images with their tags
 disk       show local images and containers
 cleanup    remove local images and containers
@@ -38,19 +39,23 @@ $ ${0##*/} archlinux:latest bash -c 'cat /etc/pacman.conf'
 EOF
 }
 
-function docker_info {
+function docker_check () {
+
+}
+
+function docker_info () {
     show docker info
 }
 
-function docker_cleanup {
+function docker_cleanup () {
     show sudo docker system prune --all --force
 }
 
-function docker_disk {
+function docker_disk () {
     show docker system df --verbose | awk NF
 }
 
-function docker_stats {
+function docker_stats () {
     show docker ps
     show docker stats --no-stream
 }

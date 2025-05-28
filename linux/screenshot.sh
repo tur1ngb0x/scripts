@@ -47,17 +47,18 @@ fi
 # capture screenshot
 printf '%s\n' "${ss_cmd}"
 (eval "${ss_cmd}") &> "${ss_log}"
+notify-send -u low -t 1000 -a screenshot.sh -i camera "screenshot captured"
 printf 'file\t%s\nlog\t%s\n' "${ss_file}" "${ss_log}"
 
 
 
-# set keybinding
+# set keybinging
 function set_ss_gnome () {
 	# register keybinding
 	gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
 		"['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
 
-	# set keybinding
+	# configure keybinding
 	gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
 		name 'screenshot.sh'
 	gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ \
