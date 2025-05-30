@@ -39,9 +39,9 @@ $ ${0##*/} archlinux:latest bash -c 'cat /etc/pacman.conf'
 EOF
 }
 
-function docker_check () {
+# function docker_check () {
 
-}
+# }
 
 function docker_info () {
     show docker info
