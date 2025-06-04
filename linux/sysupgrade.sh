@@ -86,7 +86,11 @@ function create_user () {
     else
         read -r -p 'Enter name: ' DKRUSER
         if grep -q "^${DKRUSER}" /etc/passwd; then
+            show getent passwd "${DKRUSER}"
             text "User '${DKRUSER}' already exists on this system."
+            # text "User '${DKRUSER}' is being deleted from this system."
+            # show userdel --remove --force "${DKRUSER}"
+            # show getent passwd "${DKRUSER}"
 
         else
             show ${ELEVATE} groupadd --force --gid 27 sudo
@@ -107,13 +111,24 @@ function create_user () {
 %sudo ALL=(ALL:ALL) ALL
 ${DKRUSER} ALL=(ALL:ALL) ALL
 EOF
-            # user shell profile
+
+            # root user shell
+            cat << EOF | ${ELEVATE} tee /root/.profile &> /dev/null
+source /root/.bashrc
+EOF
+            cat << 'EOF' | ${ELEVATE} tee /root/.bashrc &> /dev/null
+[[ "${-}" != *i* ]] && return
+[[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
+PS1="\u@\h \w\n\$ "
+EOF
+
+            # user shell
             cat << EOF | ${ELEVATE} tee /home/"${DKRUSER}"/.profile &> /dev/null
 source /home/${DKRUSER}/.bashrc
 EOF
-            # user shell bash config
-            cat << 'EOF' | ${ELEVATE} tee -a /home/"${DKRUSER}"/.bashrc &> /dev/null
-source /usr/share/bash-completion/bash_completion
+            cat << 'EOF' | ${ELEVATE} tee /home/"${DKRUSER}"/.bashrc &> /dev/null
+[[ "${-}" != *i* ]] && return
+[[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
         # user shell permissions
@@ -128,7 +143,7 @@ EOF
            show ${ELEVATE} id "${i}"
         done
         fi
-		text " > sudo --user ${DKRUSER} --login"
+        text " > sudo --user ${DKRUSER} --login"
     fi
 }
 
@@ -226,21 +241,22 @@ EOF
         header 'pacman update'
         show ${ELEVATE} pacman -Syyu --needed --noconfirm reflector
 
-		header 'reflector'
-		if command -v reflector &> /dev/null; then
+        header 'reflector'
+        if command -v reflector &> /dev/null; then
 
-			if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2> /dev/null)" ]; then
-				text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
-				show ${ELEVATE} reflector --verbose --ipv4 --protocol http,https --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
-			else
-				text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
-			fi
-		else
-			text 'reflector is not available for this distribution'
-		fi
+            if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2>/dev/null)" ]; then
+                text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
+                show ${ELEVATE} reflector --verbose --ipv4 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+            else
+                text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
+                text 'using existing mirrors'
+            fi
+        else
+            text 'reflector is not available for this distribution'
+        fi
 
         header 'pacman packages'
-	    show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
+        show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
 
         header 'yay'
         if command -v yay &> /dev/null; then
@@ -299,7 +315,7 @@ function upgrade_flatpak {
 function upgrade_code {
     if command -v code &> /dev/null; then
         header 'code'
-		show code --list-extensions
+        show code --list-extensions
         show code --update-extensions
     fi
 }
@@ -307,11 +323,11 @@ function upgrade_code {
 function upgrade_docker {
     if command -v docker &> /dev/null; then
         header 'docker'
-		show docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.Size}}"
+        show docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.Size}}"
         DOCKER_CLI_HINTS="false"; export DOCKER_CLI_HINTS
-		for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
-			show docker pull "${img}"
-		done
+        for img in $(docker images --format "{{.Repository}}:{{.Tag}}"); do
+            show docker pull "${img}"
+        done
     fi
 }
 

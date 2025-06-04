@@ -118,13 +118,16 @@ function get_display {
         if [[ ${?} -ne 0 ]]; then
             print_na
         else
-            # gd_id="$(xrandr | awk '/[^ ]* connected primary/ {print $1}')"
-            # gd_xy="$(xrandr | grep '\*+' | awk '{print $1}')"
-            # gd_hz="$(xrandr | grep '\*+' | awk '{print $2}' | sed 's/*+//' | cut -d '.' -f 1)"
-            gd_id="$(xrandr | grep -w 'connected primary' | awk '{print $1}')"
-            gd_xy="$(xrandr | grep '\*+' | awk '{print $1}')"
-            gd_hz="$(xrandr | grep '\*+' | awk '{print $2}' | cut -d '.' -f1)"
-            printf '%s@%s@%s' "${gd_id}" "${gd_xy}" "${gd_hz}"
+			gd_data=""
+            gd_id="$(xrandr | grep -w 'connected primary' | awk '{print $1}')"; [ -n "${gd_id}" ] && gd_data="${gd_data}${gd_id}"
+            gd_xy="$(xrandr | grep -E '\*\+' | awk '{print $1}')"; [ -n "${gd_xy}" ] && gd_data="${gd_data}@${gd_xy}"
+            gd_hz="$(xrandr | grep -E '\*\+' | awk '{print int($2)}')"; [ -n "${gd_hz}" ] && gd_data="${gd_data}@${gd_hz}Hz"
+            # printf '%s@%s@%s' "${gd_id}" "${gd_xy}" "${gd_hz}"
+			if [ -n "$gd_data" ]; then
+				printf '%s\n' "$gd_data"
+			else
+				print_na
+			fi
         fi
     else
         print_na
