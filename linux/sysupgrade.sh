@@ -6,6 +6,9 @@ function text () { printf "%s\n" "${1}"; }
 
 function show () { (set -x; "${@:?}"); }
 
+# reverse output
+function show() { printf '\033[7m # %s \033[0m\n' "${*}"; "${@}"; }
+
 function usage () {
     Treset=$(tput sgr0)
     Tbold=$(tput bold)
@@ -29,6 +32,7 @@ dnf     Upgrade DNF packages
 docker  Upgrade docker images
 flatpak Upgrade flatpak packages
 pacman  Upgrade pacman packages
+pamac   Upgrade pamac packages
 pipx    Upgrade pipx packages
 snap    Upgrade snap packages
 user    Create non-root user
@@ -204,7 +208,9 @@ function upgrade_pacman {
     if command -v pacman &> /dev/null; then
         text 'pacman found in PATH'
         header 'pacman.conf'
-        cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
+        if [ "$(find /etc/pacman.conf -type f -mmin +60 2>/dev/null)" ]; then
+            text '/etc/pacman.conf was modified more than 60 minutes ago.'
+            cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
 [options]
 Architecture = x86_64
 HoldPkg = pacman glibc
@@ -234,6 +240,11 @@ Include = /etc/pacman.d/mirrorlist
 #[chaotic-aur]
 #Include = /etc/pacman.d/chaotic-mirrorlist
 EOF
+        else
+            text '/etc/pacman.conf was modified less than 60 minutes ago.'
+            text 'using existing pacman.conf'
+        fi
+
         header 'pacman cache'
         show ${ELEVATE} find /var/cache/pacman/pkg/ -mindepth 1 -exec rm -f {} \;
         show ${ELEVATE} find /var/lib/pacman/sync/ -mindepth 1 -exec rm -f {} \;
@@ -249,7 +260,7 @@ EOF
                 show ${ELEVATE} reflector --verbose --ipv4 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
             else
                 text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
-                text 'using existing mirrors'
+                text 'using existing /etc/pacman.d/mirrorlist'
             fi
         else
             text 'reflector is not available for this distribution'
@@ -274,6 +285,75 @@ EOF
             show sed -i "/exit \$E_ROOT/ s/^/#/g" /usr/sbin/makepkg
 
             show makepkg --dir /tmp/yay-bin --syncdeps --install --needed --noconfirm
+        fi
+
+        header 'pacman *.pacnew *.pacsave'
+        show ${ELEVATE} find /etc -name '*.pacnew' 2> /dev/null
+        show ${ELEVATE} find /etc -name '*.pacsave' 2> /dev/null
+    else
+        text 'pacman not found in PATH'
+    fi
+}
+
+function upgrade_pamac {
+    header 'pamac'
+    if command -v pamac &> /dev/null; then
+        text 'pamac found in PATH'
+        header 'pacman.conf'
+        if [ "$(find /etc/pamac.conf -type f -mmin +60 2>/dev/null)" ]; then
+            text '/etc/pamac.conf was modified more than 60 minutes ago.'
+            cat <<-'EOF' | ${ELEVATE} tee /etc/pamac.conf
+#CheckAURUpdates
+#CheckAURVCSUpdates
+#CheckFlatpakUpdates
+#DownloadUpdates
+#EnableFlatpak
+#EnableSnap
+#KeepBuiltPkgs
+#OfflineUpgrade
+#OnlyRmUninstalled
+#SimpleInstall
+BuildDirectory = /var/tmp
+EnableAUR
+EnableDowngrade
+KeepNumPackages = 1
+MaxParallelDownloads = 8
+NoUpdateHideIcon
+RefreshPeriod = 0
+RemoveUnrequiredDeps
+EOF
+        else
+            text '/etc/pamac.conf was modified less than 60 minutes ago.'
+            text 'using existing /etc/pamac.conf'
+        fi
+
+        header 'pamac cache'
+        show pamac clean --no-confirm --keep 0 --verbose
+
+        header 'pamac mirrors'
+        if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2>/dev/null)" ]; then
+            text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
+            cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.d/mirrorlist
+Server = https://mirrors.manjaro.org/repo/stable/$repo/$arch
+Server = https://mirrors2.manjaro.org/stable/$repo/$arch
+Server = http://mirror.xeonbd.com/manjaro/$repo/$arch
+EOF
+        else
+            text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
+            text 'using existing /etc/pacman.d/mirrorlist'
+        fi
+
+        header 'pamac update'
+        show pamac upgrade --force-refresh --no-confirm --no-aur
+
+        header 'pacman packages'
+        show pamac install --no-confirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
+
+        header 'yay'
+        if command -v yay &> /dev/null; then
+            text 'yay is already installed.'
+        else
+            pamac install yay
         fi
 
         header 'pacman *.pacnew *.pacsave'
@@ -361,6 +441,7 @@ function upgrade_all {
     upgrade_apt
     upgrade_dnf
     upgrade_pacman
+    upgrade_pamac
     upgrade_snap
     upgrade_flatpak
     upgrade_code
@@ -403,6 +484,7 @@ function handle_arguments {
             docker)     upgrade_docker  ;;
             flatpak)    upgrade_flatpak ;;
             pacman)     upgrade_pacman  ;;
+            pamac)      upgrade_pamac   ;;
             pipx)       upgrade_pipx    ;;
             snap)       upgrade_snap    ;;
             user)       create_user     ;;

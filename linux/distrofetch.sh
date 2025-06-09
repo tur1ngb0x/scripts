@@ -46,6 +46,7 @@ function check_cmd {
     # Check if cmdno array contains missing requirements
     if [ "${#cmdno[@]}" -eq 0 ]; then
         printf '%s\n' 'Status: Pass'
+		return 0
     else
         printf '%s\n' 'Status: Fail'
         printf '%s\n' "Found: ${cmdyes[*]}"
@@ -56,6 +57,7 @@ RHEL/Fedora:   dnf install bash bash-completion coreutils procps-ng hostname xra
 Arch:          pacman -Syu bash bash-completion coreutils inetutils procps-ng uutils-coreutils xorg-xrandr
 Alpine:        apk add     bash bash-completion coreutils busybox procps xrandr
 EOF
+	return 1
     fi
 }
 
@@ -119,9 +121,9 @@ function get_display {
             print_na
         else
 			gd_data=""
-            gd_id="$(xrandr | grep -w 'connected primary' | awk '{print $1}')"; [ -n "${gd_id}" ] && gd_data="${gd_data}${gd_id}"
-            gd_xy="$(xrandr | grep -E '\*\+' | awk '{print $1}')"; [ -n "${gd_xy}" ] && gd_data="${gd_data}@${gd_xy}"
-            gd_hz="$(xrandr | grep -E '\*\+' | awk '{print int($2)}')"; [ -n "${gd_hz}" ] && gd_data="${gd_data}@${gd_hz}Hz"
+            gd_id="$(xrandr | grep -w 'connected primary' | awk '{print $1}')"; [ -n "${gd_id}" ] && gd_data="${gd_data}${gd_id}@"
+            gd_xy="$(xrandr | grep -E '\*\+' | awk '{print $1}')"; [ -n "${gd_xy}" ] && gd_data="${gd_data}${gd_xy}@"
+            gd_hz="$(xrandr | grep -E '\*\+' | awk '{print int($2)}')"; [ -n "${gd_hz}" ] && gd_data="${gd_data}${gd_hz}Hz"
             # printf '%s@%s@%s' "${gd_id}" "${gd_xy}" "${gd_hz}"
 			if [ -n "$gd_data" ]; then
 				printf '%s\n' "$gd_data"
@@ -216,39 +218,96 @@ get_uptime() {
 #     done
 # }
 
+# function get_packages {
+#     pm_all=()
+#     pm_1p=()
+#     pm_3p=()
+#     for pm in dpkg dnf pacman; do
+#         if command -v "${pm}" &> /dev/null; then
+#             count=""
+#             case "${pm}" in
+#                 dpkg)   count="$(dpkg --list 2>/dev/null | grep -c '^ii')@dpkg" ;;
+#                 dnf)    count="$(dnf list --installed 2>/dev/null | wc -l)@dnf" ;;
+#                 pacman) count="$(pacman -Qq 2>/dev/null | wc -l)@pacman" ;;
+#             esac
+#             pm_1p+=("${count}" )
+#         fi
+#     done
+
+#     pm_3p=()
+#     for pm in docker pipx flatpak snap; do
+#         if command -v "${pm}" &> /dev/null; then
+#             count=""
+#             case "${pm}" in
+#                 docker)  count="$(docker images --format '{{.Repository}}' 2>/dev/null | wc -l)"; count="${count}@docker";;
+#                 flatpak) count="$(flatpak list --all 2>/dev/null | wc -l)"; count="${count}@flatpak";;
+#                 pipx)    count="$(pipx list --short 2>/dev/null | wc -l)"; count="${count}@pipx";;
+#                 snap)    count="$(snap list --all 2>/dev/null | wc -l)"; count="${count}@snap";;
+#             esac
+#             pm_3p+=("${count}")
+#         fi
+#     done
+#     pm_all+=("${pm_1p[@]}")
+#     pm_all+=("${pm_3p[@]}")
+#     printf '%s ' "${pm_all[@]}"
+# }
+
 function get_packages {
-    pm_all=()
-    pm_1p=()
-    pm_3p=()
-    for pm in dpkg dnf pacman; do
-        if command -v "${pm}" &> /dev/null; then
-            count=""
-            case "${pm}" in
-                dpkg)   count="$(dpkg --list 2>/dev/null | grep -c '^ii')@dpkg" ;;
-                dnf)    count="$(dnf list --installed 2>/dev/null | wc -l)@dnf" ;;
-                pacman) count="$(pacman -Qq 2>/dev/null | wc -l)@pacman" ;;
-            esac
-            pm_1p+=("${count}" )
+	# initialise empty arrays
+    declare -a pm_all=()
+    declare -a pm_1p=()
+    declare -a pm_3p=()
+    declare -A pm_cmds
+    declare -A pm_pids
+    declare -A pm_results
+
+    # count packages for each package manager
+    pm_cmds=(
+        [dpkg]="dpkg --list 2>/dev/null | grep -c '^ii'"
+        [dnf]="dnf list --installed 2>/dev/null | wc -l"
+        [pacman]="pacman -Qq 2>/dev/null | wc -l"
+        [docker]="docker images --format '{{.Repository}}' 2>/dev/null | wc -l"
+        [pipx]="pipx list --short 2>/dev/null | wc -l"
+        [flatpak]="flatpak list --all 2>/dev/null | wc -l"
+        [snap]="snap list --all 2>/dev/null | wc -l"
+    )
+
+    # start async jobs for available package managers
+    for pm in dpkg dnf pacman docker pipx flatpak snap; do
+        if command -v "$pm" &> /dev/null; then
+            eval "${pm_cmds[$pm]}" > "/dev/shm/pkg_${pm}" &
+            pm_pids[$pm]=$!
         fi
     done
 
-    pm_3p=()
-    for pm in docker pipx flatpak snap; do
-        if command -v "${pm}" &> /dev/null; then
-            count=""
-            case "${pm}" in
-                docker)  count="$(docker images --format '{{.Repository}}' 2>/dev/null | wc -l)"; count="${count}@docker";;
-                flatpak) count="$(flatpak list --all 2>/dev/null | wc -l)"; count="${count}@flatpak";;
-                pipx)    count="$(pipx list --short 2>/dev/null | wc -l)"; count="${count}@pipx";;
-                snap)    count="$(snap list --all 2>/dev/null | wc -l)"; count="${count}@snap";;
-            esac
-            pm_3p+=("${count}")
+    # gather results
+    for pm in "${!pm_pids[@]}"; do
+        if wait "${pm_pids[$pm]}" 2>/dev/null; then
+            pm_results[$pm]=$(<"/dev/shm/pkg_${pm}")
+        else
+            pm_results[$pm]="?"
         fi
+        rm -f "/dev/shm/pkg_${pm}"
     done
+
+    # format results
+    for pm in dpkg dnf pacman; do
+        [[ -n "${pm_results[$pm]}" ]] && pm_1p+=("${pm_results[$pm]}@${pm}")
+    done
+
+    for pm in docker pipx flatpak snap; do
+        [[ -n "${pm_results[$pm]}" ]] && pm_3p+=("${pm_results[$pm]}@${pm}")
+    done
+
+	# combine results
     pm_all+=("${pm_1p[@]}")
     pm_all+=("${pm_3p[@]}")
+
     printf '%s ' "${pm_all[@]}"
 }
+
+
+
 
 function get_shell {
     if [[ -n "${SHELL}" ]]; then
@@ -267,29 +326,16 @@ function get_shell {
 
 function get_colors {
     for i in {0..15}; do
-        printf '\e[48;5;%dm    ' "${i}"
+        #printf '\e[48;5;%dm    ' "${i}"
+		printf '\e[48;5;%dm ' "${i}"
     done
     printf "\e[0m\n"
-}
-
-#######################################################################
-# display data short format
-#######################################################################
-function fetch_short {
-    cat <<-EOF | tr '[:upper:]' '[:lower:]'
-distro : $(source /etc/os-release; printf '%s' "${PRETTY_NAME}")
-kernel : $(printf '%s' "$(uname --kernel-release)")
-memory : $(printf '%sMiB' "$(free --mebi | awk 'FNR == 2 {print $3}')")
-uptime : $(printf '%s' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')")
-EOF
-    #colors: $(for i in {0..15}; do printf '\e[48;5;%dm ' "${i}"; done; printf "\e[0m\n")
 }
 
 #######################################################################
 # display data long format (default)
 #######################################################################
 function fetch_long {
-    get_colors
     print_row 'Hardware'  "$(get_hardware)"
     print_row 'Distro'    "$(get_distro)"
     print_row 'Kernel'    "$(get_kernel)"
@@ -298,9 +344,28 @@ function fetch_long {
     print_row 'RAM'       "$(get_ram)"
     print_row 'Swap'      "$(get_swap)"
     print_row 'Uptime'    "$(get_uptime)"
-    print_row 'Shell'     "$(get_shell)"
     print_row 'Packages'  "$(get_packages)"
-    get_colors
+    print_row 'Shell'     "$(get_shell)"
+	print_row 'Colors'    "$(get_colors)"
+}
+
+#######################################################################
+# display data short format
+#######################################################################
+function s_get_distro() { sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"'; }
+function s_get_kernel () { printf '%s\n' "$(uname -r)"; }
+function s_get_memory() { read -r _ _ used _ < <(free -m | grep 'Mem:'); printf '%sMiB' "${used}"; }
+function s_get_uptime () { printf '%s\n' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"; }
+
+function fetch_short {
+    # cat <<-EOF | tr '[:upper:]' '[:lower:]'
+    cat <<-EOF
+Distro : $(s_get_distro)
+Kernel : $(s_get_kernel)
+Memory : $(s_get_memory)
+Uptime : $(s_get_uptime)
+EOF
+    #colors: $(for i in {0..15}; do printf '\e[48;5;%dm ' "${i}"; done; printf "\e[0m\n")
 }
 
 function main () {
