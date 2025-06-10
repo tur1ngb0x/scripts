@@ -122,14 +122,12 @@ function SetupFonts {
 }
 
 function main {
-    set -e
     CheckCmd find curl awk grep sed sort tar fc-cache
     ShowFontsLocal
     ShowFontsRemote
     ShowUsage
     InstallFonts "${@}"
     SetupFonts
-    set +e
 }
 
 # begin script from here
