@@ -24,9 +24,9 @@ ${Treverse}${Tbold} SYNTAX ${Treset}
 $ ${0##*/} <option>
 
 ${Treverse}${Tbold} OPTIONS ${Treset}
-1p      update apk, apt, dnf, pacman, pamac
-3p      update code, docker, flatpak, pipx, snap
-all     update everything
+1p      apk, apt, dnf, pacman, pamac
+3p      code, docker, flatpak, pipx, snap
+all     upgrade everything
 user    create user
 help    show help
 
