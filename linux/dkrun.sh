@@ -9,7 +9,7 @@ function usage () {
     Tunderline=$(tput ul)
     Treverse=$(tput rev)
     Tdim=$(tput dim)
-	cat << EOF
+    cat << EOF
 ${Treverse}${Tbold} DESCRIPTION ${Treset}
 Bash wrapper for quickly spinning up docker containers.
 
@@ -19,9 +19,9 @@ $ ${0##*/} <image:tag> <command>
 
 ${Treverse}${Tbold} OPTIONS ${Treset}
 check      check common issues and problems
-images     list popular images with their tags
-disk       show local images and containers
 cleanup    remove local images and containers
+disk       show local images and containers
+images     list popular images with their tags
 info       show system information
 stats      show local containers statistics
 help       show help
@@ -39,9 +39,16 @@ $ ${0##*/} archlinux:latest bash -c 'cat /etc/pacman.conf'
 EOF
 }
 
-# function docker_check () {
-
-# }
+function docker_check () {
+    show command -v docker
+	show type docker
+	show which docker
+    show docker --version
+    show systemctl is-active docker.service
+    show file /var/run/docker.sock
+    show id -Grn | grep docker
+    show docker container run --rm hello-world
+}
 
 function docker_info () {
     show docker info
@@ -63,8 +70,8 @@ function docker_stats () {
 function docker_run {
     local image="${1}"
     shift
-	local dkrhost
-	dkrhost="docker"
+    local dkrhost
+    dkrhost="docker"
     # local uuidtag
     # uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
     # dkrhost="docker-${image}-${uuidtag}"
@@ -79,7 +86,7 @@ function docker_run {
         --volume "${HOME}"/src/:/root/src:ro \
         --workdir '/root' \
         "${image}" \
-		"${@}"
+        "${@}"
         # "${@:2}"
         # --volume "/etc/timezone:/etc/timezone:ro" \
         # --volume "/etc/localtime:/etc/localtime:ro" \
@@ -108,27 +115,15 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# function main () {
-#     # switch case
-#     case "${1}" in
-#         cleanup)      docker_cleanup ;;
-#         disk)         docker_disk ;;
-#         images)       docker_images ;;
-#         info)         docker_info ;;
-#         stats)        docker_stats ;;
-#         '')           usage ;;
-#         *)            docker_run "${@}" ;;
-#     esac
-# }
-
 function main () {
     case "${1}" in
-        cleanup)      						docker_cleanup ;;
-        disk)         						docker_disk ;;
-        images)       						docker_images ;;
-        info)         						docker_info ;;
-        stats)        						docker_stats ;;
-		''|help|-help|--help|h|-h|--h)      usage ;;
+        check)								docker_check      ;;
+        cleanup)      						docker_cleanup    ;;
+        disk)         						docker_disk       ;;
+        images)       						docker_images     ;;
+        info)         						docker_info       ;;
+        stats)        						docker_stats      ;;
+        ''|help|-help|--help|h|-h|--h)      usage             ;;
         *)    								docker_run "${@}" ;;
     esac
 }

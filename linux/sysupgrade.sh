@@ -24,19 +24,11 @@ ${Treverse}${Tbold} SYNTAX ${Treset}
 $ ${0##*/} <option>
 
 ${Treverse}${Tbold} OPTIONS ${Treset}
-all     Upgrade everything
-apk     Upgrade APK packages
-apt     Upgrade APT packages
-code    Update VS Code extensions
-dnf     Upgrade DNF packages
-docker  Upgrade docker images
-flatpak Upgrade flatpak packages
-pacman  Upgrade pacman packages
-pamac   Upgrade pamac packages
-pipx    Upgrade pipx packages
-snap    Upgrade snap packages
-user    Create non-root user
-help    Show help
+1p      update apk, apt, dnf, pacman, pamac
+3p      update code, docker, flatpak, pipx, snap
+all     update everything
+user    create user
+help    show help
 
 ${Treverse}${Tbold} USAGE ${Treset}
 $ ${0##*/} all
@@ -436,17 +428,25 @@ function set_shell {
     fi
 }
 
-function upgrade_all {
+function upgrade_1p () {
     upgrade_apk
     upgrade_apt
     upgrade_dnf
     upgrade_pacman
     upgrade_pamac
+}
+
+function upgrade_3p () {
     upgrade_snap
     upgrade_flatpak
     upgrade_code
     upgrade_docker
     upgrade_pipx
+}
+
+function upgrade_all () {
+    upgrade_1p
+    upgrade_3p
 }
 
 function handle_arguments {
@@ -477,6 +477,8 @@ function handle_arguments {
     for arg in "${unique_args[@]}"; do
         case "${arg}" in
             all)        if [[ "${upgrade_all_executed}" == false ]]; then upgrade_all; upgrade_all_executed="true"; fi ;;
+            1p)         upgrade_1p      ;;
+            3p)         upgrade_3p      ;;
             apk)        upgrade_apk     ;;
             apt)        upgrade_apt     ;;
             code)       upgrade_code    ;;

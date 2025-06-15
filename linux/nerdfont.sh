@@ -2,7 +2,7 @@
 
 function show { (set -x; "${@:?}"); }
 function stdout { printf "%s\n" "${1}"; }
-function header  { tput bold; tput setaf 4; printf "\n%s \n" "${1}"; tput sgr0; }
+function header  { tput bold; tput setaf 4; printf "%s \n" "${1}"; tput sgr0; }
 function stderr { tput bold; tput setaf 1; printf "\nError: "; tput sgr0; printf "%s\n" "${1}"; tput sgr0; }
 
 function CheckCmd {
@@ -24,15 +24,35 @@ function CheckCmd {
     fi
 }
 
+# function ShowFontsLocal {
+#     header "Installed Fonts"
+#     if [[ -d "${HOME}"/.local/share/fonts ]]; then
+#         find "${HOME}"/.local/share/fonts -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort
+#         # awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}'
+#     else
+#         printf '%s\n' 'No fonts installed'
+#     fi
+# }
+
+
 function ShowFontsLocal {
-        header "Installed Fonts"
-        if [[ -d "${HOME}"/.local/share/fonts ]]; then
-           find "${HOME}"/.local/share/fonts -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort
-           # awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}'
+    header "Installed Fonts"
+
+    if [[ -d "${HOME}/.local/share/fonts" ]]; then
+        mapfile -t font_dirs < <(find "${HOME}/.local/share/fonts" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)
+
+        if [[ ${#font_dirs[@]} -eq 0 ]]; then
+            echo "<none>"
+        else
+            printf '%s\n' "${font_dirs[@]}"
+            # Optional formatted output:
+            # printf '%s\n' "${font_dirs[@]}" | awk '{printf "%-25s", $0; if (NR % 3 == 0) print ""} END {if (NR % 3 != 0) print ""}'
+        fi
     else
-        printf '%s\n' 'No fonts installed'
+        echo "No fonts installed"
     fi
 }
+
 
 function ShowFontsRemote {
     header "Available Fonts"
@@ -88,7 +108,6 @@ function PatchFonts {
 function InstallFonts {
     # if no arguments are provided, exit
     if [[ -z "${1}" ]]; then
-        stderr "No font name provided."
         exit
     fi
 

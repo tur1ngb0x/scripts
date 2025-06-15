@@ -26,7 +26,7 @@ Usage:
 Commands:
     help            Show this help
     clean           Remove package cache
-    install <pkg>	Install package
+    install <pkg>   Install package
     remove <pkg>    Remove package and config
     refresh         Refresh package metadata
     upgrade         Upgrade all packages
@@ -41,9 +41,9 @@ case "${1}" in
         pkg="${2}"
 	    [ -z "${pkg}" ] && usage && exit 1
         case "${PM}" in
-            apt-get) sudo apt-get install -y "${pkg}" ;;
-            dnf) sudo dnf install -y "${pkg}" ;;
-            pacman) sudo pacman -S --noconfirm "${pkg}" ;;
+            apt-get) sudo apt-get install "${pkg}" ;;
+            dnf) sudo dnf install "${pkg}" ;;
+            pacman) sudo pacman -Syu "${pkg}" ;;
         esac
         ;;
 
@@ -51,9 +51,9 @@ case "${1}" in
         pkg="${2}"
 	    [ -z "${pkg}" ] && usage && exit 1
         case "$PM" in
-            apt-get) sudo apt-get purge --autoremove "$pkg" ;;
-            dnf) sudo dnf remove "$pkg" ;;
-            pacman) sudo pacman -Rns "$pkg" ;;
+            apt-get) sudo apt-get purge --autoremove "${pkg}" ;;
+            dnf) sudo dnf remove "${pkg}" ;;
+            pacman) sudo pacman -Rns "${pkg}" ;;
         esac
         ;;
 
@@ -69,15 +69,15 @@ case "${1}" in
         case "$PM" in
             apt-get) sudo apt-get clean ;;
             dnf) sudo dnf clean all ;;
-            pacman) sudo pacman -Scc --noconfirm ;;
+            pacman) sudo pacman -Scc ;;
         esac
         ;;
 
     upgrade)
         case "$PM" in
-            apt-get) sudo apt-get upgrade -y ;;
-            dnf) sudo dnf upgrade -y ;;
-            pacman) sudo pacman -Syu --noconfirm ;;
+            apt-get) sudo apt-get upgrade ;;
+            dnf) sudo dnf upgrade ;;
+            pacman) sudo pacman -Syu ;;
         esac
         ;;
 
