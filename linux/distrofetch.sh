@@ -53,7 +53,7 @@ function check_cmd {
        printf '%s\n' "Missing: ${cmdno[*]}"
         cat << EOF
 Debian/Ubuntu: apt install bash bash-completion coreutils procps x11-utils
-RHEL/Fedora:   dnf install bash bash-completion coreutils procps-ng hostname xrandr
+RHEL/Fedora:   dnf install bash bash-completion coreutils gawk procps-ng hostname xrandr
 Arch:          pacman -Syu bash bash-completion coreutils inetutils procps-ng uutils-coreutils xorg-xrandr
 Alpine:        apk add     bash bash-completion coreutils busybox procps xrandr
 EOF
@@ -88,9 +88,19 @@ function get_now {
     fi
 }
 
+# function get_hardware {
+#     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
+#         printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
+#     else
+#         print_na
+#     fi
+# }
+
 function get_hardware {
     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
         printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
+    elif [[ -f /etc/wsl.conf ]]; then
+         printf '%s %s' "WSL2" "$(wsl.exe --version | tr -d '\0' | awk 'FNR==1 {print $3}')"
     else
         print_na
     fi

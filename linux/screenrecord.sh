@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
-
 [[ ${#} -gt 0 ]] && echo 'syntax: screenrecord.sh' && exit
-
-file="${HOME}/screenrecord.sh-$(date +%Y%m%S-%H%M%S).mp4"
 
 ffmpeg \
 	-loglevel verbose \
@@ -14,4 +11,4 @@ ffmpeg \
 	-c:v 'libx264rgb' \
 	-preset 'ultrafast' \
 	-crf '0' \
-	"${file}"
+	"${HOME}/screenrecord.sh-$(date +%Y%m%S-%H%M%S).mp4"

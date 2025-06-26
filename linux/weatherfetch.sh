@@ -555,8 +555,6 @@ function main () {
 #######################################################################
 main "${@}"
 
-
-
 # function wttr()
 # {
 #     [[ ! $(command -v curl) ]] && echo 'curl not found' && return

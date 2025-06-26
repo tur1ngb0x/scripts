@@ -89,54 +89,54 @@ function create_user () {
             # show getent passwd "${DKRUSER}"
 
         else
-            show ${ELEVATE} groupadd --force --gid 27 sudo
-            show ${ELEVATE} groupadd --force --gid 28 wheel
-            show ${ELEVATE} groupadd --force --gid 29 adm
+            show ${ELEVATE:-} groupadd --force --gid 27 sudo
+            show ${ELEVATE:-} groupadd --force --gid 28 wheel
+            show ${ELEVATE:-} groupadd --force --gid 29 adm
 
-            show ${ELEVATE} useradd --create-home --shell /bin/bash  "${DKRUSER}"
-            show ${ELEVATE} passwd "${DKRUSER}"
+            show ${ELEVATE:-} useradd --create-home --shell /bin/bash  "${DKRUSER}"
+            show ${ELEVATE:-} passwd "${DKRUSER}"
 
-            show ${ELEVATE} usermod --append --groups sudo "${DKRUSER}"
-            show ${ELEVATE} usermod --append --groups wheel "${DKRUSER}"
-            show ${ELEVATE} usermod --append --groups adm "${DKRUSER}"
+            show ${ELEVATE:-} usermod --append --groups sudo "${DKRUSER}"
+            show ${ELEVATE:-} usermod --append --groups wheel "${DKRUSER}"
+            show ${ELEVATE:-} usermod --append --groups adm "${DKRUSER}"
 
             # sudo custom template
-            ${ELEVATE} mkdir -p /etc/sudoers.d/
-            cat << EOF | ${ELEVATE} tee /etc/sudoers.d/custom &> /dev/null
+            ${ELEVATE:-} mkdir -p /etc/sudoers.d/
+            cat << EOF | ${ELEVATE:-} tee /etc/sudoers.d/custom &> /dev/null
 %wheel ALL=(ALL:ALL) ALL
 %sudo ALL=(ALL:ALL) ALL
 ${DKRUSER} ALL=(ALL:ALL) ALL
 EOF
 
             # root user shell
-            cat << EOF | ${ELEVATE} tee /root/.profile &> /dev/null
+            cat << EOF | ${ELEVATE:-} tee /root/.profile &> /dev/null
 source /root/.bashrc
 EOF
-            cat << 'EOF' | ${ELEVATE} tee /root/.bashrc &> /dev/null
+            cat << 'EOF' | ${ELEVATE:-} tee /root/.bashrc &> /dev/null
 [[ "${-}" != *i* ]] && return
 [[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
 
             # user shell
-            cat << EOF | ${ELEVATE} tee /home/"${DKRUSER}"/.profile &> /dev/null
+            cat << EOF | ${ELEVATE:-} tee /home/"${DKRUSER}"/.profile &> /dev/null
 source /home/${DKRUSER}/.bashrc
 EOF
-            cat << 'EOF' | ${ELEVATE} tee /home/"${DKRUSER}"/.bashrc &> /dev/null
+            cat << 'EOF' | ${ELEVATE:-} tee /home/"${DKRUSER}"/.bashrc &> /dev/null
 [[ "${-}" != *i* ]] && return
 [[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
         # user shell permissions
-        ${ELEVATE} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.profile &> /dev/null
-        ${ELEVATE} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.bashrc &> /dev/null
+        ${ELEVATE:-} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.profile &> /dev/null
+        ${ELEVATE:-} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.bashrc &> /dev/null
 
         # all users
         header 'current users'
-        show ${ELEVATE} cat /etc/passwd | awk -F: '$3 == 0 || $3 >= 1000' | sort
+        show ${ELEVATE:-} cat /etc/passwd | awk -F: '$3 == 0 || $3 >= 1000' | sort
         header 'user details'
         awk -F: '$3 == 0 || $3 >= 1000 {print $1}' /etc/passwd | while IFS= read -r i; do
-           show ${ELEVATE} id "${i}"
+           show ${ELEVATE:-} id "${i}"
         done
         fi
         text " > sudo --user ${DKRUSER} --login"
@@ -156,11 +156,11 @@ function upgrade_apt {
     header 'apt'
     if command -v apt &> /dev/null; then
         DEBIAN_FRONTEND="noninteractive"; export DEBIAN_FRONTEND
-        show ${ELEVATE} apt clean
-        show ${ELEVATE} apt update
-        show ${ELEVATE} apt full-upgrade
-        show ${ELEVATE} apt install --assume-yes bash bash-completion curl dialog git nano sudo vim wget
-        show ${ELEVATE} apt purge --autoremove
+        show ${ELEVATE:-} apt clean
+        show ${ELEVATE:-} apt update
+        show ${ELEVATE:-} apt full-upgrade
+        show ${ELEVATE:-} apt install --assume-yes bash bash-completion curl dialog git nano sudo vim wget
+        show ${ELEVATE:-} apt purge --autoremove
     else
         text 'apt not found in PATH'
     fi
@@ -169,10 +169,10 @@ function upgrade_apt {
 function upgrade_apk {
     header 'apk'
     if command -v apk &> /dev/null; then
-        show ${ELEVATE} apk cache clean
-        show ${ELEVATE} apk update
-        show ${ELEVATE} apk upgrade --progress
-        show ${ELEVATE} apk add bash bash-completion curl wget ncurses git nano sudo shadow vim virt-what
+        show ${ELEVATE:-} apk cache clean
+        show ${ELEVATE:-} apk update
+        show ${ELEVATE:-} apk upgrade --progress
+        show ${ELEVATE:-} apk add bash bash-completion curl wget ncurses git nano sudo shadow vim virt-what
     else
         text 'apk not found in PATH'
     fi
@@ -181,10 +181,10 @@ function upgrade_apk {
 function upgrade_dnf {
     header 'dnf'
     if command -v dnf &> /dev/null; then
-        show ${ELEVATE} dnf clean all
-        show ${ELEVATE} dnf upgrade --refresh --assumeyes
-        show ${ELEVATE} dnf install --assumeyes bash bash-completion curl wget ncurses git nano procps-ng vim xclip
-        show ${ELEVATE} dnf autoremove
+        show ${ELEVATE:-} dnf clean all
+        show ${ELEVATE:-} dnf upgrade --refresh --assumeyes
+        show ${ELEVATE:-} dnf install --assumeyes bash bash-completion curl wget ncurses git nano procps-ng vim xclip
+        show ${ELEVATE:-} dnf autoremove
     else
         text 'dnf not found in PATH'
     fi
@@ -202,7 +202,7 @@ function upgrade_pacman {
         header 'pacman.conf'
         if [ "$(find /etc/pacman.conf -type f -mmin +60 2>/dev/null)" ]; then
             text '/etc/pacman.conf was modified more than 60 minutes ago.'
-            cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.conf
+            cat <<-'EOF' | ${ELEVATE:-} tee /etc/pacman.conf
 [options]
 Architecture = x86_64
 HoldPkg = pacman glibc
@@ -238,18 +238,18 @@ EOF
         fi
 
         header 'pacman cache'
-        show ${ELEVATE} find /var/cache/pacman/pkg/ -mindepth 1 -exec rm -f {} \;
-        show ${ELEVATE} find /var/lib/pacman/sync/ -mindepth 1 -exec rm -f {} \;
+        show ${ELEVATE:-} find /var/cache/pacman/pkg/ -mindepth 1 -exec rm -f {} \;
+        show ${ELEVATE:-} find /var/lib/pacman/sync/ -mindepth 1 -exec rm -f {} \;
 
         header 'pacman update'
-        show ${ELEVATE} pacman -Syyu --needed --noconfirm reflector
+        show ${ELEVATE:-} pacman -Syyu --needed --noconfirm reflector
 
         header 'reflector'
         if command -v reflector &> /dev/null; then
 
             if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2>/dev/null)" ]; then
                 text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
-                show ${ELEVATE} reflector --verbose --ipv4 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+                show ${ELEVATE:-} reflector --verbose --ipv4 --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
             else
                 text '/etc/pacman.d/mirrorlist was modified less than 60 minutes ago.'
                 text 'using existing /etc/pacman.d/mirrorlist'
@@ -259,7 +259,7 @@ EOF
         fi
 
         header 'pacman packages'
-        show ${ELEVATE} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
+        show ${ELEVATE:-} pacman -Syu --needed --noconfirm base-devel bash bash-completion curl git micro pacman-contrib sudo wget
 
         header 'yay'
         if command -v yay &> /dev/null; then
@@ -280,8 +280,8 @@ EOF
         fi
 
         header 'pacman *.pacnew *.pacsave'
-        show ${ELEVATE} find /etc -name '*.pacnew' 2> /dev/null
-        show ${ELEVATE} find /etc -name '*.pacsave' 2> /dev/null
+        show ${ELEVATE:-} find /etc -name '*.pacnew' 2> /dev/null
+        show ${ELEVATE:-} find /etc -name '*.pacsave' 2> /dev/null
     else
         text 'pacman not found in PATH'
     fi
@@ -294,7 +294,7 @@ function upgrade_pamac {
         header 'pacman.conf'
         if [ "$(find /etc/pamac.conf -type f -mmin +60 2>/dev/null)" ]; then
             text '/etc/pamac.conf was modified more than 60 minutes ago.'
-            cat <<-'EOF' | ${ELEVATE} tee /etc/pamac.conf
+            cat <<-'EOF' | ${ELEVATE:-} tee /etc/pamac.conf
 #CheckAURUpdates
 #CheckAURVCSUpdates
 #CheckFlatpakUpdates
@@ -325,7 +325,7 @@ EOF
         header 'pamac mirrors'
         if [ "$(find /etc/pacman.d/mirrorlist -type f -mmin +60 2>/dev/null)" ]; then
             text '/etc/pacman.d/mirrorlist was modified more than 60 minutes ago.'
-            cat <<-'EOF' | ${ELEVATE} tee /etc/pacman.d/mirrorlist
+            cat <<-'EOF' | ${ELEVATE:-} tee /etc/pacman.d/mirrorlist
 Server = https://mirrors.manjaro.org/repo/stable/$repo/$arch
 Server = https://mirrors2.manjaro.org/stable/$repo/$arch
 Server = http://mirror.xeonbd.com/manjaro/$repo/$arch
@@ -349,8 +349,8 @@ EOF
         fi
 
         header 'pacman *.pacnew *.pacsave'
-        show ${ELEVATE} find /etc -name '*.pacnew' 2> /dev/null
-        show ${ELEVATE} find /etc -name '*.pacsave' 2> /dev/null
+        show ${ELEVATE:-} find /etc -name '*.pacnew' 2> /dev/null
+        show ${ELEVATE:-} find /etc -name '*.pacsave' 2> /dev/null
     else
         text 'pacman not found in PATH'
     fi
@@ -359,13 +359,13 @@ EOF
 function upgrade_snap {
     if command -v snap &> /dev/null; then
         header 'snap'
-        show ${ELEVATE} snap refresh
-        show ${ELEVATE} snap refresh --hold
-        show ${ELEVATE} snap set system snapshots.automatic.retention=no
-        ${ELEVATE} snap list --all --unicode=never --color=never | while read -r name version revision tracking publisher notes; do
+        show ${ELEVATE:-} snap refresh
+        show ${ELEVATE:-} snap refresh --hold
+        show ${ELEVATE:-} snap set system snapshots.automatic.retention=no
+        ${ELEVATE:-} snap list --all --unicode=never --color=never | while read -r name version revision tracking publisher notes; do
             if [[ "${notes}" = *disabled* ]]; then
                 echo "${name}" "${version}" "${tracking}" "${publisher}" "${notes}"
-                show ${ELEVATE} snap remove --purge "${name}" --revision="${revision}"
+                show ${ELEVATE:-} snap remove --purge "${name}" --revision="${revision}"
             fi; done
         unset name version revision tracking publisher notes
         #sudo snap remove --purge $(sudo snap list --all | awk 'NR > 1 {print $1}' | xargs)
