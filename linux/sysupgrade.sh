@@ -1,14 +1,5 @@
 #!/usr/bin/env bash
 
-function header() { printf "\033[7m # %s - %s \033[0m\n" "$(date +%H:%M:%S)" "${1}"; }
-
-function text () { printf "%s\n" "${1}"; }
-
-function show () { (set -x; "${@:?}"); }
-
-# reverse output
-function show() { printf '\033[7m # %s \033[0m\n' "${*}"; "${@}"; }
-
 function usage () {
     Treset=$(tput sgr0)
     Tbold=$(tput bold)
@@ -37,111 +28,145 @@ $ ${0##*/} help
 EOF
 }
 
-function prompt_user () {
-    local answer
-    printf "%s\n" "${1}"
-    read -p "Input: " -n 1 -r answer
-    text ''
-    if [[ ! "${answer}" =~ ^[Yy]$ ]]; then
-        return
-    fi
-}
+# helpers
+
+# function show() { printf '\033[7m # %s \033[0m\n' "${*}"; eval "${@}"; }
+function check () { command -v "${1}" &> /dev/null; }
+function header() { printf "\033[7m # %s - %s \033[0m\n" "$(date +%H:%M:%S)" "${1}"; }
+function show () { (set -x; "${@:?}"); }
+function text () { printf "%s\n" "${1}"; }
+
+# function prompt_user () {
+#     printf "%s\n" "${1}"
+#     read -p "Input: " -n 1 -r answer
+#     text ''
+#     if [[ ! "${answer}" =~ ^[Yy]$ ]]; then
+#         return
+#     fi
+# }
 
 function elevate_user () {
     if [[ "$(id -ur)" -eq 0 ]]; then
         ELEVATE=""
     else
-        if command -v sudo &> /dev/null; then
+        if check sudo ; then
             ELEVATE="sudo"
-        elif command -v sudo-rs &> /dev/null; then
+        elif check sudo-rs; then
             ELEVATE="sudo-rs"
-        elif command -v doas &> /dev/null; then
+        elif check doas; then
             ELEVATE="doas"
         else
-            text 'no tool found for user elevation'
-            text 'install any one - sudo, sudo-rs, doas'
+            text 'sudo, sudo-rs, doas not found in PATH'
             exit
         fi
     fi
 }
 
-function create_user () {
-    header 'create user'
-    # check virtualization
-    if command -v systemd-detect-virt &> /dev/null; then
-        virt="$(systemd-detect-virt)"
-    elif command -v virt-what &> /dev/null; then
-        virt="$(virt-what)"
-    else
-        virt=""
-    fi
-
-    # if no virtualization, exit, else create user.
-    if [[ "${virt}" = "none" ]]; then
-        text 'user setup not needed'
-    else
-        read -r -p 'Enter name: ' DKRUSER
-        if grep -q "^${DKRUSER}" /etc/passwd; then
-            show getent passwd "${DKRUSER}"
-            text "User '${DKRUSER}' already exists on this system."
-            # text "User '${DKRUSER}' is being deleted from this system."
-            # show userdel --remove --force "${DKRUSER}"
-            # show getent passwd "${DKRUSER}"
-
+create_user() {
+    detect_virtualization() {
+        if check systemd-detect-virt; then
+            virt="$(systemd-detect-virt)"
+        elif check virt-what; then
+            virt="$(virt-what)"
         else
-            show ${ELEVATE:-} groupadd --force --gid 27 sudo
-            show ${ELEVATE:-} groupadd --force --gid 28 wheel
-            show ${ELEVATE:-} groupadd --force --gid 29 adm
+            virt=""
+        fi
+    }
 
-            show ${ELEVATE:-} useradd --create-home --shell /bin/bash  "${DKRUSER}"
-            show ${ELEVATE:-} passwd "${DKRUSER}"
+    user_exists() {
+        grep -q "^${DKRUSER}:" /etc/passwd
+    }
 
-            show ${ELEVATE:-} usermod --append --groups sudo "${DKRUSER}"
-            show ${ELEVATE:-} usermod --append --groups wheel "${DKRUSER}"
-            show ${ELEVATE:-} usermod --append --groups adm "${DKRUSER}"
+    create_groups() {
+        show ${ELEVATE:-} groupadd --force --gid 27 sudo
+        show ${ELEVATE:-} groupadd --force --gid 28 wheel
+        show ${ELEVATE:-} groupadd --force --gid 29 adm
+    }
 
-            # sudo custom template
-            ${ELEVATE:-} mkdir -p /etc/sudoers.d/
-            cat << EOF | ${ELEVATE:-} tee /etc/sudoers.d/custom &> /dev/null
+    create_user_account() {
+        show ${ELEVATE:-} useradd --create-home --shell /bin/bash "${DKRUSER}"
+        show ${ELEVATE:-} passwd "${DKRUSER}"
+        for grp in sudo wheel adm; do
+            show ${ELEVATE:-} usermod --append --groups "$grp" "${DKRUSER}"
+        done
+    }
+
+    setup_sudoers() {
+        ${ELEVATE:-} mkdir -p /etc/sudoers.d/
+        cat << EOF | ${ELEVATE:-} tee /etc/sudoers.d/custom &>/dev/null
 %wheel ALL=(ALL:ALL) ALL
-%sudo ALL=(ALL:ALL) ALL
+%sudo  ALL=(ALL:ALL) ALL
 ${DKRUSER} ALL=(ALL:ALL) ALL
 EOF
+    }
 
-            # root user shell
-            cat << EOF | ${ELEVATE:-} tee /root/.profile &> /dev/null
-source /root/.bashrc
+    setup_shells() {
+        # root profile
+        cat << EOF | ${ELEVATE:-} tee ${ELEVATE:-} tee /root/.profile &>/dev/null
+[[ -f /root/.bashrc ]] && . /root/.bashrc
 EOF
-            cat << 'EOF' | ${ELEVATE:-} tee /root/.bashrc &> /dev/null
+        # root bash
+        cat << 'EOF' | ${ELEVATE:-} tee /root/.bashrc &>/dev/null
 [[ "${-}" != *i* ]] && return
 [[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
-
-            # user shell
-            cat << EOF | ${ELEVATE:-} tee /home/"${DKRUSER}"/.profile &> /dev/null
-source /home/${DKRUSER}/.bashrc
+        # user profile
+        cat << EOF | ${ELEVATE:-} tee "/home/${DKRUSER}/.profile" &>/dev/null
+[[ -f . /home/${DKRUSER}/.bashrc ]] && . /home/${DKRUSER}/.bashrc
 EOF
-            cat << 'EOF' | ${ELEVATE:-} tee /home/"${DKRUSER}"/.bashrc &> /dev/null
+        # user bash
+        cat << 'EOF' | ${ELEVATE:-} tee "/home/${DKRUSER}/.bashrc" &>/dev/null
 [[ "${-}" != *i* ]] && return
 [[ -z "${BASH_COMPLETION_VERSINFO}" ]] && source /usr/share/bash-completion/bash_completion
 PS1="\u@\h \w\n\$ "
 EOF
-        # user shell permissions
-        ${ELEVATE:-} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.profile &> /dev/null
-        ${ELEVATE:-} chown "${DKRUSER}":"${DKRUSER}" /home/"${DKRUSER}"/.bashrc &> /dev/null
+        # user permission
+        ${ELEVATE:-} chown "${DKRUSER}:${DKRUSER}" "/home/${DKRUSER}/.profile" &>/dev/null
+        ${ELEVATE:-} chown "${DKRUSER}:${DKRUSER}" "/home/${DKRUSER}/.bashrc" &>/dev/null
+    }
 
-        # all users
+    show_users() {
         header 'current users'
-        show ${ELEVATE:-} cat /etc/passwd | awk -F: '$3 == 0 || $3 >= 1000' | sort
-        header 'user details'
-        awk -F: '$3 == 0 || $3 >= 1000 {print $1}' /etc/passwd | while IFS= read -r i; do
-           show ${ELEVATE:-} id "${i}"
+        awk -F: '$3 == 0 || $3 >= 1000' /etc/passwd | sort | while read -r line; do
+            show echo "$line"
         done
-        fi
-        text " > sudo --user ${DKRUSER} --login"
+
+        header 'user details'
+        awk -F: '$3 == 0 || $3 >= 1000 {print $1}' /etc/passwd | while read -r usr; do
+            show ${ELEVATE:-} id "$usr"
+        done
+
+        header 'login'
+        text "sudo --user ${DKRUSER} --login"
+    }
+
+    # ----- Execution -----
+    header 'create user'
+    detect_virtualization
+
+    if [[ "${virt}" == "none" ]]; then
+        text 'user setup not needed'
+        return
     fi
+
+    read -r -p 'Enter name: ' DKRUSER
+    DKRUSER="$(echo "${DKRUSER}" | xargs)"  # Trim whitespace
+
+    if user_exists; then
+        text "User '${DKRUSER}' already exists on this system."
+        show getent passwd "${DKRUSER}"
+        return
+    fi
+
+    create_groups
+    create_user_account
+    setup_sudoers
+    setup_shells
+    show_users
 }
+
+
 
 function pause_script {
     head="${1}"

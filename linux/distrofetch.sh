@@ -99,7 +99,7 @@ function get_now {
 function get_hardware {
     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
         printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
-    elif [[ -f /etc/wsl.conf ]]; then
+    elif [[ -f /etc/wsl.conf ]] || uname -r | grep -q 'WSL2' ; then
          printf '%s %s' "WSL2" "$(wsl.exe --version | tr -d '\0' | awk 'FNR==1 {print $3}')"
     else
         print_na

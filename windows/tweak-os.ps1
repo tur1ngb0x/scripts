@@ -64,3 +64,40 @@ function Tasks {
     # trim SSD
     Optimize-Volume -DriveLetter C -ReTrim -Verbose
 }
+
+function Shortcuts {
+    New-Item -ItemType Directory -Path "$HOME\Desktop" -Force *> $null
+    $desktop = "$HOME\Desktop"
+    $shell   = New-Object -ComObject WScript.Shell
+
+    function local:lnk_wt {
+        Remove-Item "$desktop\Terminal.lnk" -Force *> $null
+        $shortcutPath          = Join-Path $desktop 'Terminal.lnk'
+        $shortcut              = $shell.CreateShortcut($shortcutPath)
+        $exePath                = Join-Path (Get-AppxPackage -Name Microsoft.WindowsTerminal)[-1].InstallLocation 'wt.exe'
+        $shortcut.TargetPath   = $exePath
+        $shortcut.IconLocation = "$exePath,0"
+        $shortcut.Description  = 'Open Windows Terminal'
+        $shortcut.Hotkey       = 'CTRL+ALT+T'
+        $shortcut.WindowStyle  = 3
+        $shortcut.Save()
+        Write-Host "Shortcut created at $shortcutPath"
+    }
+
+    function local:lnk_ubuntu {
+        Remove-Item "$desktop\Ubuntu.lnk" -Force *> $null
+        $shortcutPath          = Join-Path $desktop 'Ubuntu.lnk'
+        $shortcut              = $shell.CreateShortcut($shortcutPath)
+        $exePath                = Join-Path (Get-AppxPackage -Name CanonicalGroupLimited.Ubuntu24.04LTS)[-1].InstallLocation 'ubuntu2404.exe'
+        $shortcut.TargetPath   = $exePath
+        $shortcut.IconLocation = "$exePath,0"
+        $shortcut.Arguments    = ''
+        $shortcut.Description  = 'Open Ubuntu'
+        $shortcut.Save()
+        Write-Host "Shortcut created at $shortcutPath"
+    }
+
+    # call sub functions
+    lnk_wt
+    lnk_ubuntu
+}; Shortcuts

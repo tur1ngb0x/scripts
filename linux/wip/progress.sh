@@ -5,17 +5,49 @@
 # cat << EOF | grep --invert-match '^#' | column --keep-empty-lines --output-separator ' ' --table --table-right 1,2,3,4,5
 
 
+
+
+today() {
+    if [[ $# -eq 0 ]]; then                # no args? → just show today
+        date '+%Y-%m-%d %a'
+        return
+    fi
+
+    local day_name="${1,,}"                                                   # convert argument to lowercase
+    local week_number="$(date +%V)"                                           # get current week number
+    local day_number="$(date +%u)"                                            # get current day number
+    local date_monday="$(date -d "-$((day_number-1)) day" +%F)" || return     # get date based on current week monday
+
+    local day_offset                                                          # calculate day offset based on current day
+    case "${day_name}" in
+        mon) day_offset=0 ;;
+        tue) day_offset=1 ;;
+        wed) day_offset=2 ;;
+        thu) day_offset=3 ;;
+        fri) day_offset=4 ;;
+        sat) day_offset=5 ;;
+        sun) day_offset=6 ;;
+        *)
+            printf 'Usage: today {mon|tue|wed|thu|fri|sat|sun}\n'
+            return
+            ;;
+    esac
+
+    # --- print result ---
+    date -d "$date_monday +$day_offset day" '+%Y-%m-%d-%a'
+}
+
+
+
 echo '```'
-
-cat << EOF | column --table --table-right 1,2,3,4,5,6 --output-separator ' '
-W$(command date +'%V') DIET GYM STEPS SLEEP WEIGHT
-MON 2 N 39 9:23 71.4
-TUE 10 Y 12882 7:58 71.5
-WED 10 Y 11848 7:38 71.3
-THU 10 Y 10505 6:58 71.7
-FRI 10 Y 3879 8:07 71.5
-SAT - R - - -
-SUN - R - - -
+cat << EOF | column --output-separator '    ' --table-right 1,2,3,4,5 --keep-empty-lines  --table
+DATE GYM STEPS DIET SLEEP
+$(today mon) Yes 8924 10 7:24
+$(today tue) Yes 13258 10 7:26
+$(today wed) - - - -
+$(today thu) - - - -
+$(today fri) - - - -
+$(today sat) - - - -
+$(today sun) - - - -
 EOF
-
 echo '```'

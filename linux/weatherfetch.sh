@@ -213,6 +213,26 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # #####################################################################
 # REWRITE
 # #####################################################################
@@ -230,7 +250,6 @@ OPTIONS
     -h    show help
     -l    use long format (default)
     -s    use short format
-
 USAGE
     $ ${0##*/} -l "Pune"
     $ ${0##*/} -s "Mumbai"
@@ -555,25 +574,3 @@ function main () {
 #######################################################################
 main "${@}"
 
-# function wttr()
-# {
-#     [[ ! $(command -v curl) ]] && echo 'curl not found' && return
-#     [[ "${#}" -eq 0 ]] || [[ "${1}" =~ [[:space:]] ]] && echo 'syntax: wttr <City+Name> or <PinCode>' && return
-#     printf '%12s : %s\n' "Now" "$(date +'%Y-%m-%d %a %H:%M:%S %Z')"
-#     printf '%12s : %s\n' "Location" "$(command curl -sL4 "https://wttr.in/${1}?format=%l" | sed 's/+/ /g')"
-#     printf '%12s : %s\n' "Weather" "$(command curl -sL4 "https://wttr.in/${1}?format=%C")"
-#     printf '%12s : %s\n' "UV Index" "$(command curl -sL4 "https://wttr.in/${1}?format=%u")"
-#     printf '%12s : %s\n' "Temperature" "$(command curl -sL4 "https://wttr.in/${1}?format=%t")"
-#     printf '%12s : %s\n' "FeelsLike" "$(command curl -sL4 "https://wttr.in/${1}?format=%f")"
-#     printf '%12s : %s\n' "Rain" "$(command curl -sL4 "https://wttr.in/${1}?format=%p")"
-#     printf '%12s : %s\n' "Wind" "$(command curl -sL4 "https://wttr.in/${1}?format=%w")"
-#     printf '%12s : %s\n' "Humidity" "$(command curl -sL4 "https://wttr.in/${1}?format=%h")"
-#     printf '%12s : %s\n' "Pressure" "$(command curl -sL4 "https://wttr.in/${1}?format=%P")"
-#     printf '%12s : %s\n' "Dawn" "$(command curl -sL4 "https://wttr.in/${1}?format=%D")"
-#     printf '%12s : %s\n' "Sunrise" "$(command curl -sL4 "https://wttr.in/${1}?format=%S")"
-#     printf '%12s : %s\n' "Zenith" "$(command curl -sL4 "https://wttr.in/${1}?format=%z")"
-#     printf '%12s : %s\n' "Sunset" "$(command curl -sL4 "https://wttr.in/${1}?format=%s")"
-#     printf '%12s : %s\n' "Dusk" "$(command curl -sL4 "https://wttr.in/${1}?format=%d")"
-#     printf '%12s : %s\n' "Moon Day" "$(command curl -sL4 "https://wttr.in/${1}?format=%M")"
-#     printf '%12s : %s\n' "Moon Phase" "$(command curl -sL4 "https://wttr.in/${1}?format=%m")"
-# }
