@@ -25,10 +25,10 @@ EOF
 #######################################################################
 # helpers
 #######################################################################
-function print_row { printf -- '%9s : %s\n' "${1}" "${2}"; }
-function print_sep { printf -- '*%.0s' {1..60}; printf '\n'; }
-function print_na { printf '%s' '?'; }
-function check_cmd {
+function print_row () { printf -- '%9s : %s\n' "${1}" "${2}"; }
+function print_sep () { printf -- '*%.0s' {1..60}; printf '\n'; }
+function print_na () { printf '%s' '?'; }
+function check_cmd () {
     cmdlist=(date hostname free id uname uptime xrandr)
     cmdyes=()
     cmdno=()
@@ -52,10 +52,10 @@ function check_cmd {
         printf '%s\n' "Found: ${cmdyes[*]}"
        printf '%s\n' "Missing: ${cmdno[*]}"
         cat << EOF
-Debian/Ubuntu: apt install bash bash-completion coreutils procps x11-utils
-RHEL/Fedora:   dnf install bash bash-completion coreutils gawk procps-ng hostname xrandr
-Arch:          pacman -Syu bash bash-completion coreutils inetutils procps-ng uutils-coreutils xorg-xrandr
-Alpine:        apk add     bash bash-completion coreutils busybox procps xrandr
+Debian/Ubuntu : apt install bash bash-completion coreutils procps x11-xserver-utils
+RHEL/Fedora   : dnf install bash bash-completion coreutils gawk procps-ng hostname xrandr
+Arch          : pacman -Syu bash bash-completion coreutils inetutils procps-ng uutils-coreutils xorg-xrandr
+Alpine        : apk add     bash bash-completion coreutils busybox procps xrandr
 EOF
 	return 1
     fi
@@ -64,7 +64,7 @@ EOF
 #######################################################################
 # get data
 #######################################################################
-function get_user {
+function get_user () {
     if command -v id &> /dev/null; then
         printf '%s' "$(id --user --name)"
     else
@@ -72,7 +72,7 @@ function get_user {
     fi
 }
 
-function get_host {
+function get_host () {
     if command -v hostname &> /dev/null; then
         printf '%s' "$(hostname --long)"
     else
@@ -80,7 +80,7 @@ function get_host {
     fi
 }
 
-function get_now {
+function get_now () {
     if command -v date &> /dev/null; then
         printf '%s' "$(date +'%Y %B %-d %A %H:%M:%S %Z ')"
     else
@@ -96,7 +96,7 @@ function get_now {
 #     fi
 # }
 
-function get_hardware {
+function get_hardware () {
     if [[ -f /sys/devices/virtual/dmi/id/sys_vendor ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ]]; then
         printf '%s %s' "$(cat /sys/devices/virtual/dmi/id/sys_vendor)" "$(cat /sys/devices/virtual/dmi/id/product_name)"
     elif [[ -f /etc/wsl.conf ]] || uname -r | grep -q 'WSL2' ; then
@@ -106,7 +106,7 @@ function get_hardware {
     fi
 }
 
-function get_distro {
+function get_distro () {
     if [[ -f /etc/os-release ]]; then
         source /etc/os-release; printf '%s %s' "${NAME}" "${VERSION}"
     else
@@ -114,7 +114,7 @@ function get_distro {
     fi
 }
 
-function get_kernel {
+function get_kernel () {
     if command -v uname &> /dev/null; then
         printf '%s' "$(uname --kernel-release)"
     else
@@ -122,7 +122,7 @@ function get_kernel {
     fi
 }
 
-function get_display {
+function get_display () {
     if [[ $(tty) == *tty* ]]; then
         print_na
     elif command -v xrandr &> /dev/null; then
@@ -146,7 +146,7 @@ function get_display {
     fi
 }
 
-function get_desktop {
+function get_desktop () {
     if [[ -n "${XDG_CURRENT_DESKTOP}" ]] && [[ -n "${XDG_SESSION_TYPE}" ]]; then
         printf '%s@%s' "${XDG_CURRENT_DESKTOP}" "${XDG_SESSION_TYPE}"
     else
@@ -154,7 +154,7 @@ function get_desktop {
     fi
 }
 
-function get_ram {
+function get_ram () {
     if command -v free &> /dev/null; then
         printf '%sMiB / %sMiB' "$(free -m | awk 'FNR == 2 {print $3}')" "$(free -m | awk 'FNR == 2 {print $2}')"
     else
@@ -162,7 +162,7 @@ function get_ram {
     fi
 }
 
-function get_swap {
+function get_swap () {
     if command -v free &> /dev/null; then
         printf '%sMiB / %sMiB' "$(free -m | awk 'FNR == 3 {print $3}')" "$(free -m | awk 'FNR == 3 {print $2}')"
     else
@@ -193,7 +193,7 @@ function get_swap {
 #     printf '%s' "${out%% }"
 # }
 
-get_uptime() {
+function get_uptime() {
     if command -v uptime >/dev/null 2>&1; then
         sec=$(($(date +%s) - $(date -d"$(uptime -s)" +%s)))
     elif [ -r /proc/uptime ]; then
@@ -212,7 +212,7 @@ get_uptime() {
     printf '%s' "${out%% }"
 }
 
-# function get_packages {
+# function get_packages () {
 #     for pm in dpkg dnf pacman flatpak snap docker pipx; do
 #         if command -v "${pm}" &> /dev/null; then
 #             case "${pm}" in
@@ -262,7 +262,7 @@ get_uptime() {
 #     printf '%s ' "${pm_all[@]}"
 # }
 
-function get_packages {
+function get_packages () {
 	# initialise empty arrays
     declare -a pm_all=()
     declare -a pm_1p=()
@@ -319,7 +319,7 @@ function get_packages {
 
 
 
-function get_shell {
+function get_shell () {
     if [[ -n "${SHELL}" ]]; then
 		case "${SHELL}" in
 			/bin/bash)  printf '%s %s' "bash" "$(bash --version | awk 'FNR==1 {print $4}' | cut -d '-' -f1)" ;;
@@ -334,7 +334,7 @@ function get_shell {
     fi
 }
 
-function get_colors {
+function get_colors () {
     for i in {0..15}; do
         #printf '\e[48;5;%dm    ' "${i}"
 		printf '\e[48;5;%dm ' "${i}"
@@ -345,7 +345,7 @@ function get_colors {
 #######################################################################
 # display data long format (default)
 #######################################################################
-function fetch_long {
+function fetch_long () {
     print_row 'Hardware'  "$(get_hardware)"
     print_row 'Distro'    "$(get_distro)"
     print_row 'Kernel'    "$(get_kernel)"
@@ -362,9 +362,9 @@ function fetch_long {
 #######################################################################
 # display data short format
 #######################################################################
-function s_get_distro() { sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"'; }
+function s_get_distro () { sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"'; }
 function s_get_kernel () { printf '%s\n' "$(uname -r)"; }
-function s_get_memory() { read -r _ _ used _ < <(free -m | grep 'Mem:'); printf '%sMiB' "${used}"; }
+function s_get_memory () { read -r _ _ used _ < <(free -m | grep 'Mem:'); printf '%sMiB' "${used}"; }
 function s_get_uptime () { printf '%s\n' "$(uptime -p | sed 's/up //g; s/,//g; s/ hour/hr/g; s/ minutes/min/g')"; }
 
 function fetch_short {
