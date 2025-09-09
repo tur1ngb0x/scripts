@@ -102,7 +102,7 @@ EOF
 
     setup_shells() {
         # root profile
-        cat << EOF | ${ELEVATE:-} tee ${ELEVATE:-} tee /root/.profile &>/dev/null
+        cat << EOF | ${ELEVATE:-} tee /root/.profile &>/dev/null
 [[ -f /root/.bashrc ]] && . /root/.bashrc
 EOF
         # root bash
@@ -112,6 +112,7 @@ EOF
 PS1="\u@\h \w\n\$ "
 EOF
         # user profile
+        ${ELEVATE:-} rm "/home/${DKRUSER}/.bash_profile"
         cat << EOF | ${ELEVATE:-} tee "/home/${DKRUSER}/.profile" &>/dev/null
 [[ -f . /home/${DKRUSER}/.bashrc ]] && . /home/${DKRUSER}/.bashrc
 EOF

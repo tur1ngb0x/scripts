@@ -84,10 +84,11 @@ function gui_telegram {
 }
 
 function gui_toolbox {
-	wget -4O- 'https://data.services.jetbrains.com/products/download?platform=linux&code=TBA' | tar -xvz --strip-components=1 -C /tmp && (nohup /tmp/jetbrains-toolbox &) &> /tmp/jetbrains-toolbox.out
+	#tar --file /tmp/toolbox.tar.gz -vvv --extract --gzip --strip-components 1 --directory /tmp/toolbox
+	mkdir -pv "${HOME}"/Apps/jetbrains-toolbox
 	wget -4O /tmp/toolbox.tar.gz 'https://data.services.jetbrains.com/products/download?platform=linux&code=TBA'
-	tar --file /tmp/toolbox.tar.gz -vvv --extract --gzip --strip-components 1 --directory /tmp
-	(nohup /tmp/jetbrains-toolbox &) &> /tmp/jetbrains-toolbox.txt
+	tar --file /tmp/toolbox.tar.gz -vvv --extract --gzip --strip-components 1 --directory "${HOME}"/Apps/jetbrains-toolbox
+	(nohup ~/Apps/jetbrains-toolbox/bin/jetbrains-toolbox &) &> /tmp/jetbrains-toolbox.txt
 }
 
 # begin script from here

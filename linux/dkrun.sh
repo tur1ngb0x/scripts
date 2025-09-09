@@ -109,13 +109,13 @@ Source: https://hub.docker.com/search
 EOF
 }
 
-# if docker is not found, exit.
-if ! command -v docker &> /dev/null; then
-    echo 'docker not found in PATH'
-    exit 1
-fi
+
 
 function main () {
+	if ! command -v docker &> /dev/null; then
+		echo 'docker not found in PATH'
+		exit 1
+	fi
     case "${1}" in
         check)								docker_check      ;;
         cleanup)      						docker_cleanup    ;;
