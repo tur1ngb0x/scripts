@@ -1,26 +1,16 @@
 #!/usr/bin/env bash
 
-# fail safes
-LC_ALL=C
+# fail safe
 set -euo pipefail
+LC_ALL=C
 
 # helpers
-function show () {
-    printf '\033[7m # %s \033[0m\n' "${*}"
-    eval "${@:?}"
-}
-
-function check () {
-    if ! command -v "${1}" &> /dev/null; then
-        return 1
-    fi
-}
-
-# elevate
+show() { printf '\033[7m # %s \033[0m\n' "${*}"; eval "${@:?}"; }
+check() { command -v "${1:?}" &> /dev/null; }
 [[ "$(id -ur)" -ne 0 ]] && ELEVATE="sudo"
 
 # title
-printf '\033[7m %s \033[0m\n' "SYSTEM UPGRADER"
+printf '\033[7m # %s \033[0m\n' "SYSTEM UPGRADER"
 ${ELEVATE:-} printf '%s\n' ''
 
 # third party
@@ -31,10 +21,11 @@ check snap    && show ${ELEVATE:-} snap refresh
 
 # first party
 check apt-get && show "${ELEVATE:-}" apt-get update && show "${ELEVATE:-}" apt-get dist-upgrade && exit
-check dnf     && show "${ELEVATE:-}" dnf upgrade --refresh && exit
-check pacman  && show "${ELEVATE:-}" pacman -Syyu --needed && exit
+check dnf     && show "${ELEVATE:-}" dnf upgrade --refresh                                      && exit
+check pamac   && show "${ELEVATE:-}" pamac upgrade --refresh                                    && exit
+check pacman  && show "${ELEVATE:-}" pacman -Syyu --needed                                      && exit
 
-# unset
+# cleanup
 unset ELEVATE
 unset -f show
 unset -f check
