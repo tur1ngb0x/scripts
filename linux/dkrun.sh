@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+# cat dkrun.sh
+
+LC_ALL=C
 
 function show { (set -x; "${@:?}"); }
 
@@ -15,7 +17,7 @@ Bash wrapper for quickly spinning up docker containers.
 
 ${Treverse}${Tbold} SYNTAX ${Treset}
 $ ${0##*/} <options>
-$ ${0##*/} <image:tag> <command>
+$ ${0##*/} <image:tag> [command]
 
 ${Treverse}${Tbold} OPTIONS ${Treset}
 check      check common issues and problems
@@ -32,17 +34,18 @@ bash    /bin/bash
 dash    /bin/dash
 
 ${Treverse}${Tbold} USAGE ${Treset}
+$ ${0##*/} <image:tag>      [command]
 $ ${0##*/} alpine
 $ ${0##*/} debian:latest
-$ ${0##*/} fedora:rawhide bash
+$ ${0##*/} fedora:rawhide   bash
 $ ${0##*/} archlinux:latest bash -c 'cat /etc/pacman.conf'
 EOF
 }
 
 function docker_check () {
     show command -v docker
-	show type docker
-	show which docker
+    show type docker
+    show which docker
     show docker --version
     show systemctl is-active docker.service
     show file /var/run/docker.sock
@@ -67,29 +70,42 @@ function docker_stats () {
     show docker stats --no-stream
 }
 
+# function docker_run {
+#     local image="${1}"
+#     shift
+#     local dkrhost
+#     dkrhost="docker"
+#     # local uuidtag
+#     # uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
+#     # dkrhost="docker-${image}-${uuidtag}"
+#     # dkrhost="${dkrhost//:/-}"
+#     show docker --debug=true --log-level=debug container run \
+#         --interactive \
+#         --tty \
+#         --cpus '2' \
+#         --memory '2G' \
+#         --user 'root' \
+#         --hostname "${dkrhost}" \
+#         --volume "${HOME}"/src/:/root/src:ro \
+#         --workdir '/root' \
+#         "${image}" \
+#         "${@}"
+#         # "${@:2}"
+# }
+
 function docker_run {
-    local image="${1}"
-    shift
-    local dkrhost
-    dkrhost="docker"
-    # local uuidtag
-    # uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
-    # dkrhost="docker-${image}-${uuidtag}"
-    # dkrhost="${dkrhost//:/-}"
+    local dkrimg="${1}"; shift
     show docker --debug=true --log-level=debug container run \
         --interactive \
         --tty \
         --cpus '2' \
         --memory '2G' \
         --user 'root' \
-        --hostname "${dkrhost}" \
-        --volume "${HOME}"/src/:/root/src:ro \
+        --hostname 'docker' \
+        --volume "${HOME}/src/:/root/src:ro" \
         --workdir '/root' \
-        "${image}" \
+        "${dkrimg}" \
         "${@}"
-        # "${@:2}"
-        # --volume "/etc/timezone:/etc/timezone:ro" \
-        # --volume "/etc/localtime:/etc/localtime:ro" \
 }
 
 function docker_images () {
@@ -109,13 +125,17 @@ Source: https://hub.docker.com/search
 EOF
 }
 
-
-
 function main () {
-	if ! command -v docker &> /dev/null; then
-		echo 'docker not found in PATH'
-		exit 1
-	fi
+    if ! command -v docker &> /dev/null; then
+        echo 'docker not found in PATH'
+        exit 1
+    fi
+
+    if [[ "${1}" -eq 0 ]]; then
+        usage
+        exit
+    fi
+
     case "${1}" in
         check)								docker_check      ;;
         cleanup)      						docker_cleanup    ;;
