@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-if [[ "${#}" -eq 0 ]]; then
-	echo 'no arguments provided.'
-	exit
-fi
-
-if [[ ! -d "${1}" ]]; then
-	echo 'argument should be a path.'
-	exit
+if [[ $# -eq 0 ]]; then
+    echo 'no arguments provided.'
+    exit
+elif [[ ! -d "${1}" ]]; then
+    echo 'argument should be a path.'
+    exit
 fi
 
 fxlist=(caja dolphin lf nautilus nemo pcmanfm ranger thunar xdg-open)
@@ -23,9 +21,10 @@ done
 
 if [ -z "${fxcmd}" ]; then
     echo "Supported file managers: ${fxlist[*]}"
-    return 1
-fi
+    exit
+    fi
 
 # launch file manager
-(nohup "${fxcmd}" "${@}" &) &>/dev/null
-# nohup "${fx_cmd}" "${@}" &>/dev/null &
+# (nohup "${fxcmd}" "${@}" &) &>/dev/null
+
+nohup "${fxcmd}" "${@}" &>/dev/null &
