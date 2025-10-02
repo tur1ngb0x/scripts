@@ -70,29 +70,6 @@ function docker_stats () {
     show docker stats --no-stream
 }
 
-# function docker_run {
-#     local image="${1}"
-#     shift
-#     local dkrhost
-#     dkrhost="docker"
-#     # local uuidtag
-#     # uuidtag="$(uuidgen | awk -F '-' '{print $1}')"
-#     # dkrhost="docker-${image}-${uuidtag}"
-#     # dkrhost="${dkrhost//:/-}"
-#     show docker --debug=true --log-level=debug container run \
-#         --interactive \
-#         --tty \
-#         --cpus '2' \
-#         --memory '2G' \
-#         --user 'root' \
-#         --hostname "${dkrhost}" \
-#         --volume "${HOME}"/src/:/root/src:ro \
-#         --workdir '/root' \
-#         "${image}" \
-#         "${@}"
-#         # "${@:2}"
-# }
-
 function docker_run {
     local dkrimg="${1}"; shift
     show docker --debug=true --log-level=debug container run \
@@ -131,7 +108,7 @@ function main () {
         exit 1
     fi
 
-    if [[ "${1}" -eq 0 ]]; then
+    if [[ $# -eq 0 ]]; then
         usage
         exit
     fi
@@ -143,7 +120,7 @@ function main () {
         images)       						docker_images     ;;
         info)         						docker_info       ;;
         stats)        						docker_stats      ;;
-        ''|help|-help|--help|h|-h|--h)      usage             ;;
+        help|-help|--help|h|-h|--h|'')      usage             ;;
         *)    								docker_run "${@}" ;;
     esac
 }
