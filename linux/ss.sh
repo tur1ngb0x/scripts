@@ -39,3 +39,13 @@ else
     notify 'Cannot determine $XDG_SESSION_TYPE'
     builtin exit 1
 fi
+
+
+# GNOME Wayland
+# if [[ "${XDG_SESSION_DESKTOP}" == 'gnome' ]]; then
+#     # PrintScreen         = Menu
+#     # PrintScreen + Alt   = Window
+#     # PrintScreen + Shift = Screen
+#     gsettings set org.gnome.shell.keybindings show-screenshot-ui "['Print', '<Super><Shift>S']"
+#     builtin exit 0
+# fi

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# TOTP | tee /dev/stderr | xclip -selection clipboard
+
+usage() {
+    local reset=$'\033[0m'       # reset
+    local bold=$'\033[1m'        # bold
+    local italic=$'\033[3m'      # italic
+    local underline=$'\033[4m'   # underline
+    local reverse=$'\033[7m'     # reverse
+    local dim=$'\033[2m'         # dim
+    local violet=$'\033[35m'     # violet
+    local indigo=$'\033[34m'     # indigo
+    local blue=$'\033[94m'       # blue
+    local green=$'\033[32m'      # green
+    local yellow=$'\033[33m'     # yellow
+    local orange=$'\033[91m'     # orange
+    local red=$'\033[31m'        # red
+
+    cat << EOF
+${reverse}${bold} DESCRIPTION ${reset}
+Generates TOTP codes using Ente Auth plain text exports.
+
+${reverse}${bold} SYNTAX ${reset}
+${0##*/} <file.txt>
+
+${reverse}${bold} EXAMPLE ${reset}
+${0##*/} ~/Downloads/ente-auth-codes.txt
+EOF
+}
+
+main() {
+    if [[ $# -ne 1 ]]; then
+        usage
+        exit
+    fi
+
+    timedatectl --adjust-system-clock
+
+    while true; do
+        epoch_current="$(date +%s)"
+        seconds_current="$((epoch_current % 60))"
+
+        if [ "${seconds_current}" -lt 30 ]; then
+            seconds_next="$((30 - seconds_current))"
+            epoch_next="$((epoch_current + seconds_next))"
+        else
+            seconds_next="$((60 - seconds_current))"
+            epoch_next="$((epoch_current + seconds_next))"
+        fi
+
+        printf '\033[H\033[J'
+
+        sed --quiet 's#^[^:]*:[^:]*:\([^?]*\)?.*&secret=\([^&]*\)&codeDisplay=.*#\1 \2#p' "${1:?}" | while read -r account_name secret_key; do
+            totp_current="$(printf '%s\n' "${secret_key}" | xargs oathtool --base32 --totp=SHA1 --time-step-size=30)"
+            totp_next="$(printf '%s\n' "${secret_key}" | xargs oathtool  --base32 --totp=SHA1 --time-step-size=30 --now="@${epoch_next}")"
+            printf '%s %s %s\n' "${account_name}" "${totp_current}" "${totp_next}"
+        done | column -t -N ACCOUNT,CURRENT,NEXT
+
+        printf "\n"
+        while [ "$seconds_next" -gt 0 ]; do
+            printf '\rRefreshing TOTPs in: %2ds' "${seconds_next}"
+            sleep 1.0
+            seconds_next=$((seconds_next - 1))
+        done
+    done
+}
+
+# begin script from here
+main "${@}"
