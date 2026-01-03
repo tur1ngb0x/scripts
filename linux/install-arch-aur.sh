@@ -33,6 +33,6 @@ wget -4O /tmp/pacman-static 'https://pkgbuild.com/~morganamilo/pacman-static/x86
 sudo install -v -D -m 0755 -o root -g root /tmp/pacman-static /usr/bin/pacman-static
 
 # install pikaur-static
-pikaur -S --noedit --nodiff --noconfirm pikaur-static
+# pikaur -S --noedit --nodiff --noconfirm pikaur-static
 
 set +euxo pipefail
