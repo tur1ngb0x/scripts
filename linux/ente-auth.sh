@@ -68,3 +68,16 @@ main() {
 
 # begin script from here
 main "${@}"
+
+# function totp () {
+#     if [[ $# -ne 2 ]]; then
+#         builtin command awk -F '\?secret=' '{print $1}' "${1:?}" | builtin command sed 's|otpauth://totp/||g'
+#         builtin printf '\n%s\n' 'usage: totp <file> <account>' && return
+#     else
+#         builtin command grep --ignore-case "${2:?}" "${1:?}" \
+#             | awk -F '\?secret=' '{print $2}' \
+#             | xargs oathtool --base32 --totp=SHA1 --time-step-size=30 \
+#             | tee /dev/stderr \
+#             | xclip -selection clipboard
+#     fi
+# }
