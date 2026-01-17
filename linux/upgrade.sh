@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-LC_ALL=C
 builtin set -euo pipefail
+export LC_ALL=C
+export PATH='/usr/local/sbin:/usr/local/bin:/usr/bin'
 
 function show () {
     builtin printf '\033[7m # %s | $ %s \033[0m\n' "$(command date '+%Y-%m-%d %H:%M:%S')" "${*}"
@@ -34,3 +35,8 @@ check apt-get && show "${ELEVATE:-} bash -c 'apt-get update && apt-get dist-upgr
 check dnf     && show "${ELEVATE:-} bash -c 'dnf upgrade --refresh'"                  && cleanup
 check pamac   && show "${ELEVATE:-} bash -c 'pacmac upgrade --refresh'"               && cleanup
 check pacman  && show "${ELEVATE:-} bash -c 'pacman -Syyu --needed'"                  && cleanup
+
+
+
+# cleanup
+cleanup

@@ -3,37 +3,23 @@
 LC_ALL=C
 set -euxo pipefail
 
-# reset terminal
-reset
+sudo pacman --verbose --sync --needed --noconfirm git base-devel
 
-# install dependencies
-sudo pacman --sync --needed git base-devel
+sudo rm --verbose --force --recursive /tmp/pikaur
 
-# remove existing pikaur directory
-sudo rm -fr /tmp/pikaur
+git clone --verbose --ipv4 --depth=1 https://aur.archlinux.org/pikaur.git /tmp/pikaur
 
-# get pikaur source
-git clone --ipv4 --depth=1 https://aur.archlinux.org/pikaur.git /tmp/pikaur
-
-# move into pikaur directory
 pushd /tmp/pikaur
 
-# disable lto and debug flags
 builtin printf '%s\n' 'OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug !lto)' >| /tmp/makepkg.conf
-install -v -D /tmp/makepkg.conf "${HOME}"/.config/pacman/makepkg.conf
 
-# remove existing pikaur binary
-# [[ -f /usr/bin/pikaur ]] && sudo pacman --remove --nosave --recursive --noconfirm pikaur
+install --verbose -D /tmp/makepkg.conf "${HOME}"/.config/pacman/makepkg.conf
 
-# compile pikaur
+sudo pacman --remove --nosave --recursive pikaur
+
 makepkg --cleanbuild --clean --syncdeps --install --force --rmdeps --needed --noconfirm
 
-# install pacman-static
-# pikaur -S --noedit --nodiff --noconfirm pacman-static
-wget -4O /tmp/pacman-static 'https://pkgbuild.com/~morganamilo/pacman-static/x86_64/bin/pacman-static'
-sudo install -v -D -m 0755 -o root -g root /tmp/pacman-static /usr/bin/pacman-static
+#/usr/bin/pikaur --color=always --verbose --noconfirm --sync --noedit --nodiff brave-bin ente-auth-bin bitwarden-bin
 
-# install pikaur-static
-# pikaur -S --noedit --nodiff --noconfirm pikaur-static
-
-set +euxo pipefail
+#wget -4O /tmp/pacman-static 'https://pkgbuild.com/~morganamilo/pacman-static/x86_64/bin/pacman-static'
+#sudo install -v -D -m 0755 -o root -g root /tmp/pacman-static /usr/bin/pacman-static
